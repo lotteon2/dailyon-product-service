@@ -2,6 +2,7 @@ package com.dailyon.productservice.service;
 
 import com.dailyon.productservice.dto.request.CreateBrandRequest;
 import com.dailyon.productservice.dto.response.CreateBrandResponse;
+import com.dailyon.productservice.dto.response.ReadBrandListResponse;
 import com.dailyon.productservice.entity.Brand;
 import com.dailyon.productservice.exception.DuplicatedBrandException;
 import com.dailyon.productservice.repository.brand.BrandRepository;
@@ -28,5 +29,9 @@ public class BrandService {
         return CreateBrandResponse.builder()
                 .brandId(brand.getId())
                 .build();
+    }
+
+    public ReadBrandListResponse readAllBrands() {
+        return ReadBrandListResponse.fromEntity(brandRepository.findAllBrands());
     }
 }
