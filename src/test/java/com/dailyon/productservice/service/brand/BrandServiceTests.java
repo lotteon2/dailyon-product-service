@@ -3,8 +3,10 @@ package com.dailyon.productservice.service.brand;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.dailyon.productservice.dto.request.CreateBrandRequest;
+import com.dailyon.productservice.dto.request.UpdateBrandRequest;
 import com.dailyon.productservice.dto.response.CreateBrandResponse;
 import com.dailyon.productservice.dto.response.ReadBrandListResponse;
+import com.dailyon.productservice.exception.BrandNotFoundException;
 import com.dailyon.productservice.exception.DuplicatedBrandException;
 import com.dailyon.productservice.service.BrandService;
 import org.junit.jupiter.api.DisplayName;
@@ -63,5 +65,53 @@ public class BrandServiceTests {
 
         // then
         assertEquals(2, brands.getBrandResponses().size());
+    }
+
+    @Test
+    @DisplayName("브랜드 이름 수정 성공")
+    void updateBrandServiceSuccess() {
+        // given
+        String name = "testBrandName";
+        CreateBrandRequest createBrandRequest = CreateBrandRequest.builder().name(name).build();
+        CreateBrandResponse createBrandResponse = brandService.createBrand(createBrandRequest);
+
+        UpdateBrandRequest updateBrandRequest = UpdateBrandRequest.builder().name("test1").build();
+
+        // when
+        brandService.updateBrand(createBrandResponse.getBrandId(), updateBrandRequest);
+
+        // then
+        assertEquals(brandService.readAllBrands().getBrandResponses().get(0).getName(), "test1");
+    }
+
+    @Test
+    @DisplayName("브랜드 이름 수정 실패 - 존재하지 않는 id")
+    void updateBrandServiceFail1() {
+        // given
+        UpdateBrandRequest updateBrandRequest = UpdateBrandRequest.builder().name("test").build();
+
+        // when, then
+        assertThrows(BrandNotFoundException.class, () -> brandService.updateBrand(1L, updateBrandRequest));
+    }
+
+    @Test
+    @DisplayName("브랜드 이름 수정 실패 - 중복 이름")
+    void updateBrandServiceFail2() {
+        // given
+        String name = "test";
+        CreateBrandRequest createBrandRequest = CreateBrandRequest.builder().name(name).build();
+        brandService.createBrand(createBrandRequest);
+
+        String name1 = "test1";
+        CreateBrandRequest createBrandRequest1 = CreateBrandRequest.builder().name(name1).build();
+        CreateBrandResponse createBrandResponse = brandService.createBrand(createBrandRequest1);
+
+        // when
+        UpdateBrandRequest updateBrandRequest = UpdateBrandRequest.builder().name(name).build();
+
+        // then
+        assertThrows(DuplicatedBrandException.class, () ->
+                brandService.updateBrand(createBrandResponse.getBrandId(), updateBrandRequest)
+        );
     }
 }
