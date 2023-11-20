@@ -1,4 +1,4 @@
-package com.dailyon.productservice.exception.advice.brand;
+package com.dailyon.productservice.exception.advice.admin;
 
 import com.dailyon.productservice.exception.NotExistsException;
 import com.dailyon.productservice.exception.UniqueException;
