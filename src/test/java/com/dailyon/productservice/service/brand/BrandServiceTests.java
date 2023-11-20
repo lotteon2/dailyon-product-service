@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.dailyon.productservice.dto.request.CreateBrandRequest;
 import com.dailyon.productservice.dto.response.CreateBrandResponse;
+import com.dailyon.productservice.dto.response.ReadBrandListResponse;
 import com.dailyon.productservice.exception.DuplicatedBrandException;
 import com.dailyon.productservice.service.BrandService;
 import org.junit.jupiter.api.DisplayName;
@@ -47,5 +48,20 @@ public class BrandServiceTests {
         CreateBrandRequest anotherCreateBrandRequest = CreateBrandRequest.builder().name(anotherName).build();
 
         assertThrows(DuplicatedBrandException.class, () -> brandService.createBrand(anotherCreateBrandRequest));
+    }
+
+    // TODO : 삭제 api 개발하고 나서 deleted=false만 조회하는지 테스트
+    @Test
+    @DisplayName("브랜드 전체 조회")
+    void readBrandsService() {
+        // given
+        brandService.createBrand(CreateBrandRequest.builder().name("test1").build());
+        brandService.createBrand(CreateBrandRequest.builder().name("test2").build());
+
+        // when
+        ReadBrandListResponse brands = brandService.readAllBrands();
+
+        // then
+        assertEquals(2, brands.getBrandResponses().size());
     }
 }
