@@ -24,4 +24,8 @@ public class Brand extends BaseEntity {
     public static Brand createBrand(String name) {
         return Brand.builder().name(name).build();
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }
