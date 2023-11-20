@@ -1,4 +1,4 @@
-package com.dailyon.productservice.service;
+package com.dailyon.productservice.service.brand;
 
 import com.dailyon.productservice.dto.request.CreateBrandRequest;
 import com.dailyon.productservice.dto.request.UpdateBrandRequest;

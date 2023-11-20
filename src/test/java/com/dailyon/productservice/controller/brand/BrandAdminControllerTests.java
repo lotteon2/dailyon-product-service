@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.dailyon.productservice.dto.request.CreateBrandRequest;
 import com.dailyon.productservice.dto.request.UpdateBrandRequest;
 import com.dailyon.productservice.dto.response.CreateBrandResponse;
-import com.dailyon.productservice.service.BrandService;
+import com.dailyon.productservice.service.brand.BrandService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

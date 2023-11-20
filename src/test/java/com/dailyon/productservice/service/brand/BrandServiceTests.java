@@ -8,7 +8,6 @@ import com.dailyon.productservice.dto.response.CreateBrandResponse;
 import com.dailyon.productservice.dto.response.ReadBrandListResponse;
 import com.dailyon.productservice.exception.BrandNotFoundException;
 import com.dailyon.productservice.exception.DuplicatedBrandException;
-import com.dailyon.productservice.service.BrandService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
