@@ -10,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @SpringBootTest
 @Transactional
 @ActiveProfiles(value = {"test"})
@@ -45,5 +47,47 @@ public class CategoryRepositoryTests {
         // then
         assertEquals(category.getMasterCategory(), masterCategory);
         assertEquals(category.getName(), name);
+    }
+
+    @Test
+    @DisplayName("최상위 카테고리의 하위 카테고리 목록 조회")
+    public void findChildrenCategoriesFromRoot() {
+        // given
+        Category masterCategory = categoryRepository.save(Category.createRootCategory("master"));
+        for(int i=0; i<3; i++) {
+            categoryRepository.save(Category.createCategory(masterCategory, "children_"+i));
+        }
+
+        // when
+        List<Category> children = categoryRepository.findChildrenCategoriesById(masterCategory.getId());
+
+        // then
+        assertEquals(3, children.size());
+    }
+
+    @Test
+    @DisplayName("최하위 카테고리의 하위 카테고리 목록 조회")
+    public void findChildrenCategoriesFromLeaf() {
+        // given
+        Category masterCategory = categoryRepository.save(Category.createRootCategory("master"));
+
+        // when
+        List<Category> children = categoryRepository.findChildrenCategoriesById(masterCategory.getId());
+
+        // then
+        assertEquals(0, children.size());
+    }
+
+    @Test
+    @DisplayName("전체 카테고리 조회")
+    public void findAllCategories() {
+        // given
+        categoryRepository.save(Category.createRootCategory("name"));
+
+        // when
+        List<Category> categories = categoryRepository.findAll();
+
+        // then
+        assertEquals(1, categories.size());
     }
 }
