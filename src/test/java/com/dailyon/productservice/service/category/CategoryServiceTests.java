@@ -3,6 +3,8 @@ package com.dailyon.productservice.service.category;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.dailyon.productservice.dto.request.CreateCategoryRequest;
+import com.dailyon.productservice.dto.response.ReadAllCategoryListResponse;
+import com.dailyon.productservice.dto.response.ReadChildrenCategoryListResponse;
 import com.dailyon.productservice.entity.Category;
 import com.dailyon.productservice.exception.NotExistsException;
 import com.dailyon.productservice.exception.UniqueException;
@@ -93,5 +95,67 @@ public class CategoryServiceTests {
 
         // then
         assertEquals(category.getMasterCategory().getId(), masterCategory.getId());
+    }
+
+    @Test
+    @DisplayName("최상위 카테고리의 하위 카테고리 목록 조회")
+    public void readChildrenCategoriesFromRoot() {
+        // given
+        Category masterCategory = categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("master")
+                .build());
+
+        for(int i=0; i<3; i++) {
+            categoryService.createCategory(CreateCategoryRequest.builder()
+                    .masterCategoryId(masterCategory.getId())
+                    .categoryName("children_"+i)
+                    .build());
+        }
+
+        // when
+        ReadChildrenCategoryListResponse response = categoryService.readChildrenCategories(masterCategory.getId());
+
+        // then
+        assertEquals(response.getCategoryResponses().size(), 3);
+    }
+
+    @Test
+    @DisplayName("최하위 카테고리의 하위 카테고리 목록 조회")
+    public void readChildrenCategoriesFromLeaf() {
+        // given
+        Category leafCategory = categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("leaf")
+                .build());
+
+        // when
+        ReadChildrenCategoryListResponse response = categoryService.readChildrenCategories(leafCategory.getId());
+
+        // then
+        assertEquals(response.getCategoryResponses().size(), 0);
+    }
+
+    @Test
+    @DisplayName("카테고리 목록 조회 실패 - 존재하지 않는 id")
+    public void readChildrenCategoriesFail() {
+        // given
+        Long id = 0L;
+
+        // when, then
+        assertThrows(NotExistsException.class, () -> categoryService.readChildrenCategories(id));
+    }
+
+    @Test
+    @DisplayName("전체 카테고리 조회")
+    public void readAllCategories() {
+        // given
+        categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("test")
+                .build());
+
+        // when
+        ReadAllCategoryListResponse response = categoryService.readAllCategories();
+
+        // then
+        assertEquals(1, response.getAllCategories().size());
     }
 }

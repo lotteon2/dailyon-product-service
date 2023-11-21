@@ -1,6 +1,8 @@
 package com.dailyon.productservice.service.category;
 
 import com.dailyon.productservice.dto.request.CreateCategoryRequest;
+import com.dailyon.productservice.dto.response.ReadAllCategoryListResponse;
+import com.dailyon.productservice.dto.response.ReadChildrenCategoryListResponse;
 import com.dailyon.productservice.entity.Category;
 import com.dailyon.productservice.exception.NotExistsException;
 import com.dailyon.productservice.exception.UniqueException;
@@ -35,5 +37,17 @@ public class CategoryService {
             throw new NotExistsException();
         }
         return categoryRepository.save(Category.createCategory(masterCategory.get(), createCategoryRequest.getCategoryName()));
+    }
+
+    public ReadChildrenCategoryListResponse readChildrenCategories(Long id) {
+        // 존재하지 않는 id의 하위 카테고리를 조회하려고 하면 exception
+        if(id == null || categoryRepository.findById(id).isEmpty()) {
+            throw new NotExistsException();
+        }
+        return ReadChildrenCategoryListResponse.fromEntity(categoryRepository.findChildrenCategoriesById(id));
+    }
+
+    public ReadAllCategoryListResponse readAllCategories() {
+        return ReadAllCategoryListResponse.fromEntity(categoryRepository.findAll());
     }
 }
