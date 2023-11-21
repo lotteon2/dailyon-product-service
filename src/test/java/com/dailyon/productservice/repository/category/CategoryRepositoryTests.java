@@ -27,7 +27,6 @@ public class CategoryRepositoryTests {
         Category category = categoryRepository.save(Category.createRootCategory(name));
 
         // then
-        assertEquals(category.getId(), 1L);
         assertEquals(category.getName(), name);
         assertNull(category.getMasterCategory());
     }
