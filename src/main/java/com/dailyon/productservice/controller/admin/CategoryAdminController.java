@@ -1,6 +1,7 @@
 package com.dailyon.productservice.controller.admin;
 
 import com.dailyon.productservice.dto.request.CreateCategoryRequest;
+import com.dailyon.productservice.dto.response.ReadAllCategoryListResponse;
 import com.dailyon.productservice.service.category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,5 +21,10 @@ public class CategoryAdminController {
                                                @Valid @RequestBody CreateCategoryRequest createCategoryRequest) {
         categoryService.createCategory(createCategoryRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<ReadAllCategoryListResponse> readAllCategories(@RequestHeader String role) {
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.readAllCategories());
     }
 }
