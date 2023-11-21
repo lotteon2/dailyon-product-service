@@ -3,7 +3,7 @@ package com.dailyon.productservice.controller.admin;
 import com.dailyon.productservice.dto.request.CreateBrandRequest;
 import com.dailyon.productservice.dto.request.UpdateBrandRequest;
 import com.dailyon.productservice.dto.response.CreateBrandResponse;
-import com.dailyon.productservice.service.BrandService;
+import com.dailyon.productservice.service.brand.BrandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

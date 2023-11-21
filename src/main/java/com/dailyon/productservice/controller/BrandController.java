@@ -1,7 +1,7 @@
 package com.dailyon.productservice.controller;
 
 import com.dailyon.productservice.dto.response.ReadBrandListResponse;
-import com.dailyon.productservice.service.BrandService;
+import com.dailyon.productservice.service.brand.BrandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

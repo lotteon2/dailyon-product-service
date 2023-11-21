@@ -6,9 +6,8 @@ import com.dailyon.productservice.dto.request.CreateBrandRequest;
 import com.dailyon.productservice.dto.request.UpdateBrandRequest;
 import com.dailyon.productservice.dto.response.CreateBrandResponse;
 import com.dailyon.productservice.dto.response.ReadBrandListResponse;
-import com.dailyon.productservice.exception.BrandNotFoundException;
-import com.dailyon.productservice.exception.DuplicatedBrandException;
-import com.dailyon.productservice.service.BrandService;
+import com.dailyon.productservice.exception.NotExistsException;
+import com.dailyon.productservice.exception.UniqueException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,7 @@ public class BrandServiceTests {
         String anotherName = "testBrandName";
         CreateBrandRequest anotherCreateBrandRequest = CreateBrandRequest.builder().name(anotherName).build();
 
-        assertThrows(DuplicatedBrandException.class, () -> brandService.createBrand(anotherCreateBrandRequest));
+        assertThrows(UniqueException.class, () -> brandService.createBrand(anotherCreateBrandRequest));
     }
 
     // TODO : 삭제 api 개발하고 나서 deleted=false만 조회하는지 테스트
@@ -91,7 +90,7 @@ public class BrandServiceTests {
         UpdateBrandRequest updateBrandRequest = UpdateBrandRequest.builder().name("test").build();
 
         // when, then
-        assertThrows(BrandNotFoundException.class, () -> brandService.updateBrand(1L, updateBrandRequest));
+        assertThrows(NotExistsException.class, () -> brandService.updateBrand(1L, updateBrandRequest));
     }
 
     @Test
@@ -110,7 +109,7 @@ public class BrandServiceTests {
         UpdateBrandRequest updateBrandRequest = UpdateBrandRequest.builder().name(name).build();
 
         // then
-        assertThrows(DuplicatedBrandException.class, () ->
+        assertThrows(UniqueException.class, () ->
                 brandService.updateBrand(createBrandResponse.getBrandId(), updateBrandRequest)
         );
     }

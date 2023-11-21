@@ -3,7 +3,7 @@ package com.dailyon.productservice.controller.brand;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 import com.dailyon.productservice.dto.request.CreateBrandRequest;
-import com.dailyon.productservice.service.BrandService;
+import com.dailyon.productservice.service.brand.BrandService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
