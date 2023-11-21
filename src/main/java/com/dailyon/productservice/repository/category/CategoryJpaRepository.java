@@ -12,10 +12,10 @@ import java.util.Optional;
 public interface CategoryJpaRepository extends JpaRepository<Category, Long> {
     boolean existsByName(String name);
     Optional<Category> findByIdAndDeletedIsFalse(Long id);
-    @Query("SELECT child " +
+    @Query(value = "SELECT child " +
             "FROM Category child " +
-            "JOIN Category c ON c.id = child.masterCategory.id " +
-            "WHERE c.id = :id AND c.deleted = false AND child.deleted = false")
+            "JOIN FETCH child.masterCategory parent " +
+            "WHERE parent.id = :id AND parent.deleted = false AND child.deleted = false")
     List<Category> findChildrenCategoriesById(Long id);
     List<Category> findCategoriesByDeletedIsFalse();
 }
