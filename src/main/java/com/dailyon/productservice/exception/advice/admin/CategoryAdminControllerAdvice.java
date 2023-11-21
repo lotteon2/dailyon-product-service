@@ -1,5 +1,6 @@
 package com.dailyon.productservice.exception.advice.admin;
 
+import com.dailyon.productservice.controller.admin.CategoryAdminController;
 import com.dailyon.productservice.exception.ErrorResponse;
 import com.dailyon.productservice.exception.NotExistsException;
 import com.dailyon.productservice.exception.UniqueException;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackageClasses = CategoryAdminController.class)
 public class CategoryAdminControllerAdvice {
     @ExceptionHandler(NotExistsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
