@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "category_id"}))
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,10 +20,10 @@ public class ProductSize extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id")
     private Category category;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 
     @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN default false")
