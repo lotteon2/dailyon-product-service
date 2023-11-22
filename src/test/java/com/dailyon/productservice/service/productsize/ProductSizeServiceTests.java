@@ -52,7 +52,7 @@ public class ProductSizeServiceTests {
     }
 
     @Test
-    @DisplayName("치수 등록 실패 - 중복 이름")
+    @DisplayName("치수 등록 실패 - 중복")
     public void createProductSizeFail() {
         // given
         String name = "TEST";
@@ -82,12 +82,19 @@ public class ProductSizeServiceTests {
     }
 
     @Test
-    @DisplayName("치수 등록 성공")
+    @DisplayName("치수 등록 성공 - 다른 카테고리, 같은 name")
     public void createProductSizeSuccess() {
         // given
-        String name = "TEST1";
+        CreateCategoryRequest createCategoryRequest = CreateCategoryRequest.builder()
+                .masterCategoryId(null)
+                .categoryName("category1")
+                .build();
+
+        Category category1 = categoryService.createCategory(createCategoryRequest);
+
+        String name = "TEST";
         CreateProductSizeRequest createProductSizeRequest = CreateProductSizeRequest.builder()
-                .categoryId(category.getId())
+                .categoryId(category1.getId())
                 .name(name)
                 .build();
 
@@ -96,6 +103,6 @@ public class ProductSizeServiceTests {
 
         // then
         assertEquals(name, productSize.getName());
-        assertEquals(category.getId(), productSize.getCategory().getId());
+        assertEquals(category1.getId(), productSize.getCategory().getId());
     }
 }

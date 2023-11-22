@@ -20,13 +20,13 @@ public class ProductSizeService {
 
     @Transactional
     public ProductSize createProductSize(CreateProductSizeRequest createProductSizeRequest) {
-        if(productSizeRepository.isDuplicatedName(createProductSizeRequest.getName())) {
-            throw new UniqueException();
-        }
-
         Category category = categoryRepository
                 .findById(createProductSizeRequest.getCategoryId())
                 .orElseThrow(NotExistsException::new);
+
+        if(productSizeRepository.isDuplicated(category, createProductSizeRequest.getName())) {
+            throw new UniqueException();
+        }
 
         return productSizeRepository.save(ProductSize.create(category, createProductSizeRequest.getName()));
     }
