@@ -65,7 +65,20 @@ public class CategoryControllerTests {
 
     @Test
     @DisplayName("브레드크럼 조회")
-    void readBreadCrumb() {
+    void readBreadCrumb() throws Exception {
+        // given
+        Category root = categoryService.createCategory(CreateCategoryRequest.builder().categoryName("root").build());
 
+        Category mid = categoryService.createCategory(CreateCategoryRequest.builder().masterCategoryId(root.getId()).categoryName("mid").build());
+
+        Category leaf = categoryService.createCategory(CreateCategoryRequest.builder().masterCategoryId(mid.getId()).categoryName("leaf").build());
+
+        // when
+        ResultActions resultActions = mockMvc.perform(get("/categories/breadcrumb/"+leaf.getId()));
+
+        // then
+        resultActions
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.breadCrumbs").isArray());
     }
 }

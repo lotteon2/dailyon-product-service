@@ -1,5 +1,6 @@
 package com.dailyon.productservice.controller;
 
+import com.dailyon.productservice.dto.response.ReadBreadCrumbListResponse;
 import com.dailyon.productservice.dto.response.ReadChildrenCategoryListResponse;
 import com.dailyon.productservice.service.category.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -18,5 +19,10 @@ public class CategoryController {
     @GetMapping("/{masterCategoryId}")
     public ResponseEntity<ReadChildrenCategoryListResponse> readChildrenCategories(@PathVariable Long masterCategoryId) {
         return ResponseEntity.ok(categoryService.readChildrenCategories(masterCategoryId));
+    }
+
+    @GetMapping("/breadcrumb/{categoryId}")
+    public ResponseEntity<ReadBreadCrumbListResponse> readBreadCrumbs(@PathVariable Long categoryId) {
+        return ResponseEntity.ok(categoryService.readBreadCrumbs(categoryId));
     }
 }
