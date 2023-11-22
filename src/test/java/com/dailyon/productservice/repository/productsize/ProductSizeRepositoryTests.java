@@ -34,7 +34,7 @@ public class ProductSizeRepositoryTests {
     @DisplayName("치수 등록 성공")
     public void createProductSizeSuccess() {
         ProductSize productSize =
-                productSizeRepository.save(ProductSize.create(categoryRepository.findById(1L).get(), "TEST"));
+                productSizeRepository.save(ProductSize.create(categoryRepository.findById(category.getId()).get(), "TEST"));
 
         assertEquals("TEST", productSize.getName());
         assertEquals(category.getId(), productSize.getCategory().getId());
