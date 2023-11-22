@@ -33,6 +33,7 @@ public class ProductSizeServiceTests {
     EntityManager entityManager;
 
     private Category category = null;
+    private ProductSize productSize = null;
 
     @BeforeEach
     void before() {
@@ -48,7 +49,7 @@ public class ProductSizeServiceTests {
                 .name("TEST")
                 .build();
 
-        productSizeService.createProductSize(createProductSizeRequest);
+        productSize = productSizeService.createProductSize(createProductSizeRequest);
     }
 
     @Test
@@ -83,26 +84,39 @@ public class ProductSizeServiceTests {
 
     @Test
     @DisplayName("치수 등록 성공 - 다른 카테고리, 같은 name")
-    public void createProductSizeSuccess() {
+    public void createProductSizeSuccess1() {
         // given
-        CreateCategoryRequest createCategoryRequest = CreateCategoryRequest.builder()
+        // beforeEach에 (category, "TEST")로 product_size 생성했음
+        Category category1 = categoryService.createCategory(CreateCategoryRequest.builder()
                 .masterCategoryId(null)
-                .categoryName("category1")
-                .build();
-
-        Category category1 = categoryService.createCategory(createCategoryRequest);
-
-        String name = "TEST";
-        CreateProductSizeRequest createProductSizeRequest = CreateProductSizeRequest.builder()
-                .categoryId(category1.getId())
-                .name(name)
-                .build();
+                .categoryName("OTHER")
+                .build());
 
         // when
-        ProductSize productSize = productSizeService.createProductSize(createProductSizeRequest);
+        ProductSize productSize1 = productSizeService.createProductSize(CreateProductSizeRequest.builder()
+                .categoryId(category1.getId())
+                .name("TEST")
+                .build());
 
         // then
-        assertEquals(name, productSize.getName());
-        assertEquals(category1.getId(), productSize.getCategory().getId());
+        assertEquals(productSize1.getName(), productSize.getName());
+        assertNotEquals(productSize1.getCategory(), productSize.getCategory());
+    }
+
+    @Test
+    @DisplayName("치수 등록 성공 - 같은 카테고리, 다른 name")
+    public void createProductSizeSuccess2() {
+        // given
+        // beforeEach에 (category, "TEST")로 product_size 생성했음
+
+        // when
+        ProductSize productSize1 = productSizeService.createProductSize(CreateProductSizeRequest.builder()
+                .categoryId(category.getId())
+                .name("TEST1")
+                .build());
+
+        // then
+        assertNotEquals(productSize1.getName(), productSize.getName());
+        assertEquals(productSize1.getCategory(), productSize.getCategory());
     }
 }
