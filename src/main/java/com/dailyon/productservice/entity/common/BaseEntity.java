@@ -16,10 +16,8 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
 
     @CreatedDate
-    @Column(nullable = false, columnDefinition = "DATETIME default NOW()")
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false, columnDefinition = "DATETIME default NOW()")
     private LocalDateTime updatedAt;
 }
