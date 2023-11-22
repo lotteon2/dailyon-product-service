@@ -28,11 +28,6 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     }
 
     @Override
-    public List<Category> findChildrenCategoriesById(Long id) {
-        return categoryJpaRepository.findChildrenCategoriesById(id);
-    }
-
-    @Override
     public List<Category> findAll() {
         return categoryJpaRepository.findCategoriesByDeletedIsFalse();
     }
