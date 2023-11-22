@@ -9,6 +9,5 @@ public interface CategoryRepository {
     Category save(Category category);
     boolean isDuplicatedName(String name);
     Optional<Category> findById(Long id);
-    List<Category> findChildrenCategoriesById(Long id);
     List<Category> findAll();
 }
