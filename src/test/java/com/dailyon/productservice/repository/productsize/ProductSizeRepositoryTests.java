@@ -23,18 +23,20 @@ public class ProductSizeRepositoryTests {
     @Autowired
     CategoryRepository categoryRepository;
 
+    Category category;
+
     @BeforeEach
     void before() {
-        categoryRepository.save(Category.createRootCategory("TEST"));
+        category = categoryRepository.save(Category.createRootCategory("TEST"));
     }
 
     @Test
-    @DisplayName("치수 생성 성공")
+    @DisplayName("치수 등록 성공")
     public void createProductSizeSuccess() {
         ProductSize productSize =
                 productSizeRepository.save(ProductSize.create(categoryRepository.findById(1L).get(), "TEST"));
 
         assertEquals("TEST", productSize.getName());
-        assertEquals(1L, productSize.getCategory().getId());
+        assertEquals(category.getId(), productSize.getCategory().getId());
     }
 }

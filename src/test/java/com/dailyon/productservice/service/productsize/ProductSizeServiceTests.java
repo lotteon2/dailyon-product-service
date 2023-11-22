@@ -96,6 +96,6 @@ public class ProductSizeServiceTests {
 
         // then
         assertEquals(name, productSize.getName());
-        assertEquals(1L, productSize.getCategory().getId());
+        assertEquals(category.getId(), productSize.getCategory().getId());
     }
 }
