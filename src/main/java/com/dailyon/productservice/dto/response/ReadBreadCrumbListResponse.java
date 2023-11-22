@@ -19,7 +19,7 @@ public class ReadBreadCrumbListResponse {
     public static ReadBreadCrumbListResponse fromEntity(List<Category> children) {
         return ReadBreadCrumbListResponse.builder()
                 .breadCrumbs(children.stream()
-                        .map(child -> new ReadBreadCrumbResponse(child.getId(), child.getName()))
+                        .map(ReadBreadCrumbResponse::fromEntity)
                         .collect(Collectors.toList()))
                 .build();
     }
