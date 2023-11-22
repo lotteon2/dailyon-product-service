@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface BrandJpaRepository extends JpaRepository<Brand, Long> {
-    boolean existsByName(String name);
+    boolean existsByNameAndDeletedIsFalse(String name);
     List<Brand> findAllByDeletedIsFalse();
     Optional<Brand> findByIdAndDeletedIsFalse(Long id);
 }

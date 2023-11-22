@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductSizeJpaRepository extends JpaRepository<ProductSize, Long> {
-    boolean existsByCategoryAndName(Category category, String name);
+    boolean existsByCategoryAndNameAndDeletedIsFalse(Category category, String name);
 }

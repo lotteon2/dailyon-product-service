@@ -24,7 +24,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public boolean isDuplicatedName(String name) {
-        return categoryJpaRepository.existsByName(name);
+        return categoryJpaRepository.existsByNameAndDeletedIsFalse(name);
     }
 
     @Override

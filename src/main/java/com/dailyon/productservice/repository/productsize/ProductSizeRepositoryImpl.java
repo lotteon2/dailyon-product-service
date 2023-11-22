@@ -12,7 +12,7 @@ public class ProductSizeRepositoryImpl implements ProductSizeRepository {
 
     @Override
     public boolean isDuplicated(Category category, String name) {
-        return productSizeJpaRepository.existsByCategoryAndName(category, name);
+        return productSizeJpaRepository.existsByCategoryAndNameAndDeletedIsFalse(category, name);
     }
 
     @Override

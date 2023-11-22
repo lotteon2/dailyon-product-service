@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface CategoryJpaRepository extends JpaRepository<Category, Long> {
-    boolean existsByName(String name);
+    boolean existsByNameAndDeletedIsFalse(String name);
     Optional<Category> findByIdAndDeletedIsFalse(Long id);
     List<Category> findCategoriesByDeletedIsFalse();
 }
