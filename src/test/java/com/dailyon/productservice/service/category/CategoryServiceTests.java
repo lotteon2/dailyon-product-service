@@ -3,6 +3,9 @@ package com.dailyon.productservice.service.category;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.dailyon.productservice.dto.request.CreateCategoryRequest;
+import com.dailyon.productservice.dto.response.ReadAllCategoryListResponse;
+import com.dailyon.productservice.dto.response.ReadBreadCrumbListResponse;
+import com.dailyon.productservice.dto.response.ReadChildrenCategoryListResponse;
 import com.dailyon.productservice.entity.Category;
 import com.dailyon.productservice.exception.NotExistsException;
 import com.dailyon.productservice.exception.UniqueException;
@@ -13,12 +16,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
+
 @SpringBootTest
 @Transactional
 @ActiveProfiles(value = {"test"})
 public class CategoryServiceTests {
     @Autowired
     CategoryService categoryService;
+    @Autowired
+    EntityManager em;
 
     @Test
     @DisplayName("카테고리 등록 실패 - 중복 이름")
@@ -91,7 +100,104 @@ public class CategoryServiceTests {
 
         Category category = categoryService.createCategory(createCategoryRequest1);
 
+        em.clear();
+
         // then
         assertEquals(category.getMasterCategory().getId(), masterCategory.getId());
+    }
+
+    @Test
+    @DisplayName("최상위 카테고리의 하위 카테고리 목록 조회")
+    public void readChildrenCategoriesFromRoot() {
+        // given
+        Category masterCategory = categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("master")
+                .build());
+
+        List<Category> childrens = new ArrayList<>();
+        for(int i=0; i<3; i++) {
+            childrens.add(categoryService.createCategory(CreateCategoryRequest.builder()
+                    .masterCategoryId(masterCategory.getId())
+                    .categoryName("children_"+i)
+                    .build())
+            );
+        }
+
+        em.clear();
+
+        // when
+        ReadChildrenCategoryListResponse response = categoryService.readChildrenCategories(masterCategory.getId());
+
+        // then
+        assertEquals(3, response.getCategoryResponses().size());
+        assertEquals(childrens.size(), response.getCategoryResponses().size());
+    }
+
+    @Test
+    @DisplayName("최하위 카테고리의 하위 카테고리 목록 조회")
+    public void readChildrenCategoriesFromLeaf() {
+        // given
+        Category leafCategory = categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("leaf")
+                .build());
+
+        // when
+        ReadChildrenCategoryListResponse response = categoryService.readChildrenCategories(leafCategory.getId());
+
+        // then
+        assertEquals(response.getCategoryResponses().size(), 0);
+    }
+
+    @Test
+    @DisplayName("카테고리 목록 조회 실패 - 존재하지 않는 id")
+    public void readChildrenCategoriesFail() {
+        // given
+        Long id = 0L;
+
+        // when, then
+        assertThrows(NotExistsException.class, () -> categoryService.readChildrenCategories(id));
+    }
+
+    @Test
+    @DisplayName("전체 카테고리 조회")
+    public void readAllCategories() {
+        // given
+        categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("test")
+                .build());
+
+        // when
+        ReadAllCategoryListResponse response = categoryService.readAllCategories();
+
+        // then
+        assertEquals(1, response.getAllCategories().size());
+    }
+
+    @Test
+    @DisplayName("breadcrumb 조회 - root > mid > leaf")
+    void readBreadCrumbList() {
+        // given
+        Category root = categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("root")
+                .build());
+
+        Category mid = categoryService.createCategory(CreateCategoryRequest.builder()
+                .masterCategoryId(root.getId())
+                .categoryName("mid")
+                .build());
+
+        Category leaf = categoryService.createCategory(CreateCategoryRequest.builder()
+                .masterCategoryId(mid.getId())
+                .categoryName("leaf")
+                .build());
+
+        // when
+        ReadBreadCrumbListResponse breadCrumbs = categoryService.readBreadCrumbs(leaf.getId());
+
+        // then
+        assertEquals(3, breadCrumbs.getBreadCrumbs().size());
+        assertEquals("root", breadCrumbs.getBreadCrumbs().get(0).getName());
+        assertEquals("mid", breadCrumbs.getBreadCrumbs().get(1).getName());
+        assertEquals("leaf", breadCrumbs.getBreadCrumbs().get(2).getName());
     }
 }

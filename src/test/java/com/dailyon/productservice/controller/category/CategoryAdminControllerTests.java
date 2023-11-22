@@ -133,4 +133,21 @@ public class CategoryAdminControllerTests {
         resultActions
                 .andExpect(MockMvcResultMatchers.status().isCreated());
     }
+
+    @Test
+    @DisplayName("전체 카테고리 목록 조회")
+    void readAllCategories() throws Exception {
+        // given
+        categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("test")
+                .build());
+
+        // when
+        ResultActions resultActions = mockMvc.perform(get("/admin/categories").header("role", "ADMIN"));
+
+        // then
+        resultActions
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.allCategories").isArray());
+    }
 }

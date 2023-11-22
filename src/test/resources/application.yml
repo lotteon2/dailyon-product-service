@@ -3,9 +3,11 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:product-service;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MySQL;TRACE_LEVEL_FIle=4
   jpa:
     hibernate:
       ddl-auto: create
+    show-sql: true
     generate-ddl: true
     defer-datasource-initialization: true
     properties:
@@ -22,3 +24,14 @@ spring:
   config:
     activate:
       on-profile: test
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        engine.jdbc.batch.internal.BatchingBatch: DEBUG
+      springframework:
+        jdbc:
+          core:
+            JdbcTemplate: DEBUG

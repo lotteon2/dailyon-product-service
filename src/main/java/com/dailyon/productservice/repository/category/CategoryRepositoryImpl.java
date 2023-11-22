@@ -4,6 +4,7 @@ import com.dailyon.productservice.entity.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,11 +19,16 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public Optional<Category> findById(Long id) {
-        return categoryJpaRepository.findById(id);
+        return categoryJpaRepository.findByIdAndDeletedIsFalse(id);
     }
 
     @Override
     public boolean isDuplicatedName(String name) {
         return categoryJpaRepository.existsByName(name);
+    }
+
+    @Override
+    public List<Category> findAll() {
+        return categoryJpaRepository.findCategoriesByDeletedIsFalse();
     }
 }
