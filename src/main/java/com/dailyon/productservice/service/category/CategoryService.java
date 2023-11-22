@@ -3,7 +3,6 @@ package com.dailyon.productservice.service.category;
 import com.dailyon.productservice.dto.request.CreateCategoryRequest;
 import com.dailyon.productservice.dto.response.ReadAllCategoryListResponse;
 import com.dailyon.productservice.dto.response.ReadBreadCrumbListResponse;
-import com.dailyon.productservice.dto.response.ReadBreadCrumbResponse;
 import com.dailyon.productservice.dto.response.ReadChildrenCategoryListResponse;
 import com.dailyon.productservice.entity.Category;
 import com.dailyon.productservice.exception.NotExistsException;
@@ -12,10 +11,6 @@ import com.dailyon.productservice.repository.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
