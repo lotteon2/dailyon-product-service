@@ -19,7 +19,7 @@ public class ReadChildrenCategoryListResponse {
     public static ReadChildrenCategoryListResponse fromEntity(List<Category> childrenCategories) {
         return ReadChildrenCategoryListResponse.builder()
                 .categoryResponses(childrenCategories.stream()
-                        .map(children -> new ReadChildrenCategoryResponse(children.getId(), children.getName()))
+                        .map(ReadChildrenCategoryResponse::fromEntity)
                         .collect(Collectors.toList()))
                 .build();
     }
