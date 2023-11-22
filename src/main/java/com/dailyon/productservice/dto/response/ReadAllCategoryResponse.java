@@ -14,8 +14,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReadAllCategoryResponse {
     private Long id;
-    private Long masterCategoryId;
     private String name;
+    private Long masterCategoryId;
+    private String masterCategoryName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -23,6 +24,7 @@ public class ReadAllCategoryResponse {
         return ReadAllCategoryResponse.builder()
                 .id(category.getId())
                 .masterCategoryId(category.getMasterCategory() == null ? null : category.getMasterCategory().getId())
+                .masterCategoryName(category.getMasterCategory() == null ? null : category.getMasterCategory().getName())
                 .name(category.getName())
                 .createdAt(category.getCreatedAt())
                 .updatedAt(category.getUpdatedAt())
