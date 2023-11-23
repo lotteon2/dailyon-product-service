@@ -19,7 +19,7 @@ public class BrandRepositoryImpl implements BrandRepository {
 
     @Override
     public boolean isDuplicatedName(String name) {
-        return brandJpaRepository.existsByName(name);
+        return brandJpaRepository.existsByNameAndDeletedIsFalse(name);
     }
 
     @Override

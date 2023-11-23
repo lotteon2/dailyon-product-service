@@ -1,6 +1,7 @@
 package com.dailyon.productservice.service.productsize;
 
 import com.dailyon.productservice.dto.request.CreateProductSizeRequest;
+import com.dailyon.productservice.dto.response.ReadProductSizeListResponse;
 import com.dailyon.productservice.entity.Category;
 import com.dailyon.productservice.entity.ProductSize;
 import com.dailyon.productservice.exception.NotExistsException;
@@ -29,5 +30,9 @@ public class ProductSizeService {
         }
 
         return productSizeRepository.save(ProductSize.create(category, createProductSizeRequest.getName()));
+    }
+
+    public ReadProductSizeListResponse readProductSizeListByCategory(Long id) {
+        return ReadProductSizeListResponse.fromEntity(productSizeRepository.readProductSizesByCategoryId(id));
     }
 }

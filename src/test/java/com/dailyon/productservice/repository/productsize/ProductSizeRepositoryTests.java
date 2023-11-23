@@ -13,6 +13,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
+
 @SpringBootTest
 @Transactional
 @ActiveProfiles(value = {"test"})
@@ -23,11 +27,21 @@ public class ProductSizeRepositoryTests {
     @Autowired
     CategoryRepository categoryRepository;
 
+    @Autowired
+    EntityManager entityManager;
+
     Category category;
+    List<ProductSize> productSizes = new ArrayList<>();
 
     @BeforeEach
     void before() {
         category = categoryRepository.save(Category.createRootCategory("TEST"));
+
+        for(int i=0; i<3; i++) {
+            productSizes.add(productSizeRepository.save(ProductSize.create(category, "Product Size_"+i)));
+        }
+
+        entityManager.clear();
     }
 
     @Test
@@ -38,5 +52,15 @@ public class ProductSizeRepositoryTests {
 
         assertEquals("TEST", productSize.getName());
         assertEquals(category.getId(), productSize.getCategory().getId());
+    }
+
+    @Test
+    @DisplayName("카테고리에 해당하는 치수 목록 조회")
+    public void readProductSizeList() {
+        // given, when
+        List<ProductSize> result = productSizeRepository.readProductSizesByCategoryId(category.getId());
+
+        // then
+        assertEquals(result.size(), productSizes.size());
     }
 }
