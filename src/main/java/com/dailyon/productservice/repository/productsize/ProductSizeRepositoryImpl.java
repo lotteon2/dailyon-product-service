@@ -5,6 +5,8 @@ import com.dailyon.productservice.entity.ProductSize;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class ProductSizeRepositoryImpl implements ProductSizeRepository {
@@ -18,5 +20,10 @@ public class ProductSizeRepositoryImpl implements ProductSizeRepository {
     @Override
     public ProductSize save(ProductSize productSize) {
         return productSizeJpaRepository.save(productSize);
+    }
+
+    @Override
+    public List<ProductSize> readProductSizesByCategoryId(Long id) {
+        return productSizeJpaRepository.findProductSizesByCategoryId(id);
     }
 }
