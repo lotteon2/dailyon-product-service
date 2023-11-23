@@ -1,6 +1,7 @@
 package com.dailyon.productservice.controller.admin;
 
 import com.dailyon.productservice.dto.request.CreateProductSizeRequest;
+import com.dailyon.productservice.dto.response.ReadProductSizeListResponse;
 import com.dailyon.productservice.service.productsize.ProductSizeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,5 +21,11 @@ public class ProductSizeAdminController {
                                                   @Valid @RequestBody CreateProductSizeRequest createProductSizeRequest) {
         productSizeService.createProductSize(createProductSizeRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/product-size/{categoryId}")
+    public ResponseEntity<ReadProductSizeListResponse> readProductSizeList(@RequestHeader String role,
+                                                                           @PathVariable Long categoryId) {
+        return ResponseEntity.status(HttpStatus.OK).body(productSizeService.readProductSizeListByCategory(categoryId));
     }
 }

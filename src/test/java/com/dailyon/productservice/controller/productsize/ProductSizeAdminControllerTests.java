@@ -3,6 +3,7 @@ package com.dailyon.productservice.controller.productsize;
 import com.dailyon.productservice.dto.request.CreateCategoryRequest;
 import com.dailyon.productservice.dto.request.CreateProductSizeRequest;
 import com.dailyon.productservice.entity.Category;
+import com.dailyon.productservice.entity.ProductSize;
 import com.dailyon.productservice.service.category.CategoryService;
 import com.dailyon.productservice.service.productsize.ProductSizeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +19,11 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
@@ -33,6 +39,9 @@ public class ProductSizeAdminControllerTests {
 
     @Autowired
     CategoryService categoryService;
+
+    @Autowired
+    EntityManager entityManager;
 
     ObjectMapper objectMapper = new ObjectMapper();
     @Test
@@ -111,5 +120,36 @@ public class ProductSizeAdminControllerTests {
 
         // then
         resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("치수 목록 조회")
+    void readProductSizeList() throws Exception {
+        // given
+        Category categoryForProductList = categoryService.createCategory(CreateCategoryRequest.builder()
+                .masterCategoryId(null)
+                .categoryName("CATEGORY_FOR_LIST")
+                .build());
+
+        List<ProductSize> productSizes = new ArrayList<>();
+        for(int i=0; i<3; i++) {
+            productSizes.add(productSizeService.createProductSize(CreateProductSizeRequest.builder()
+                    .categoryId(categoryForProductList.getId())
+                    .name("PRODUCT_SIZE_"+i)
+                    .build()));
+        }
+
+        entityManager.clear();
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                get("/admin/product-size/"+categoryForProductList.getId())
+                        .header("role", "ADMIN")
+        );
+
+        // then
+        resultActions
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.productSizes").isArray());
     }
 }
