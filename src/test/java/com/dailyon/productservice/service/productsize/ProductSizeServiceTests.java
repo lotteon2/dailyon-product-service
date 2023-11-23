@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.dailyon.productservice.dto.request.CreateCategoryRequest;
 import com.dailyon.productservice.dto.request.CreateProductSizeRequest;
+import com.dailyon.productservice.dto.response.ReadProductSizeListResponse;
 import com.dailyon.productservice.entity.Category;
 import com.dailyon.productservice.entity.ProductSize;
 import com.dailyon.productservice.exception.NotExistsException;
@@ -18,6 +19,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootTest
 @Transactional
@@ -35,6 +38,9 @@ public class ProductSizeServiceTests {
     private Category category = null;
     private ProductSize productSize = null;
 
+    private Category categoryForProductList = null;
+    private List<ProductSize> productSizes = new ArrayList<>();
+
     @BeforeEach
     void before() {
         CreateCategoryRequest createCategoryRequest = CreateCategoryRequest.builder()
@@ -50,6 +56,20 @@ public class ProductSizeServiceTests {
                 .build();
 
         productSize = productSizeService.createProductSize(createProductSizeRequest);
+
+        categoryForProductList = categoryService.createCategory(CreateCategoryRequest.builder()
+                .masterCategoryId(null)
+                .categoryName("CATEGORY_FOR_LIST")
+                .build());
+
+        for(int i=0; i<3; i++) {
+            productSizes.add(productSizeService.createProductSize(CreateProductSizeRequest.builder()
+                    .categoryId(categoryForProductList.getId())
+                    .name("PRODUCT_SIZE_"+i)
+                    .build()));
+        }
+
+        entityManager.clear();
     }
 
     @Test
@@ -100,7 +120,7 @@ public class ProductSizeServiceTests {
 
         // then
         assertEquals(productSize1.getName(), productSize.getName());
-        assertNotEquals(productSize1.getCategory(), productSize.getCategory());
+        assertNotEquals(productSize1.getCategory().getId(), productSize.getCategory().getId());
     }
 
     @Test
@@ -117,6 +137,16 @@ public class ProductSizeServiceTests {
 
         // then
         assertNotEquals(productSize1.getName(), productSize.getName());
-        assertEquals(productSize1.getCategory(), productSize.getCategory());
+        assertEquals(productSize1.getCategory().getId(), productSize.getCategory().getId());
+    }
+
+    @Test
+    @DisplayName("카테고리에 해당하는 치수 목록 조회")
+    public void readProductSizeList() {
+        // given, when
+        ReadProductSizeListResponse productSizeList = productSizeService.readProductSizeListByCategory(categoryForProductList.getId());
+
+        // then
+        assertEquals(productSizeList.getProductSizes().size(), productSizes.size());
     }
 }
