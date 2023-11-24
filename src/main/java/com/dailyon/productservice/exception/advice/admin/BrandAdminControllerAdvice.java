@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice(basePackageClasses = BrandAdminController.class)
 public class BrandAdminControllerAdvice {
-    @ExceptionHandler
+    @ExceptionHandler(UniqueException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse duplicatedBrandException(UniqueException e) {
         return ErrorResponse.builder()
@@ -19,7 +19,7 @@ public class BrandAdminControllerAdvice {
                 .build();
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(NotExistsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse brandNotFoundException(NotExistsException e) {
         return ErrorResponse.builder()
