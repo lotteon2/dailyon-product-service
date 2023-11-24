@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface ProductSizeJpaRepository extends JpaRepository<ProductSize, Long> {
@@ -16,4 +17,9 @@ public interface ProductSizeJpaRepository extends JpaRepository<ProductSize, Lon
             "JOIN FETCH ps.category c " +
             "WHERE c.id = :id AND c.deleted = false AND ps.deleted = false")
     List<ProductSize> findProductSizesByCategoryId(Long id);
+
+    @Query(value = "SELECT ps " +
+            "FROM ProductSize ps " +
+            "WHERE ps.id IN :productSizeIds AND ps.deleted = false ")
+    List<ProductSize> findProductSizesByIds(Set<Long> productSizeIds);
 }
