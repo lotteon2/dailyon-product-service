@@ -2,8 +2,11 @@ package com.dailyon.productservice.entity;
 
 import com.dailyon.productservice.entity.common.BaseEntity;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -20,6 +23,11 @@ public class Brand extends BaseEntity {
 
     @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN default false")
     private boolean deleted;
+
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "brand", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Product> products = new ArrayList<>();
 
     public static Brand createBrand(String name) {
         return Brand.builder().name(name).build();

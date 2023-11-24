@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
@@ -25,5 +26,10 @@ public class ProductSizeRepositoryImpl implements ProductSizeRepository {
     @Override
     public List<ProductSize> readProductSizesByCategoryId(Long id) {
         return productSizeJpaRepository.findProductSizesByCategoryId(id);
+    }
+
+    @Override
+    public List<ProductSize> readProductSizesByProductSizeIds(Set<Long> productSizeIds) {
+        return productSizeJpaRepository.findProductSizesByIds(productSizeIds);
     }
 }

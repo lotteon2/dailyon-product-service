@@ -35,6 +35,11 @@ public class Category extends BaseEntity {
     @Builder.Default
     private List<ProductSize> productSizes = new ArrayList<>();
 
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Product> products = new ArrayList<>();
+
     @Column(nullable = false, unique = true)
     private String name;
 
