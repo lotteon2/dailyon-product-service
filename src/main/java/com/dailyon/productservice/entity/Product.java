@@ -7,10 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Getter
 @Entity
@@ -30,9 +30,18 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     @Builder.Default
-    private List<DescribeImage> describeImages = new ArrayList<>();
+    private Set<DescribeImage> describeImages = new TreeSet<>();
+
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<ProductStock> productStocks = new TreeSet<>();
+
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
+    private ReviewAggregate reviewAggregate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
