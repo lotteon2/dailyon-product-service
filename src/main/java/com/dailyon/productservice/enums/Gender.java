@@ -17,7 +17,7 @@ public enum Gender {
         try {
             return Gender.valueOf(name);
         } catch (IllegalArgumentException e) {
-            throw new NotExistsException("존재하지 않는 성별입니다");
+            throw new NotExistsException(NotExistsException.GENDER_NOT_FOUND);
         }
     }
 }

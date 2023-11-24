@@ -17,7 +17,7 @@ public enum ProductType {
         try {
             return ProductType.valueOf(name);
         } catch (IllegalArgumentException e) {
-            throw new NotExistsException("존재하지 않는 상품 유형입니다");
+            throw new NotExistsException(NotExistsException.PRODUCT_TYPE_NOT_FOUND);
         }
     }
 }

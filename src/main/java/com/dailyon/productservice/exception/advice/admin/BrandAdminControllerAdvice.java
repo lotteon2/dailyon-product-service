@@ -23,7 +23,7 @@ public class BrandAdminControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse brandNotFoundException(NotExistsException e) {
         return ErrorResponse.builder()
-                .message("존재하지 않는 브랜드입니다")
+                .message(e.getMessage())
                 .build();
     }
 }
