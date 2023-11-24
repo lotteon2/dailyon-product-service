@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.dailyon.productservice.dto.request.CreateProductRequest;
 import com.dailyon.productservice.dto.request.CreateProductStockRequest;
-import com.dailyon.productservice.dto.response.CreateProductResponse;
 import com.dailyon.productservice.entity.Brand;
 import com.dailyon.productservice.entity.Category;
 import com.dailyon.productservice.entity.ProductSize;
@@ -112,7 +111,7 @@ public class ProductServiceTests {
                 .build();
 
         // when, then
-        assertThrows(NotExistsException.class, () -> productService.createProduct(createProductRequest), "존재하지 않는 브랜드입니다");
+        assertThrows(NotExistsException.class, () -> productService.createProduct(createProductRequest), NotExistsException.BRAND_NOT_FOUND);
     }
 
     @Test
@@ -133,7 +132,7 @@ public class ProductServiceTests {
                 .build();
 
         // when, then
-        assertThrows(NotExistsException.class, () -> productService.createProduct(createProductRequest), "존재하지 않는 카테고리입니다");
+        assertThrows(NotExistsException.class, () -> productService.createProduct(createProductRequest), NotExistsException.CATEGORY_NOT_FOUND);
     }
 
     @Test
@@ -156,7 +155,7 @@ public class ProductServiceTests {
                 .build();
 
         // when, then
-        assertThrows(NotExistsException.class, () -> productService.createProduct(createProductRequest), "존재하지 않는 치수값입니다");
+        assertThrows(NotExistsException.class, () -> productService.createProduct(createProductRequest), NotExistsException.PRODUCT_SIZE_NOT_FOUND);
     }
 
     @Test
@@ -176,7 +175,7 @@ public class ProductServiceTests {
                 .build();
 
         // when, then
-        assertThrows(NotExistsException.class, () -> productService.createProduct(createProductRequest), "존재하지 않는 성별입니다");
+        assertThrows(NotExistsException.class, () -> productService.createProduct(createProductRequest), NotExistsException.GENDER_NOT_FOUND);
     }
 
     @Test
@@ -196,6 +195,6 @@ public class ProductServiceTests {
                 .build();
 
         // when, then
-        assertThrows(NotExistsException.class, () -> productService.createProduct(createProductRequest), "존재하지 않는 상품 유형입니다");
+        assertThrows(NotExistsException.class, () -> productService.createProduct(createProductRequest), NotExistsException.PRODUCT_TYPE_NOT_FOUND);
     }
 }
