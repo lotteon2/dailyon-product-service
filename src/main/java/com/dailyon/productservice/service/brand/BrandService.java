@@ -40,7 +40,8 @@ public class BrandService {
     @Transactional
     public void updateBrand(Long id, UpdateBrandRequest updateBrandRequest) {
         // 존재하지 않는 id에 대해 수정하려고 하면 exception
-        Brand brand = brandRepository.findById(id).orElseThrow(NotExistsException::new);
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new NotExistsException(NotExistsException.BRAND_NOT_FOUND));
         // 이미 존재하는 브랜드 이름이라면 exception
         if(brandRepository.isDuplicatedName(updateBrandRequest.getName())) {
             throw new UniqueException();

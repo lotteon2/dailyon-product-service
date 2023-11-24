@@ -23,7 +23,7 @@ public class ProductSizeService {
     public ProductSize createProductSize(CreateProductSizeRequest createProductSizeRequest) {
         Category category = categoryRepository
                 .findById(createProductSizeRequest.getCategoryId())
-                .orElseThrow(NotExistsException::new);
+                .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
 
         if(productSizeRepository.isDuplicated(category, createProductSizeRequest.getName())) {
             throw new UniqueException();

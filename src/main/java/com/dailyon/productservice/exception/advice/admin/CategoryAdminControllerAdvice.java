@@ -15,7 +15,7 @@ public class CategoryAdminControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse masterCategoryNotExistsException(NotExistsException e) {
         return ErrorResponse.builder()
-                .message("존재하지 않는 상위 카테고리입니다")
+                .message(e.getMessage())
                 .build();
     }
 

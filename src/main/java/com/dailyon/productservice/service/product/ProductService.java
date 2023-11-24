@@ -3,6 +3,7 @@ package com.dailyon.productservice.service.product;
 import com.dailyon.productservice.dto.request.CreateProductRequest;
 import com.dailyon.productservice.dto.request.CreateProductStockRequest;
 import com.dailyon.productservice.dto.response.CreateProductResponse;
+import com.dailyon.productservice.dto.response.ReadProductDetailResponse;
 import com.dailyon.productservice.entity.*;
 import com.dailyon.productservice.enums.Gender;
 import com.dailyon.productservice.enums.ProductType;
@@ -43,10 +44,10 @@ public class ProductService {
     @Transactional
     public CreateProductResponse createProduct(CreateProductRequest createProductRequest) {
         Brand brand = brandRepository.findById(createProductRequest.getBrandId())
-                .orElseThrow(() -> new NotExistsException("존재하지 않는 브랜드입니다"));
+                .orElseThrow(() -> new NotExistsException(NotExistsException.BRAND_NOT_FOUND));
 
         Category category = categoryRepository.findById(createProductRequest.getCategoryId())
-                .orElseThrow(() -> new NotExistsException("존재하지 않는 카테고리입니다"));
+                .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
 
         // {productSizeId, quantity}의 목록에서 productSizeId의 목록만 추출
         Set<Long> productSizeIds = createProductRequest.getProductStocks()
@@ -57,7 +58,7 @@ public class ProductService {
         // productSizeId의 목록으로부터 product의 목록 조회(db는 id 기준으로 자동 오름차순 정렬) ... [1]
         List<ProductSize> productSizes = productSizeRepository.readProductSizesByProductSizeIds(productSizeIds);
         if(productSizes.size() != productSizeIds.size()) {
-            throw new NotExistsException("존재하지 않는 치수값입니다");
+            throw new NotExistsException(NotExistsException.PRODUCT_SIZE_NOT_FOUND);
         }
         // productSizeId 기준으로 오름차순 정렬 ... [2]
         Collections.sort(createProductRequest.getProductStocks());
@@ -119,5 +120,11 @@ public class ProductService {
         }
 
         return CreateProductResponse.create(imgPresignedUrl, describeImgPresignedUrls);
+    }
+
+    public ReadProductDetailResponse readProductDetail(Long productId) {
+        Product product = productRepository.getProductDetail(productId)
+                .orElseThrow(() -> new NotExistsException(NotExistsException.PRODUCT_NOT_FOUND));
+        return ReadProductDetailResponse.fromEntity(product);
     }
 }

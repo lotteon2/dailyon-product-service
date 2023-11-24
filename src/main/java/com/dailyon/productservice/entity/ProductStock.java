@@ -14,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(ProductStockId.class)
-public class ProductStock {
+public class ProductStock implements Comparable<ProductStock> {
     @Id
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -34,5 +34,14 @@ public class ProductStock {
                 .productSize(productSize)
                 .quantity(quantity)
                 .build();
+    }
+
+    @Override
+    public int compareTo(ProductStock o) {
+        int result = this.product.getId().compareTo(o.product.getId());
+        if(result == 0) {
+            result = this.productSize.getId().compareTo(o.productSize.getId());
+        }
+        return result;
     }
 }

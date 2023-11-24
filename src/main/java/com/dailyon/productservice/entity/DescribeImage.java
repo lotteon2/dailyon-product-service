@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DescribeImage {
+public class DescribeImage implements Comparable<DescribeImage> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,5 +29,10 @@ public class DescribeImage {
                 .product(product)
                 .imgUrl(imgUrl)
                 .build();
+    }
+
+    @Override
+    public int compareTo(DescribeImage o) {
+        return this.id.compareTo(o.id);
     }
 }

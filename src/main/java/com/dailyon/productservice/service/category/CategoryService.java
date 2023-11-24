@@ -32,12 +32,12 @@ public class CategoryService {
 
         // request body에 masterCategoryId가 있다면 하위 카테고리 생성
         Category masterCategory = categoryRepository.findById(createCategoryRequest.getMasterCategoryId())
-                        .orElseThrow(NotExistsException::new);
+                .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
         return categoryRepository.save(Category.createCategory(masterCategory, createCategoryRequest.getCategoryName()));
     }
 
     public ReadChildrenCategoryListResponse readChildrenCategories(Long id) {
-        if(id == null) throw new NotExistsException();
+        if(id == null) throw new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND);
         // 존재하지 않는 id의 하위 카테고리를 조회하려고 하면 exception
         Category category = categoryRepository.findById(id).orElseThrow(NotExistsException::new);
         return ReadChildrenCategoryListResponse.fromEntity(category.getChildrenCategories());
@@ -48,7 +48,7 @@ public class CategoryService {
     }
 
     public ReadBreadCrumbListResponse readBreadCrumbs(Long id) {
-        if(id == null) throw new NotExistsException();
+        if(id == null) throw new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND);
         Category self = categoryRepository.findById(id).orElseThrow(NotExistsException::new);
         return ReadBreadCrumbListResponse.fromEntity(self.readBreadCrumbs());
     }
