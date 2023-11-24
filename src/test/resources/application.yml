@@ -25,6 +25,14 @@ spring:
     activate:
       on-profile: test
 
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
 logging:
   level:
     org:
@@ -35,3 +43,7 @@ logging:
         jdbc:
           core:
             JdbcTemplate: DEBUG
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
