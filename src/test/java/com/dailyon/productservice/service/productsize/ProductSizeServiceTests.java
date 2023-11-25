@@ -4,11 +4,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.dailyon.productservice.dto.request.CreateCategoryRequest;
 import com.dailyon.productservice.dto.request.CreateProductSizeRequest;
+import com.dailyon.productservice.dto.request.UpdateProductSizeRequest;
 import com.dailyon.productservice.dto.response.ReadProductSizeListResponse;
 import com.dailyon.productservice.entity.Category;
 import com.dailyon.productservice.entity.ProductSize;
 import com.dailyon.productservice.exception.NotExistsException;
 import com.dailyon.productservice.exception.UniqueException;
+import com.dailyon.productservice.repository.productsize.ProductSizeRepository;
 import com.dailyon.productservice.service.category.CategoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +33,9 @@ public class ProductSizeServiceTests {
 
     @Autowired
     CategoryService categoryService;
+
+    @Autowired
+    ProductSizeRepository productSizeRepository;
 
     @Autowired
     EntityManager entityManager;
@@ -148,5 +153,49 @@ public class ProductSizeServiceTests {
 
         // then
         assertEquals(productSizeList.getProductSizes().size(), productSizes.size());
+    }
+
+    @Test
+    @DisplayName("치수 수정 성공")
+    void updateProductSizeSuccess() {
+        // given
+        String updateName = "UPDATED";
+        UpdateProductSizeRequest updateProductSizeRequest = UpdateProductSizeRequest.builder()
+                .name(updateName)
+                .build();
+
+        // when
+        productSizeService.updateProductSizeName(productSize.getId(), updateProductSizeRequest);
+
+        // then
+        assertEquals(updateName, productSizeRepository.readProductSizeById(productSize.getId()).get().getName());
+    }
+
+    @Test
+    @DisplayName("치수 수정 실패 - 존재하지 않는 치수")
+    void updateProductSizeFail1() {
+        // given
+        String updateName = "UPDATED";
+        UpdateProductSizeRequest updateProductSizeRequest = UpdateProductSizeRequest.builder()
+                .name(updateName)
+                .build();
+
+        // when, then
+        assertThrows(NotExistsException.class, () ->
+                productSizeService.updateProductSizeName(0L, updateProductSizeRequest));
+    }
+
+    @Test
+    @DisplayName("치수 수정 실패 - 중복 이름")
+    void updateProductSizeFail2() {
+        // given
+        String updateName = "TEST";
+        UpdateProductSizeRequest updateProductSizeRequest = UpdateProductSizeRequest.builder()
+                .name(updateName)
+                .build();
+
+        // when, then
+        assertThrows(UniqueException.class, () ->
+                productSizeService.updateProductSizeName(productSize.getId(), updateProductSizeRequest));
     }
 }
