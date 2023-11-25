@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -22,4 +23,6 @@ public interface ProductSizeJpaRepository extends JpaRepository<ProductSize, Lon
             "FROM ProductSize ps " +
             "WHERE ps.id IN :productSizeIds AND ps.deleted = false ")
     List<ProductSize> findProductSizesByIds(Set<Long> productSizeIds);
+
+    Optional<ProductSize> findProductSizeByIdAndDeletedIsFalse(Long id);
 }

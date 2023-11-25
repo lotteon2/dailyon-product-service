@@ -22,7 +22,7 @@ public class BrandService {
     public CreateBrandResponse createBrand(CreateBrandRequest createBrandRequest) {
         // 이미 존재하는 브랜드 이름이라면 exception
         if(brandRepository.isDuplicatedName(createBrandRequest.getName())) {
-            throw new UniqueException();
+            throw new UniqueException(UniqueException.DUPLICATE_BRAND_NAME);
         }
 
         // 이후 save
@@ -44,7 +44,7 @@ public class BrandService {
                 .orElseThrow(() -> new NotExistsException(NotExistsException.BRAND_NOT_FOUND));
         // 이미 존재하는 브랜드 이름이라면 exception
         if(brandRepository.isDuplicatedName(updateBrandRequest.getName())) {
-            throw new UniqueException();
+            throw new UniqueException(UniqueException.DUPLICATE_BRAND_NAME);
         }
         brand.updateName(updateBrandRequest.getName());
     }

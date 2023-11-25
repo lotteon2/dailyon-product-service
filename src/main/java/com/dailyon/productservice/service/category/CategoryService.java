@@ -22,7 +22,7 @@ public class CategoryService {
     public Category createCategory(CreateCategoryRequest createCategoryRequest) {
         // 이미 존재하는 카테고리명이라면 exception
         if(categoryRepository.isDuplicatedName(createCategoryRequest.getCategoryName())) {
-            throw new UniqueException();
+            throw new UniqueException(UniqueException.DUPLICATE_CATEGORY_NAME);
         }
 
         // request body에 masterCategoryId가 없다면 최상위 카테고리 생성
@@ -37,9 +37,9 @@ public class CategoryService {
     }
 
     public ReadChildrenCategoryListResponse readChildrenCategories(Long id) {
-        if(id == null) throw new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND);
         // 존재하지 않는 id의 하위 카테고리를 조회하려고 하면 exception
-        Category category = categoryRepository.findById(id).orElseThrow(NotExistsException::new);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
         return ReadChildrenCategoryListResponse.fromEntity(category.getChildrenCategories());
     }
 
@@ -48,8 +48,8 @@ public class CategoryService {
     }
 
     public ReadBreadCrumbListResponse readBreadCrumbs(Long id) {
-        if(id == null) throw new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND);
-        Category self = categoryRepository.findById(id).orElseThrow(NotExistsException::new);
+        Category self = categoryRepository.findById(id)
+                .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
         return ReadBreadCrumbListResponse.fromEntity(self.readBreadCrumbs());
     }
 }
