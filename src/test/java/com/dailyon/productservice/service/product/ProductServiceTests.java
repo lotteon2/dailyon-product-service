@@ -2,15 +2,16 @@ package com.dailyon.productservice.service.product;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.dailyon.productservice.dto.request.CreateProductRequest;
-import com.dailyon.productservice.dto.request.CreateProductStockRequest;
-import com.dailyon.productservice.entity.Brand;
-import com.dailyon.productservice.entity.Category;
-import com.dailyon.productservice.entity.ProductSize;
-import com.dailyon.productservice.exception.NotExistsException;
-import com.dailyon.productservice.repository.brand.BrandRepository;
-import com.dailyon.productservice.repository.category.CategoryRepository;
-import com.dailyon.productservice.repository.productsize.ProductSizeRepository;
+import com.dailyon.productservice.product.dto.request.CreateProductRequest;
+import com.dailyon.productservice.product.dto.request.CreateProductStockRequest;
+import com.dailyon.productservice.brand.entity.Brand;
+import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.productsize.entity.ProductSize;
+import com.dailyon.productservice.common.exception.NotExistsException;
+import com.dailyon.productservice.brand.repository.BrandRepository;
+import com.dailyon.productservice.category.repository.CategoryRepository;
+import com.dailyon.productservice.product.service.ProductService;
+import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -2,9 +2,9 @@ package com.dailyon.productservice.controller.category;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-import com.dailyon.productservice.dto.request.CreateCategoryRequest;
-import com.dailyon.productservice.entity.Category;
-import com.dailyon.productservice.service.category.CategoryService;
+import com.dailyon.productservice.category.dto.request.CreateCategoryRequest;
+import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.category.service.CategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

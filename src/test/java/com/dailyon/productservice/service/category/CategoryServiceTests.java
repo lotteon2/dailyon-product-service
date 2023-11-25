@@ -2,15 +2,16 @@ package com.dailyon.productservice.service.category;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.dailyon.productservice.dto.request.CreateCategoryRequest;
-import com.dailyon.productservice.dto.request.UpdateCategoryRequest;
-import com.dailyon.productservice.dto.response.ReadAllCategoryListResponse;
-import com.dailyon.productservice.dto.response.ReadBreadCrumbListResponse;
-import com.dailyon.productservice.dto.response.ReadChildrenCategoryListResponse;
-import com.dailyon.productservice.entity.Category;
-import com.dailyon.productservice.exception.NotExistsException;
-import com.dailyon.productservice.exception.UniqueException;
-import com.dailyon.productservice.repository.category.CategoryRepository;
+import com.dailyon.productservice.category.dto.request.CreateCategoryRequest;
+import com.dailyon.productservice.category.service.CategoryService;
+import com.dailyon.productservice.category.dto.request.UpdateCategoryRequest;
+import com.dailyon.productservice.category.dto.response.ReadAllCategoryListResponse;
+import com.dailyon.productservice.category.dto.response.ReadBreadCrumbListResponse;
+import com.dailyon.productservice.category.dto.response.ReadChildrenCategoryListResponse;
+import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.common.exception.NotExistsException;
+import com.dailyon.productservice.common.exception.UniqueException;
+import com.dailyon.productservice.category.repository.CategoryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

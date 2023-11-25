@@ -2,9 +2,10 @@ package com.dailyon.productservice.repository.productsize;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.dailyon.productservice.entity.Category;
-import com.dailyon.productservice.entity.ProductSize;
-import com.dailyon.productservice.repository.category.CategoryRepository;
+import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.productsize.entity.ProductSize;
+import com.dailyon.productservice.category.repository.CategoryRepository;
+import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

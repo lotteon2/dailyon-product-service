@@ -2,16 +2,17 @@ package com.dailyon.productservice.service.productsize;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.dailyon.productservice.dto.request.CreateCategoryRequest;
-import com.dailyon.productservice.dto.request.CreateProductSizeRequest;
-import com.dailyon.productservice.dto.request.UpdateProductSizeRequest;
-import com.dailyon.productservice.dto.response.ReadProductSizeListResponse;
-import com.dailyon.productservice.entity.Category;
-import com.dailyon.productservice.entity.ProductSize;
-import com.dailyon.productservice.exception.NotExistsException;
-import com.dailyon.productservice.exception.UniqueException;
-import com.dailyon.productservice.repository.productsize.ProductSizeRepository;
-import com.dailyon.productservice.service.category.CategoryService;
+import com.dailyon.productservice.category.dto.request.CreateCategoryRequest;
+import com.dailyon.productservice.productsize.dto.request.CreateProductSizeRequest;
+import com.dailyon.productservice.productsize.dto.request.UpdateProductSizeRequest;
+import com.dailyon.productservice.productsize.dto.response.ReadProductSizeListResponse;
+import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.productsize.entity.ProductSize;
+import com.dailyon.productservice.common.exception.NotExistsException;
+import com.dailyon.productservice.common.exception.UniqueException;
+import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
+import com.dailyon.productservice.category.service.CategoryService;
+import com.dailyon.productservice.productsize.service.ProductSizeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

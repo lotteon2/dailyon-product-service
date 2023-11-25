@@ -2,7 +2,8 @@ package com.dailyon.productservice.repository.brand;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.dailyon.productservice.entity.Brand;
+import com.dailyon.productservice.brand.repository.BrandRepository;
+import com.dailyon.productservice.brand.entity.Brand;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

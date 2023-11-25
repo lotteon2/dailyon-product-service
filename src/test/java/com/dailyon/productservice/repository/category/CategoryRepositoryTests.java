@@ -2,7 +2,8 @@ package com.dailyon.productservice.repository.category;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.dailyon.productservice.entity.Category;
+import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.category.repository.CategoryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

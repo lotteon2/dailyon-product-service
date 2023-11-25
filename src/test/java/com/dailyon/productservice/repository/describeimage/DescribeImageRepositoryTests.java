@@ -2,15 +2,16 @@ package com.dailyon.productservice.repository.describeimage;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.dailyon.productservice.entity.Brand;
-import com.dailyon.productservice.entity.Category;
-import com.dailyon.productservice.entity.DescribeImage;
-import com.dailyon.productservice.entity.Product;
-import com.dailyon.productservice.enums.Gender;
-import com.dailyon.productservice.enums.ProductType;
-import com.dailyon.productservice.repository.brand.BrandRepository;
-import com.dailyon.productservice.repository.category.CategoryRepository;
-import com.dailyon.productservice.repository.product.ProductRepository;
+import com.dailyon.productservice.brand.entity.Brand;
+import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.describeimage.entity.DescribeImage;
+import com.dailyon.productservice.describeimage.repository.DescribeImageRepository;
+import com.dailyon.productservice.product.entity.Product;
+import com.dailyon.productservice.common.enums.Gender;
+import com.dailyon.productservice.common.enums.ProductType;
+import com.dailyon.productservice.brand.repository.BrandRepository;
+import com.dailyon.productservice.category.repository.CategoryRepository;
+import com.dailyon.productservice.product.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

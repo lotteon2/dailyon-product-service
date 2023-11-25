@@ -2,12 +2,13 @@ package com.dailyon.productservice.service.brand;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.dailyon.productservice.dto.request.CreateBrandRequest;
-import com.dailyon.productservice.dto.request.UpdateBrandRequest;
-import com.dailyon.productservice.dto.response.CreateBrandResponse;
-import com.dailyon.productservice.dto.response.ReadBrandListResponse;
-import com.dailyon.productservice.exception.NotExistsException;
-import com.dailyon.productservice.exception.UniqueException;
+import com.dailyon.productservice.brand.service.BrandService;
+import com.dailyon.productservice.brand.dto.request.CreateBrandRequest;
+import com.dailyon.productservice.brand.dto.request.UpdateBrandRequest;
+import com.dailyon.productservice.brand.dto.response.CreateBrandResponse;
+import com.dailyon.productservice.brand.dto.response.ReadBrandListResponse;
+import com.dailyon.productservice.common.exception.NotExistsException;
+import com.dailyon.productservice.common.exception.UniqueException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
