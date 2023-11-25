@@ -3,6 +3,7 @@ package com.dailyon.productservice.controller.category;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 import com.dailyon.productservice.dto.request.CreateCategoryRequest;
+import com.dailyon.productservice.dto.request.UpdateCategoryRequest;
 import com.dailyon.productservice.entity.Category;
 import com.dailyon.productservice.service.category.CategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -149,5 +150,53 @@ public class CategoryAdminControllerTests {
         resultActions
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.allCategories").isArray());
+    }
+
+    @Test
+    @DisplayName("카테고리 수정 성공")
+    void updateCategorySuccess() throws Exception {
+        // given
+        Category root = categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("root")
+                .build()
+        );
+
+        UpdateCategoryRequest updateCategoryRequest = UpdateCategoryRequest.builder()
+                .name("update")
+                .build();
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                put("/admin/categories/"+root.getId())
+                        .header("role", "ADMIN")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateCategoryRequest))
+        );
+
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @DisplayName("카테고리 수정 실패 - Valid")
+    void updateCategoryFail() throws Exception {
+        // given
+        Category root = categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("root")
+                .build()
+        );
+
+        UpdateCategoryRequest updateCategoryRequest = UpdateCategoryRequest.builder()
+                .name("")
+                .build();
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                put("/admin/categories/"+root.getId())
+                        .header("role", "ADMIN")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateCategoryRequest))
+        );
+
+        resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }
