@@ -70,4 +70,8 @@ public class Category extends BaseEntity {
         }
         return result;
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }
