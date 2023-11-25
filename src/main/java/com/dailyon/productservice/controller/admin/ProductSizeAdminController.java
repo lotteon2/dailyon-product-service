@@ -1,6 +1,7 @@
 package com.dailyon.productservice.controller.admin;
 
 import com.dailyon.productservice.dto.request.CreateProductSizeRequest;
+import com.dailyon.productservice.dto.request.UpdateProductSizeRequest;
 import com.dailyon.productservice.dto.response.ReadProductSizeListResponse;
 import com.dailyon.productservice.service.productsize.ProductSizeService;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +28,13 @@ public class ProductSizeAdminController {
     public ResponseEntity<ReadProductSizeListResponse> readProductSizeList(@RequestHeader String role,
                                                                            @PathVariable Long categoryId) {
         return ResponseEntity.status(HttpStatus.OK).body(productSizeService.readProductSizeListByCategory(categoryId));
+    }
+
+    @PutMapping("/product-size/{productSizeId}")
+    public ResponseEntity<Void> updateProductSizeName(@RequestHeader String role,
+                                                      @PathVariable Long productSizeId,
+                                                      @Valid @RequestBody UpdateProductSizeRequest updateProductSizeRequest) {
+        productSizeService.updateProductSizeName(productSizeId, updateProductSizeRequest);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

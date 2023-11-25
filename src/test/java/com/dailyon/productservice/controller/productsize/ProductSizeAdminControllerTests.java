@@ -4,6 +4,7 @@ import com.dailyon.productservice.dto.request.CreateCategoryRequest;
 import com.dailyon.productservice.dto.request.CreateProductSizeRequest;
 import com.dailyon.productservice.entity.Category;
 import com.dailyon.productservice.entity.ProductSize;
+import com.dailyon.productservice.exception.NotExistsException;
 import com.dailyon.productservice.service.category.CategoryService;
 import com.dailyon.productservice.service.productsize.ProductSizeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
