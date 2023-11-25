@@ -1,6 +1,7 @@
 package com.dailyon.productservice.service.category;
 
 import com.dailyon.productservice.dto.request.CreateCategoryRequest;
+import com.dailyon.productservice.dto.request.UpdateCategoryRequest;
 import com.dailyon.productservice.dto.response.ReadAllCategoryListResponse;
 import com.dailyon.productservice.dto.response.ReadBreadCrumbListResponse;
 import com.dailyon.productservice.dto.response.ReadChildrenCategoryListResponse;
@@ -51,5 +52,17 @@ public class CategoryService {
         Category self = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
         return ReadBreadCrumbListResponse.fromEntity(self.readBreadCrumbs());
+    }
+
+    @Transactional
+    public void updateCategoryName(Long id, UpdateCategoryRequest updateCategoryRequest) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
+
+        if(categoryRepository.isDuplicatedName(updateCategoryRequest.getName())) {
+            throw new UniqueException(UniqueException.DUPLICATE_CATEGORY_NAME);
+        }
+
+        category.updateName(updateCategoryRequest.getName());
     }
 }

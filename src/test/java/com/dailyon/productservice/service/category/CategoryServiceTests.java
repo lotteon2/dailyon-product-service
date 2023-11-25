@@ -3,12 +3,14 @@ package com.dailyon.productservice.service.category;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.dailyon.productservice.dto.request.CreateCategoryRequest;
+import com.dailyon.productservice.dto.request.UpdateCategoryRequest;
 import com.dailyon.productservice.dto.response.ReadAllCategoryListResponse;
 import com.dailyon.productservice.dto.response.ReadBreadCrumbListResponse;
 import com.dailyon.productservice.dto.response.ReadChildrenCategoryListResponse;
 import com.dailyon.productservice.entity.Category;
 import com.dailyon.productservice.exception.NotExistsException;
 import com.dailyon.productservice.exception.UniqueException;
+import com.dailyon.productservice.repository.category.CategoryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,10 @@ import java.util.List;
 public class CategoryServiceTests {
     @Autowired
     CategoryService categoryService;
+
+    @Autowired
+    CategoryRepository categoryRepository;
+
     @Autowired
     EntityManager em;
 
@@ -199,5 +205,60 @@ public class CategoryServiceTests {
         assertEquals("root", breadCrumbs.getBreadCrumbs().get(0).getName());
         assertEquals("mid", breadCrumbs.getBreadCrumbs().get(1).getName());
         assertEquals("leaf", breadCrumbs.getBreadCrumbs().get(2).getName());
+    }
+
+    @Test
+    @DisplayName("카테고리 이름 변경 성공")
+    void updateCategorySuccess() {
+        // given
+        Category root = categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("root")
+                .build());
+
+        UpdateCategoryRequest updateCategoryRequest = UpdateCategoryRequest.builder()
+                .name("UPDATED")
+                .build();
+
+        // when
+        categoryService.updateCategoryName(root.getId(), updateCategoryRequest);
+
+        Category updated = categoryRepository.findById(root.getId()).get();
+
+        // then
+        assertEquals(updated.getName(), updateCategoryRequest.getName());
+    }
+
+    @Test
+    @DisplayName("카테고리 이름 변경 실패 - 존재하지 않는 카테고리")
+    void updateCategoryFail1() {
+        // given
+        categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("root")
+                .build());
+
+        UpdateCategoryRequest updateCategoryRequest = UpdateCategoryRequest.builder()
+                .name("UPDATED")
+                .build();
+
+        // when, then
+        assertThrows(NotExistsException.class, () ->
+                categoryService.updateCategoryName(0L, updateCategoryRequest));
+    }
+
+    @Test
+    @DisplayName("카테고리 이름 변경 실패 - 중복된 이름")
+    void updateCategoryFail2() {
+        // given
+        Category root = categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("root")
+                .build());
+
+        UpdateCategoryRequest updateCategoryRequest = UpdateCategoryRequest.builder()
+                .name("root")
+                .build();
+
+        // when, then
+        assertThrows(UniqueException.class, () ->
+                categoryService.updateCategoryName(root.getId(), updateCategoryRequest));
     }
 }
