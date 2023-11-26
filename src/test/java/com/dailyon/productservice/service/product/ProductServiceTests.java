@@ -3,7 +3,7 @@ package com.dailyon.productservice.service.product;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.dailyon.productservice.product.dto.request.CreateProductRequest;
-import com.dailyon.productservice.product.dto.request.CreateProductStockRequest;
+import com.dailyon.productservice.product.dto.request.ProductStockRequest;
 import com.dailyon.productservice.brand.entity.Brand;
 import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.productsize.entity.ProductSize;
@@ -50,7 +50,7 @@ public class ProductServiceTests {
     private Category category = null;
     private ProductSize productSize1 = null;
     private ProductSize productSize2 = null;
-    private List<CreateProductStockRequest> productStocks = new ArrayList<>();
+    private List<ProductStockRequest> productStocks = new ArrayList<>();
     private List<String> describeImages = new ArrayList<>();
 
     @BeforeEach
@@ -61,8 +61,8 @@ public class ProductServiceTests {
         productSize1 = productSizeRepository.save(ProductSize.create(category, "productSize1"));
         productSize2 = productSizeRepository.save(ProductSize.create(category, "productSize2"));
 
-        productStocks.add(CreateProductStockRequest.builder().productSizeId(productSize1.getId()).quantity(10L).build());
-        productStocks.add(CreateProductStockRequest.builder().productSizeId(productSize2.getId()).quantity(20L).build());
+        productStocks.add(ProductStockRequest.builder().productSizeId(productSize1.getId()).quantity(10L).build());
+        productStocks.add(ProductStockRequest.builder().productSizeId(productSize2.getId()).quantity(20L).build());
 
         describeImages.add("testDescribeImg.jpg");
         describeImages.add("testDescribeImg1.jpg");
@@ -140,7 +140,7 @@ public class ProductServiceTests {
     @DisplayName("상품 생성 실패 - 존재하지 않는 치수값")
     void createProductFail3() {
         // given
-        productStocks.add(CreateProductStockRequest.builder().productSizeId(0L).quantity(30L).build());
+        productStocks.add(ProductStockRequest.builder().productSizeId(0L).quantity(30L).build());
 
         CreateProductRequest createProductRequest = CreateProductRequest.builder()
                 .brandId(brand.getId())

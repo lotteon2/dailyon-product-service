@@ -42,7 +42,7 @@ public class CreateProductRequest {
 
     @Valid
     @Size(min = 1, message = "상품 개수를 등록해주세요")
-    private List<CreateProductStockRequest> productStocks;
+    private List<ProductStockRequest> productStocks;
 
     @Size(max = 5, message = "상품 설명 이미지는 최대 5개까지 등록 가능합니다")
     private List<String> describeImages;
