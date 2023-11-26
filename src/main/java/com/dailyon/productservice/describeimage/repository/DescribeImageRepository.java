@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface DescribeImageRepository {
     List<DescribeImage> saveAll(List<DescribeImage> describeImages);
+    void deleteByProductId(Long id);
 }

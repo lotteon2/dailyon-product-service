@@ -15,4 +15,9 @@ public class DescribeImageRepositoryImpl implements DescribeImageRepository {
     public List<DescribeImage> saveAll(List<DescribeImage> describeImages) {
         return describeImageJpaRepository.saveAll(describeImages);
     }
+
+    @Override
+    public void deleteByProductId(Long id) {
+        describeImageJpaRepository.deleteByProductId(id);
+    }
 }

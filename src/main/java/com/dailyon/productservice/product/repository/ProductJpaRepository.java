@@ -17,4 +17,6 @@ public interface ProductJpaRepository extends JpaRepository<Product, Long> {
             "JOIN FETCH p.describeImages " +
             "WHERE p.id = :id AND p.deleted = false")
     Optional<Product> getProductDetailById(Long id);
+
+    Optional<Product> findByIdAndDeletedIsFalse(Long id);
 }
