@@ -20,4 +20,9 @@ public class ProductRepositoryImpl implements ProductRepository {
     public Optional<Product> getProductDetail(Long id) {
         return productJpaRepository.getProductDetailById(id);
     }
+
+    @Override
+    public Optional<Product> findProductById(Long id) {
+        return productJpaRepository.findByIdAndDeletedIsFalse(id);
+    }
 }

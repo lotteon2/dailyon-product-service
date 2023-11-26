@@ -45,4 +45,8 @@ public class ProductStock implements Comparable<ProductStock> {
         }
         return result;
     }
+
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
+    }
 }

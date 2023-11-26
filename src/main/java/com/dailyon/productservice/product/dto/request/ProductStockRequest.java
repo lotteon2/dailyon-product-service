@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateProductStockRequest implements Comparable<CreateProductStockRequest> {
+public class ProductStockRequest implements Comparable<ProductStockRequest> {
     @NotNull(message = "치수값을 입력해주세요")
     private Long productSizeId;
 
@@ -22,7 +22,7 @@ public class CreateProductStockRequest implements Comparable<CreateProductStockR
     private Long quantity;
 
     @Override
-    public int compareTo(CreateProductStockRequest o) {
+    public int compareTo(ProductStockRequest o) {
         return this.productSizeId.compareTo(o.productSizeId);
     }
 }

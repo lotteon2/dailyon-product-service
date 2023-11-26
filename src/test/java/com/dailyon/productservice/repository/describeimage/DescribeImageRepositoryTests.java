@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.dailyon.productservice.brand.entity.Brand;
 import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.describeimage.entity.DescribeImage;
+import com.dailyon.productservice.describeimage.repository.DescribeImageJpaRepository;
 import com.dailyon.productservice.describeimage.repository.DescribeImageRepository;
 import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.common.enums.Gender;
@@ -39,6 +40,9 @@ public class DescribeImageRepositoryTests {
     @Autowired
     CategoryRepository categoryRepository;
 
+    @Autowired
+    DescribeImageJpaRepository describeImageJpaRepository;
+
     private Product product;
 
     @BeforeEach
@@ -62,5 +66,21 @@ public class DescribeImageRepositoryTests {
         List<DescribeImage> created = describeImageRepository.saveAll(describeImages);
 
         assertEquals(created.size(), describeImages.size());
+    }
+
+    @Test
+    @DisplayName("상품 이미지 목록 삭제 성공")
+    void deleteDescribeImageSuccess() {
+        // given
+        List<DescribeImage> describeImages = new ArrayList<>();
+        describeImages.add(DescribeImage.create(product, "imgUrl1"));
+        describeImages.add(DescribeImage.create(product, "imgUrl2"));
+        describeImageRepository.saveAll(describeImages);
+
+        // when
+        describeImageRepository.deleteByProductId(product.getId());
+
+        // then
+        assertEquals(0, describeImageJpaRepository.findAll().size());
     }
 }

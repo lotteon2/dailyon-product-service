@@ -1,5 +1,6 @@
 package com.dailyon.productservice.productstock.repository;
 
+import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.productstock.entity.ProductStock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -14,5 +15,10 @@ public class ProductStockRepositoryImpl implements ProductStockRepository {
     @Override
     public List<ProductStock> saveAll(List<ProductStock> productStocks) {
         return productStockJpaRepository.saveAll(productStocks);
+    }
+
+    @Override
+    public List<ProductStock> findProductsByProduct(Product product) {
+        return productStockJpaRepository.findProductStocksByProductOrderByProductSize(product);
     }
 }

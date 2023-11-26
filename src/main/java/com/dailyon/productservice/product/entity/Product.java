@@ -49,7 +49,7 @@ public class Product extends BaseEntity {
     private ReviewAggregate reviewAggregate;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private ProductType type;
 
     @Enumerated(EnumType.STRING)
@@ -77,5 +77,33 @@ public class Product extends BaseEntity {
                 .brand(brand).category(category).type(type).gender(gender)
                 .name(name).code(code).imgUrl(imgUrl).price(price)
                 .build();
+    }
+
+    public void setBrand(Brand brand) {
+        this.brand = brand;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 }

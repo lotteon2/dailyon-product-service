@@ -1,5 +1,6 @@
 package com.dailyon.productservice.product.dto.request;
 
+import com.dailyon.productservice.common.enums.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,12 +10,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
 
-
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateProductRequest {
+public class UpdateProductRequest {
     @NotNull(message = "브랜드를 입력해주세요")
     private Long brandId;
 
@@ -28,14 +28,11 @@ public class CreateProductRequest {
     @NotBlank(message = "상품 이름을 입력해주세요")
     private String name;
 
-    @NotBlank(message = "상품 코드를 입력해주세요")
-    private String code;
-
-    @NotBlank(message = "상품 유형을 입력해주세요")
-    private String type;
-
     @NotBlank(message = "성별을 입력해주세요")
     private String gender;
+
+    @NotBlank(message = "상품 코드를 입력해주세요")
+    private String code;
 
     @NotBlank(message = "상품 이미지를 입력해주세요")
     private String image;
