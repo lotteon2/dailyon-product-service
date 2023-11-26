@@ -131,14 +131,14 @@ public class ProductService {
     }
 
     public ReadProductDetailResponse readProductDetail(Long productId) {
-        Product product = productRepository.getProductDetail(productId)
+        Product product = productRepository.findProductDetailById(productId)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.PRODUCT_NOT_FOUND));
         return ReadProductDetailResponse.fromEntity(product);
     }
 
     @Transactional
     public UpdateProductResponse updateProduct(Long productId, UpdateProductRequest updateProductRequest) {
-        Product product = productRepository.findProductById(productId)
+        Product product = productRepository.findByIdAndDeletedIsFalse(productId)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.PRODUCT_NOT_FOUND));
 
         Brand newBrand = brandRepository.findById(updateProductRequest.getBrandId())
