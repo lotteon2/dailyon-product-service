@@ -8,4 +8,5 @@ import java.util.List;
 public interface ProductStockRepository {
     List<ProductStock> saveAll(List<ProductStock> productStocks);
     List<ProductStock> findProductsByProduct(Product product);
+    void deleteByProduct(Product product);
 }

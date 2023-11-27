@@ -18,4 +18,5 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
         "WHERE p.id = :id AND p.deleted = false")
     Optional<Product> findProductDetailById(Long id);
     Optional<Product> findByIdAndDeletedIsFalse(Long id);
+    Optional<Product> findProductByCode(String code);
 }

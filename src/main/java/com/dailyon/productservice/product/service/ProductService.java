@@ -2,6 +2,7 @@ package com.dailyon.productservice.product.service;
 
 import com.dailyon.productservice.brand.entity.Brand;
 import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.common.exception.UniqueException;
 import com.dailyon.productservice.describeimage.entity.DescribeImage;
 import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.ProductStockRequest;
@@ -147,6 +148,12 @@ public class ProductService {
         Category newCategory = categoryRepository.findById(updateProductRequest.getCategoryId())
                 .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
 
+        // 다른 상품에 존재하는 코드라면 exception
+        Optional<Product> productByCode = productRepository.findProductByCode(updateProductRequest.getCode());
+        if(productByCode.isPresent() && !productByCode.get().getId().equals(product.getId())) {
+            throw new UniqueException(UniqueException.DUPLICATE_PRODUCT_CODE);
+        }
+
         // {productSizeId, quantity}의 목록에서 productSizeId의 목록만 추출
         Set<Long> productSizeIds = updateProductRequest.getProductStocks()
                 .stream()
@@ -161,48 +168,38 @@ public class ProductService {
 
         List<ProductStock> productStocks = productStockRepository.findProductsByProduct(product);
         // TODO : REFACTOR for-for-if
-        int size = productStocks.size(); // productStock의 loop는 초기 productStock의 size만큼만 돌게 하기 위해
         for(ProductStockRequest productStockRequest: updateProductRequest.getProductStocks()) {
-            boolean isNew = true;
-            int productStockCursor; // for-loop 바깥(...[1])에서 productStocks의 몇 번째 원소까지 돌았는지 확인하기 위해 바깥에서 선언
-            for(productStockCursor=0; productStockCursor<size; productStockCursor++) {
-                // 기존과 productSizeId가 같은걸 찾았다면 quantity update
-                if(productStocks.get(productStockCursor).getProductSize().getId().equals(productStockRequest.getProductSizeId())) {
-                    if(productStocks.get(productStockCursor).getQuantity().equals(0L)) { // 기존 재고가 0개였다면
+            for(ProductStock productStock: productStocks) {
+                if(productStock.getProductSize().getId().equals(productStockRequest.getProductSizeId())) {
+                    if(productStock.getQuantity().equals(0L)) { // 기존 재고가 0개였다면
                         // TODO : 재입고 알림 발송
                     }
-                    productStocks.get(productStockCursor).setQuantity(productStockRequest.getQuantity());
-                    // 기존과 productSizeId가 같은걸 찾았으므로 뒤는 더 볼 필요 없음
-                    isNew = false; break;
                 }
             }
-            // productStocks에 존재하지 않던 ProductStockRequest가 들어왔다면 새로 create한다
-            if(isNew) {
-                productStocks.add(ProductStock.create(
-                        product,
-                        productStocks.get(productStockCursor-1).getProductSize(), // ...[1]
-                        productStockRequest.getQuantity()
-                ));
-            }
         }
-        productStockRepository.saveAll(productStocks);
+
+        List<ProductStock> newProductStocks = new ArrayList<>();
+        for(int i=0; i<productSizes.size(); i++) {
+            newProductStocks.add(
+                    ProductStock.create(
+                            product,
+                            productSizes.get(i),
+                            updateProductRequest.getProductStocks().get(i).getQuantity()
+                    )
+            );
+        }
 
         String newImgUrl = String.format("/%s/%s.%s", PRODUCT_IMG_BUCKET_PREFIX, UUID.randomUUID(),
                 updateProductRequest.getImage().split("\\.")[1]);
-
-        // 기존 describe image 삭제
-        describeImageRepository.deleteByProductId(product.getId());
 
         // 저장할 describe image list 생성
         List<String> describeImgUrls = updateProductRequest.getDescribeImages().stream()
                 .map(descImg -> String.format("/%s/%s.%s", PRODUCT_IMG_BUCKET_PREFIX, UUID.randomUUID(), descImg.split("\\.")[1]))
                 .collect(Collectors.toList());
 
-        List<DescribeImage> describeImages = describeImgUrls.stream()
+        List<DescribeImage> newDescribeImages = describeImgUrls.stream()
                 .map(descImgUrl -> DescribeImage.create(product, descImgUrl))
                 .collect(Collectors.toList());
-
-        describeImageRepository.saveAll(describeImages);
 
         product.setBrand(newBrand);
         product.setCategory(newCategory);
@@ -211,6 +208,12 @@ public class ProductService {
         product.setImgUrl(newImgUrl);
         product.setGender(Gender.validate(updateProductRequest.getGender()));
         product.setCode(updateProductRequest.getCode());
+
+        productStockRepository.deleteByProduct(product);
+        describeImageRepository.deleteByProduct(product);
+
+        productStockRepository.saveAll(newProductStocks);
+        describeImageRepository.saveAll(newDescribeImages);
 
         // presignedUrls for response dto
         String imgPresignedUrl = s3Util.getPreSignedUrl(IMG_BUCKET, newImgUrl);
