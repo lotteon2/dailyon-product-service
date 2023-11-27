@@ -14,6 +14,7 @@ import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.brand.repository.BrandRepository;
 import com.dailyon.productservice.category.repository.CategoryRepository;
+import com.dailyon.productservice.product.dto.response.ReadProductSliceResponse;
 import com.dailyon.productservice.product.dto.response.UpdateProductResponse;
 import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.productsize.entity.ProductSize;
@@ -26,6 +27,7 @@ import com.dailyon.productservice.reviewaggregate.repository.ReviewAggregateRepo
 import com.dailyon.productservice.reviewaggregate.entity.ReviewAggregate;
 import com.dailyon.productservice.common.util.S3Util;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -226,5 +228,9 @@ public class ProductService {
         }
 
         return UpdateProductResponse.create(imgPresignedUrl, describeImgPresignedUrls);
+    }
+
+    public ReadProductSliceResponse readProductSlice(Long brandId, Long categoryId, Gender gender, ProductType type, String query, Pageable pageable) {
+        return ReadProductSliceResponse.fromEntity(productRepository.findProductSlice(brandId, categoryId, gender, type, query, pageable));
     }
 }
