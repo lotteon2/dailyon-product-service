@@ -1,6 +1,7 @@
 package com.dailyon.productservice.describeimage.repository;
 
 import com.dailyon.productservice.describeimage.entity.DescribeImage;
+import com.dailyon.productservice.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +18,7 @@ public class DescribeImageRepositoryImpl implements DescribeImageRepository {
     }
 
     @Override
-    public void deleteByProductId(Long id) {
-        describeImageJpaRepository.deleteByProductId(id);
+    public void deleteByProduct(Product product) {
+        describeImageJpaRepository.deleteByProduct(product);
     }
 }

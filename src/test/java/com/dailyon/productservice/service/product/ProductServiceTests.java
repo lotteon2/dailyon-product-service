@@ -2,21 +2,34 @@ package com.dailyon.productservice.service.product;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.dailyon.productservice.common.enums.Gender;
+import com.dailyon.productservice.common.enums.ProductType;
+import com.dailyon.productservice.describeimage.entity.DescribeImage;
+import com.dailyon.productservice.describeimage.repository.DescribeImageRepository;
 import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.ProductStockRequest;
 import com.dailyon.productservice.brand.entity.Brand;
 import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.product.dto.response.ReadProductSliceResponse;
+import com.dailyon.productservice.product.entity.Product;
+import com.dailyon.productservice.product.repository.ProductRepository;
 import com.dailyon.productservice.productsize.entity.ProductSize;
 import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.brand.repository.BrandRepository;
 import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.product.service.ProductService;
 import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
+import com.dailyon.productservice.productstock.entity.ProductStock;
+import com.dailyon.productservice.productstock.repository.ProductStockRepository;
+import com.dailyon.productservice.reviewaggregate.entity.ReviewAggregate;
+import com.dailyon.productservice.reviewaggregate.repository.ReviewAggregateRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +59,18 @@ public class ProductServiceTests {
     @Autowired
     ProductSizeRepository productSizeRepository;
 
+    @Autowired
+    ProductRepository productRepository;
+
+    @Autowired
+    ProductStockRepository productStockRepository;
+
+    @Autowired
+    DescribeImageRepository describeImageRepository;
+
+    @Autowired
+    ReviewAggregateRepository reviewAggregateRepository;
+
     private Brand brand = null;
     private Category category = null;
     private ProductSize productSize1 = null;
@@ -66,6 +91,33 @@ public class ProductServiceTests {
 
         describeImages.add("testDescribeImg.jpg");
         describeImages.add("testDescribeImg1.jpg");
+
+        Product product = productRepository.save(Product.create(
+                brand,
+                category,
+                ProductType.NORMAL,
+                Gender.COMMON,
+                "TEST_NAME",
+                "TEST_CODE",
+                "TEST_IMG_URL",
+                1000
+                )
+        );
+
+        List<ProductStock> createProductStocks = new ArrayList<>();
+        createProductStocks.add(ProductStock.create(product, productSize1, 100L));
+        createProductStocks.add(ProductStock.create(product, productSize2, 200L));
+        productStockRepository.saveAll(createProductStocks);
+
+        List<DescribeImage> createDescribeImages = new ArrayList<>();
+        createDescribeImages.add(DescribeImage.create(product, "testDescribeImg.jpg"));
+        createDescribeImages.add(DescribeImage.create(product, "testDescribeImg1.jpg"));
+        describeImageRepository.saveAll(createDescribeImages);
+
+        reviewAggregateRepository.save(ReviewAggregate.create(product, 0.0F, 0L));
+
+        entityManager.flush();
+        entityManager.clear();
     }
 
     // Mock S3 오류로 인한 주석 처리
@@ -197,5 +249,23 @@ public class ProductServiceTests {
 
         // when, then
         assertThrows(NotExistsException.class, () -> productService.createProduct(createProductRequest), NotExistsException.PRODUCT_TYPE_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("상품 목록 조회")
+    void readProductSlice() {
+        // given, when
+        ReadProductSliceResponse response = productService.readProductSlice(
+                null,
+                null,
+                null,
+                ProductType.valueOf("NORMAL"),
+                null,
+                PageRequest.of(0, 8)
+        );
+
+        // then
+        assertFalse(response.isHasNext());
+        assertEquals(1, response.getProductResponses().size());
     }
 }

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReadProductDetailResponse {
+    private Long categoryId;
     private String brandName;
     private String name;
     private String imgUrl;
@@ -30,6 +31,7 @@ public class ReadProductDetailResponse {
 
     public static ReadProductDetailResponse fromEntity(Product product) {
         return ReadProductDetailResponse.builder()
+                .categoryId(product.getCategory().getId())
                 .brandName(product.getBrand().getName())
                 .name(product.getName())
                 .imgUrl(product.getImgUrl())

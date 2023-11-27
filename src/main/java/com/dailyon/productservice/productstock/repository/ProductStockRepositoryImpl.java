@@ -3,6 +3,8 @@ package com.dailyon.productservice.productstock.repository;
 import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.productstock.entity.ProductStock;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,5 +22,10 @@ public class ProductStockRepositoryImpl implements ProductStockRepository {
     @Override
     public List<ProductStock> findProductsByProduct(Product product) {
         return productStockJpaRepository.findProductStocksByProductOrderByProductSize(product);
+    }
+
+    @Override
+    public void deleteByProduct(Product product) {
+        productStockJpaRepository.deleteByProduct(product);
     }
 }

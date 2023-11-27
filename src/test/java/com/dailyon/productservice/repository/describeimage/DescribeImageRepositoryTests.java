@@ -78,7 +78,7 @@ public class DescribeImageRepositoryTests {
         describeImageRepository.saveAll(describeImages);
 
         // when
-        describeImageRepository.deleteByProductId(product.getId());
+        describeImageRepository.deleteByProduct(product);
 
         // then
         assertEquals(0, describeImageJpaRepository.findAll().size());
