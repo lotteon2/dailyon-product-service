@@ -10,6 +10,7 @@ import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.ProductStockRequest;
 import com.dailyon.productservice.brand.entity.Brand;
 import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.product.dto.response.ReadProductPageResponse;
 import com.dailyon.productservice.product.dto.response.ReadProductSliceResponse;
 import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.product.repository.ProductRepository;
@@ -267,5 +268,20 @@ public class ProductServiceTests {
         // then
         assertFalse(response.isHasNext());
         assertEquals(1, response.getProductResponses().size());
+    }
+
+    @Test
+    @DisplayName("상품 목록 조회 - 관리자")
+    void readProductPage() {
+        // given, when
+        ReadProductPageResponse response = productService.readProductPage(
+                null, null, ProductType.valueOf("NORMAL"), PageRequest.of(0, 8)
+        );
+
+        // then
+        assertEquals(1, response.getTotalElements());
+        assertEquals(1, response.getTotalPages());
+        assertEquals(2, response.getProductResponses().get(0).getProductStocks().size());
+        assertEquals(2, response.getProductResponses().get(0).getDescribeImgUrls().size());
     }
 }

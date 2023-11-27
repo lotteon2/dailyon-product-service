@@ -7,15 +7,12 @@ import com.dailyon.productservice.describeimage.entity.DescribeImage;
 import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.ProductStockRequest;
 import com.dailyon.productservice.product.dto.request.UpdateProductRequest;
-import com.dailyon.productservice.product.dto.response.CreateProductResponse;
-import com.dailyon.productservice.product.dto.response.ReadProductDetailResponse;
+import com.dailyon.productservice.product.dto.response.*;
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.brand.repository.BrandRepository;
 import com.dailyon.productservice.category.repository.CategoryRepository;
-import com.dailyon.productservice.product.dto.response.ReadProductSliceResponse;
-import com.dailyon.productservice.product.dto.response.UpdateProductResponse;
 import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.productsize.entity.ProductSize;
 import com.dailyon.productservice.describeimage.repository.DescribeImageRepository;
@@ -232,5 +229,9 @@ public class ProductService {
 
     public ReadProductSliceResponse readProductSlice(Long brandId, Long categoryId, Gender gender, ProductType type, String query, Pageable pageable) {
         return ReadProductSliceResponse.fromEntity(productRepository.findProductSlice(brandId, categoryId, gender, type, query, pageable));
+    }
+
+    public ReadProductPageResponse readProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable) {
+        return ReadProductPageResponse.fromEntity(productRepository.findProductPage(brandId, categoryId, type, pageable));
     }
 }

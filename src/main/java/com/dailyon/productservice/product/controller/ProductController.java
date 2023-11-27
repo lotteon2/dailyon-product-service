@@ -24,12 +24,12 @@ public class ProductController {
     }
 
     @GetMapping
-    ResponseEntity<ReadProductSliceResponse> readProductPage(@RequestParam(required = false) Long brandId,
-                                                             @RequestParam(required = false) Long categoryId,
-                                                             @RequestParam(required = false) Gender gender,
-                                                             @RequestParam ProductType type,
-                                                             @RequestParam(required = false) String query,
-                                                             @PageableDefault(page = 0, size = 8) Pageable pageable) {
+    ResponseEntity<ReadProductSliceResponse> readProductSlice(@RequestParam(required = false) Long brandId,
+                                                              @RequestParam(required = false) Long categoryId,
+                                                              @RequestParam(required = false) Gender gender,
+                                                              @RequestParam ProductType type,
+                                                              @RequestParam(required = false) String query,
+                                                              @PageableDefault(page = 0, size = 8) Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.readProductSlice(brandId, categoryId, gender, type, query, pageable));
     }
 }

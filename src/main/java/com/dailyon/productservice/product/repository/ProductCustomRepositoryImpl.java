@@ -4,6 +4,7 @@ import static com.dailyon.productservice.brand.entity.QBrand.brand;
 import static com.dailyon.productservice.category.entity.QCategory.category;
 import static com.dailyon.productservice.product.entity.QProduct.product;
 import static com.dailyon.productservice.reviewaggregate.entity.QReviewAggregate.reviewAggregate;
+import static com.dailyon.productservice.describeimage.entity.QDescribeImage.describeImage;
 
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
@@ -53,8 +54,35 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         return new SliceImpl<>(result, pageable, hasNext);
     }
 
-    private Long getTotalPageCount() {
-        return jpaQueryFactory.select(product.count()).from(product).where(product.deleted.eq(false)).fetchOne();
+    @Override
+    public Page<Product> findProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable) {
+        JPAQuery<Product> jpaQuery = jpaQueryFactory
+                .select(product)
+                .from(product)
+                .leftJoin(product.brand, brand).fetchJoin()
+                .leftJoin(product.category, category).fetchJoin()
+                .leftJoin(product.describeImages, describeImage).fetchJoin()
+                .where(
+                        product.deleted.eq(false),
+                        brandIdEq(brandId),
+                        categoryIdEq(categoryId),
+                        productTypeEq(type)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
+
+        Long total = jpaQueryFactory
+                .select(product.count())
+                .from(product)
+                .where(
+                        product.deleted.eq(false),
+                        brandIdEq(brandId),
+                        categoryIdEq(categoryId),
+                        productTypeEq(type)
+                )
+                .fetchOne();
+
+        return new PageImpl<>(jpaQuery.fetch(), pageable, total);
     }
 
     private BooleanExpression brandIdEq(Long brandId) {
