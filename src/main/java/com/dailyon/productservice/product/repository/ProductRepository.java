@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, Long>, ProductCustomRepository {
     @Query(value = "SELECT p " +
         "FROM Product p " +
+        "JOIN FETCH p.category " +
         "JOIN FETCH p.brand " +
         "JOIN FETCH p.reviewAggregate " +
         "JOIN FETCH p.productStocks " +
