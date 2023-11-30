@@ -64,4 +64,17 @@ public class CategoryRepositoryTests {
         // then
         assertEquals(3, categories.size());
     }
+
+    @Test
+    @DisplayName("master_category_id로 그 하위 카테고리 목록 조회")
+    public void findByMasterCategoryId() {
+        // given
+        Category root1 = categoryRepository.save(Category.createRootCategory("root1"));
+        Category root2 = categoryRepository.save(Category.createRootCategory("root2"));
+
+        // when
+        List<Category> categories = categoryRepository.findByMasterCategoryId(null);
+
+        assertEquals(2L, categories.size());
+    }
 }

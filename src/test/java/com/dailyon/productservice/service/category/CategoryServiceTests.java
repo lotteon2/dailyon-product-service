@@ -133,7 +133,7 @@ public class CategoryServiceTests {
         em.clear();
 
         // when
-        ReadChildrenCategoryListResponse response = categoryService.readChildrenCategories(masterCategory.getId());
+        ReadChildrenCategoryListResponse response = categoryService.readChildrenCategoriesOf(masterCategory.getId());
 
         // then
         assertEquals(3, response.getCategoryResponses().size());
@@ -149,7 +149,7 @@ public class CategoryServiceTests {
                 .build());
 
         // when
-        ReadChildrenCategoryListResponse response = categoryService.readChildrenCategories(leafCategory.getId());
+        ReadChildrenCategoryListResponse response = categoryService.readChildrenCategoriesOf(leafCategory.getId());
 
         // then
         assertEquals(response.getCategoryResponses().size(), 0);
@@ -162,7 +162,7 @@ public class CategoryServiceTests {
         Long id = 0L;
 
         // when, then
-        assertThrows(NotExistsException.class, () -> categoryService.readChildrenCategories(id));
+        assertThrows(NotExistsException.class, () -> categoryService.readChildrenCategoriesOf(id));
     }
 
     @Test
@@ -261,5 +261,28 @@ public class CategoryServiceTests {
         // when, then
         assertThrows(UniqueException.class, () ->
                 categoryService.updateCategoryName(root.getId(), updateCategoryRequest));
+    }
+
+    @Test
+    @DisplayName("최상위 카테고리 목록 조회")
+    void readRootCategories() {
+        // given
+        categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("root")
+                .build());
+
+        categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("root1")
+                .build());
+
+        categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("root2")
+                .build());
+
+        // when
+        ReadChildrenCategoryListResponse response = categoryService.readChildrenCategoriesByMaster(null);
+
+        // then
+        assertEquals(3L, response.getCategoryResponses().size());
     }
 }

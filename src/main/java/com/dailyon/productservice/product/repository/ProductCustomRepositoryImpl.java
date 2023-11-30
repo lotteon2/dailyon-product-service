@@ -23,7 +23,7 @@ import java.util.List;
 public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
-    // TODO : no-offset
+    // TODO : no-offset, 하위 카테고리의 상품들도 포함하도록 native query로 수정.
     @Override
     public Slice<Product> findProductSlice(Long brandId, Long categoryId, Gender gender, ProductType productType, String query, Pageable pageable) {
         JPAQuery<Product> jpaQuery = jpaQueryFactory
@@ -54,6 +54,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         return new SliceImpl<>(result, pageable, hasNext);
     }
 
+    // TODO : 하위 카테고리의 상품들도 포함하도록 native query로 수정.
     @Override
     public Page<Product> findProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable) {
         JPAQuery<Product> jpaQuery = jpaQueryFactory

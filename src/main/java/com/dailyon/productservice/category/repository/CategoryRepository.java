@@ -10,4 +10,5 @@ public interface CategoryRepository {
     boolean isDuplicatedName(String name);
     Optional<Category> findById(Long id);
     List<Category> findAll();
+    List<Category> findByMasterCategoryId(Long masterCategoryId);
 }
