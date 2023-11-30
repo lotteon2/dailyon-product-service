@@ -22,13 +22,13 @@ public class BrandAdminController {
      */
 
     @PostMapping("/brands")
-    public ResponseEntity<CreateBrandResponse> createBrand(@RequestHeader String role,
+    public ResponseEntity<CreateBrandResponse> createBrand(@RequestHeader(name = "Role") String role,
                                                            @Valid @RequestBody CreateBrandRequest createBrandRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(brandService.createBrand(createBrandRequest));
     }
 
     @PutMapping("/brands/{brandId}")
-    public ResponseEntity<Void> updateBrand(@RequestHeader String role,
+    public ResponseEntity<Void> updateBrand(@RequestHeader(name = "Role") String role,
                                             @PathVariable Long brandId,
                                             @Valid @RequestBody UpdateBrandRequest updateBrandRequest) {
         brandService.updateBrand(brandId, updateBrandRequest);

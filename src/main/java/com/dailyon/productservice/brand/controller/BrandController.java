@@ -15,6 +15,7 @@ public class BrandController {
 
     private final BrandService brandService;
 
+    // TODO : Pagination
     @GetMapping("")
     public ResponseEntity<ReadBrandListResponse> readBrands() {
         return ResponseEntity.ok(brandService.readAllBrands());
