@@ -43,7 +43,7 @@ public class CategoryControllerTests {
         }
 
         // when
-        ResultActions resultActions = mockMvc.perform(get("/categories/"+category.getId()));
+        ResultActions resultActions = mockMvc.perform(get("/categories/id/"+category.getId()));
 
         // then
         resultActions.andExpect(MockMvcResultMatchers.status().isOk());
@@ -57,7 +57,7 @@ public class CategoryControllerTests {
         long categoryId = 0L;
 
         // when
-        ResultActions resultActions = mockMvc.perform(get("/categories/" + categoryId));
+        ResultActions resultActions = mockMvc.perform(get("/categories/id/" + categoryId));
 
         // then
         resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -80,5 +80,21 @@ public class CategoryControllerTests {
         resultActions
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.breadCrumbs").isArray());
+    }
+
+    @Test
+    @DisplayName("최상위 카테고리 목록 조회")
+    void readRootCategories() throws Exception {
+        // given
+        Category root1 = categoryService.createCategory(CreateCategoryRequest.builder().categoryName("root1").build());
+        Category root2 = categoryService.createCategory(CreateCategoryRequest.builder().categoryName("root2").build());
+
+        // when
+        ResultActions resultActions = mockMvc.perform(get("/categories/master"));
+
+        // then
+        resultActions
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.categoryResponses").isArray());
     }
 }

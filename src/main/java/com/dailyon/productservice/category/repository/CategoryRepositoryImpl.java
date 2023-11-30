@@ -29,6 +29,11 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public List<Category> findAll() {
-        return categoryJpaRepository.findCategoriesByDeletedIsFalse();
+        return categoryJpaRepository.findByDeletedIsFalse();
+    }
+
+    @Override
+    public List<Category> findByMasterCategoryId(Long masterCategoryId) {
+        return categoryJpaRepository.findByDeletedIsFalseAndMasterCategory_Id(masterCategoryId);
     }
 }

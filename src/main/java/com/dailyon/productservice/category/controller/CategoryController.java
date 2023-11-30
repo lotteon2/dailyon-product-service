@@ -5,10 +5,7 @@ import com.dailyon.productservice.category.dto.response.ReadChildrenCategoryList
 import com.dailyon.productservice.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/categories")
@@ -16,9 +13,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @GetMapping("/{masterCategoryId}")
-    public ResponseEntity<ReadChildrenCategoryListResponse> readChildrenCategories(@PathVariable Long masterCategoryId) {
-        return ResponseEntity.ok(categoryService.readChildrenCategories(masterCategoryId));
+    /**
+     * master_category_id가 {masterCategoryId}인 카테고리의 목록을 반환
+     */
+    @GetMapping("/master")
+    public ResponseEntity<ReadChildrenCategoryListResponse> readCategoriesByMaster(@RequestParam(required = false) Long masterCategoryId) {
+        return ResponseEntity.ok(categoryService.readChildrenCategoriesByMaster(masterCategoryId));
+    }
+
+    /**
+     * {id}라는 id를 가지는 카테고리의 자식 카테고리의 목록을 반환
+     */
+    @GetMapping("/id/{id}")
+    public ResponseEntity<ReadChildrenCategoryListResponse> readChildren(@PathVariable Long id) {
+        return ResponseEntity.ok(categoryService.readChildrenCategoriesOf(id));
     }
 
     @GetMapping("/breadcrumb/{categoryId}")

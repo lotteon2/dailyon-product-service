@@ -37,11 +37,15 @@ public class CategoryService {
         return categoryRepository.save(Category.createCategory(masterCategory, createCategoryRequest.getCategoryName()));
     }
 
-    public ReadChildrenCategoryListResponse readChildrenCategories(Long id) {
+    public ReadChildrenCategoryListResponse readChildrenCategoriesOf(Long id) {
         // 존재하지 않는 id의 하위 카테고리를 조회하려고 하면 exception
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
         return ReadChildrenCategoryListResponse.fromEntity(category.getChildrenCategories());
+    }
+
+    public ReadChildrenCategoryListResponse readChildrenCategoriesByMaster(Long masterCategoryId) {
+        return ReadChildrenCategoryListResponse.fromEntity(categoryRepository.findByMasterCategoryId(masterCategoryId));
     }
 
     public ReadAllCategoryListResponse readAllCategories() {
