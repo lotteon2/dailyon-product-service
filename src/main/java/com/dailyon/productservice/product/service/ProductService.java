@@ -234,4 +234,8 @@ public class ProductService {
     public ReadProductPageResponse readProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable) {
         return ReadProductPageResponse.fromEntity(productRepository.findProductPage(brandId, categoryId, type, pageable));
     }
+
+    public ReadOOTDProductListResponse readOOTDProductDetails(List<Long> id) {
+        return ReadOOTDProductListResponse.fromEntity(productRepository.findOOTDProductDetails(id));
+    }
 }
