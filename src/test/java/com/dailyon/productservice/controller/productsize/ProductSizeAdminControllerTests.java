@@ -1,9 +1,9 @@
 package com.dailyon.productservice.controller.productsize;
 
 import com.dailyon.productservice.category.dto.request.CreateCategoryRequest;
+import com.dailyon.productservice.category.dto.response.CreateCategoryResponse;
 import com.dailyon.productservice.productsize.dto.request.CreateProductSizeRequest;
-import com.dailyon.productservice.category.entity.Category;
-import com.dailyon.productservice.productsize.entity.ProductSize;
+import com.dailyon.productservice.productsize.dto.response.CreateProductSizeResponse;
 import com.dailyon.productservice.category.service.CategoryService;
 import com.dailyon.productservice.productsize.service.ProductSizeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,10 +52,10 @@ public class ProductSizeAdminControllerTests {
                 .categoryName("test")
                 .build();
 
-        Category category = categoryService.createCategory(createCategoryRequest);
+        CreateCategoryResponse category = categoryService.createCategory(createCategoryRequest);
 
         CreateProductSizeRequest createProductSizeRequest = CreateProductSizeRequest.builder()
-                .categoryId(category.getId())
+                .categoryId(category.getCategoryId())
                 .name("test")
                 .build();
 
@@ -96,17 +96,17 @@ public class ProductSizeAdminControllerTests {
     @DisplayName("치수 등록 실패 - 중복 이름")
     void createProductSize() throws Exception {
         // given
-        Category category = categoryService.createCategory(CreateCategoryRequest.builder()
+        CreateCategoryResponse category = categoryService.createCategory(CreateCategoryRequest.builder()
                 .categoryName("test")
                 .build());
 
         productSizeService.createProductSize(CreateProductSizeRequest.builder()
-                .categoryId(category.getId())
+                .categoryId(category.getCategoryId())
                 .name("test1")
                 .build());
 
         CreateProductSizeRequest createProductSizeRequest = CreateProductSizeRequest.builder()
-                .categoryId(category.getId())
+                .categoryId(category.getCategoryId())
                 .name("test1")
                 .build();
 
@@ -126,15 +126,15 @@ public class ProductSizeAdminControllerTests {
     @DisplayName("치수 목록 조회")
     void readProductSizeList() throws Exception {
         // given
-        Category categoryForProductList = categoryService.createCategory(CreateCategoryRequest.builder()
+        CreateCategoryResponse categoryForProductList = categoryService.createCategory(CreateCategoryRequest.builder()
                 .masterCategoryId(null)
                 .categoryName("CATEGORY_FOR_LIST")
                 .build());
 
-        List<ProductSize> productSizes = new ArrayList<>();
+        List<CreateProductSizeResponse> productSizes = new ArrayList<>();
         for(int i=0; i<3; i++) {
             productSizes.add(productSizeService.createProductSize(CreateProductSizeRequest.builder()
-                    .categoryId(categoryForProductList.getId())
+                    .categoryId(categoryForProductList.getCategoryId())
                     .name("PRODUCT_SIZE_"+i)
                     .build()));
         }
@@ -143,13 +143,14 @@ public class ProductSizeAdminControllerTests {
 
         // when
         ResultActions resultActions = mockMvc.perform(
-                get("/admin/product-size/"+categoryForProductList.getId())
+                get("/admin/product-size/"+categoryForProductList.getCategoryId())
                         .header("role", "ADMIN")
         );
 
         // then
         resultActions
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.productSizes").isArray());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.productSizes").isArray())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.productSizes.size()").value(3));
     }
 }

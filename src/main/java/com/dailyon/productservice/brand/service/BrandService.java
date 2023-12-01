@@ -27,10 +27,7 @@ public class BrandService {
 
         // 이후 save
         Brand brand = brandRepository.save(Brand.createBrand(createBrandRequest.getName()));
-
-        return CreateBrandResponse.builder()
-                .brandId(brand.getId())
-                .build();
+        return CreateBrandResponse.fromEntity(brand);
     }
 
     public ReadBrandListResponse readAllBrands() {

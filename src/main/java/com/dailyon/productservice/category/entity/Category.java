@@ -61,6 +61,7 @@ public class Category extends BaseEntity {
                 .build();
     }
 
+    // TODO : with recursive로 바꿀까?
     public List<Category> readBreadCrumbs() {
         List<Category> result = new ArrayList<>();
         result.add(this);

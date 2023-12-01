@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.dailyon.productservice.category.dto.request.CreateCategoryRequest;
 import com.dailyon.productservice.category.dto.request.UpdateCategoryRequest;
+import com.dailyon.productservice.category.dto.response.CreateCategoryResponse;
 import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.category.service.CategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -115,10 +116,10 @@ public class CategoryAdminControllerTests {
                 .categoryName("test")
                 .build();
 
-        Category masterCategory = categoryService.createCategory(createCategoryRequest);
+        CreateCategoryResponse masterCategory = categoryService.createCategory(createCategoryRequest);
 
         CreateCategoryRequest createCategoryRequest1 = CreateCategoryRequest.builder()
-                .masterCategoryId(masterCategory.getId())
+                .masterCategoryId(masterCategory.getCategoryId())
                 .categoryName("test1")
                 .build();
 
@@ -156,7 +157,7 @@ public class CategoryAdminControllerTests {
     @DisplayName("카테고리 수정 성공")
     void updateCategorySuccess() throws Exception {
         // given
-        Category root = categoryService.createCategory(CreateCategoryRequest.builder()
+        CreateCategoryResponse root = categoryService.createCategory(CreateCategoryRequest.builder()
                 .categoryName("root")
                 .build()
         );
@@ -167,7 +168,7 @@ public class CategoryAdminControllerTests {
 
         // when
         ResultActions resultActions = mockMvc.perform(
-                put("/admin/categories/"+root.getId())
+                put("/admin/categories/"+root.getCategoryId())
                         .header("role", "ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateCategoryRequest))
@@ -180,7 +181,7 @@ public class CategoryAdminControllerTests {
     @DisplayName("카테고리 수정 실패 - Valid")
     void updateCategoryFail() throws Exception {
         // given
-        Category root = categoryService.createCategory(CreateCategoryRequest.builder()
+        CreateCategoryResponse root = categoryService.createCategory(CreateCategoryRequest.builder()
                 .categoryName("root")
                 .build()
         );
@@ -191,7 +192,7 @@ public class CategoryAdminControllerTests {
 
         // when
         ResultActions resultActions = mockMvc.perform(
-                put("/admin/categories/"+root.getId())
+                put("/admin/categories/"+root.getCategoryId())
                         .header("role", "ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateCategoryRequest))

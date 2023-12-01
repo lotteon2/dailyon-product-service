@@ -12,11 +12,13 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateProductResponse {
+    private Long productId;
     private String imgPresignedUrl;
     private Map<String, String> describeImgPresignedUrl;
 
-    public static CreateProductResponse create(String imgPresignedUrl, Map<String, String> describeImgPresignedUrl) {
+    public static CreateProductResponse create(Long productId, String imgPresignedUrl, Map<String, String> describeImgPresignedUrl) {
         return CreateProductResponse.builder()
+                .productId(productId)
                 .imgPresignedUrl(imgPresignedUrl)
                 .describeImgPresignedUrl(describeImgPresignedUrl)
                 .build();

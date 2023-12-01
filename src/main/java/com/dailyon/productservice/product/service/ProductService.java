@@ -118,16 +118,16 @@ public class ProductService {
         reviewAggregateRepository.save(ReviewAggregate.create(product, 0F, 0L));
 
         // presignedUrls for response dto
-        String imgPresignedUrl = s3Util.getPreSignedUrl(IMG_BUCKET, imgUrl);
+        String imgPresignedUrl = s3Util.getPreSignedUrl(IMG_BUCKET, imgUrl.substring(1));
         Map<String, String> describeImgPresignedUrls = new HashMap<>();
         for(int i=0; i<describeImgUrls.size(); i++) {
             describeImgPresignedUrls.put(
                     createProductRequest.getDescribeImages().get(i),
-                    s3Util.getPreSignedUrl(IMG_BUCKET, describeImgUrls.get(i))
+                    s3Util.getPreSignedUrl(IMG_BUCKET, describeImgUrls.get(i).substring(1))
             );
         }
 
-        return CreateProductResponse.create(imgPresignedUrl, describeImgPresignedUrls);
+        return CreateProductResponse.create(product.getId(), imgPresignedUrl, describeImgPresignedUrls);
     }
 
     public ReadProductDetailResponse readProductDetail(Long productId) {
@@ -215,12 +215,12 @@ public class ProductService {
         describeImageRepository.saveAll(newDescribeImages);
 
         // presignedUrls for response dto
-        String imgPresignedUrl = s3Util.getPreSignedUrl(IMG_BUCKET, newImgUrl);
+        String imgPresignedUrl = s3Util.getPreSignedUrl(IMG_BUCKET, newImgUrl.substring(1));
         Map<String, String> describeImgPresignedUrls = new HashMap<>();
         for(int i=0; i<describeImgUrls.size(); i++) {
             describeImgPresignedUrls.put(
                     updateProductRequest.getDescribeImages().get(i),
-                    s3Util.getPreSignedUrl(IMG_BUCKET, describeImgUrls.get(i))
+                    s3Util.getPreSignedUrl(IMG_BUCKET, describeImgUrls.get(i).substring(1))
             );
         }
 
