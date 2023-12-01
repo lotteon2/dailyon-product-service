@@ -3,17 +3,17 @@ package com.dailyon.productservice.service.productsize;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.dailyon.productservice.category.dto.request.CreateCategoryRequest;
+import com.dailyon.productservice.category.dto.response.CreateCategoryResponse;
 import com.dailyon.productservice.productsize.dto.request.CreateProductSizeRequest;
 import com.dailyon.productservice.productsize.dto.request.UpdateProductSizeRequest;
+import com.dailyon.productservice.productsize.dto.response.CreateProductSizeResponse;
 import com.dailyon.productservice.productsize.dto.response.ReadProductSizeListResponse;
-import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.productsize.entity.ProductSize;
 import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.common.exception.UniqueException;
-import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import com.dailyon.productservice.category.service.CategoryService;
+import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import com.dailyon.productservice.productsize.service.ProductSizeService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,50 +32,10 @@ public class ProductSizeServiceTests {
     ProductSizeService productSizeService;
 
     @Autowired
-    CategoryService categoryService;
-
-    @Autowired
     ProductSizeRepository productSizeRepository;
 
     @Autowired
-    EntityManager entityManager;
-
-    private Category category = null;
-    private ProductSize productSize = null;
-
-    private Category categoryForProductList = null;
-    private List<ProductSize> productSizes = new ArrayList<>();
-
-    @BeforeEach
-    void before() {
-        CreateCategoryRequest createCategoryRequest = CreateCategoryRequest.builder()
-                .masterCategoryId(null)
-                .categoryName("root")
-                .build();
-
-        category = categoryService.createCategory(createCategoryRequest);
-
-        CreateProductSizeRequest createProductSizeRequest = CreateProductSizeRequest.builder()
-                .categoryId(category.getId())
-                .name("TEST")
-                .build();
-
-        productSize = productSizeService.createProductSize(createProductSizeRequest);
-
-        categoryForProductList = categoryService.createCategory(CreateCategoryRequest.builder()
-                .masterCategoryId(null)
-                .categoryName("CATEGORY_FOR_LIST")
-                .build());
-
-        for(int i=0; i<3; i++) {
-            productSizes.add(productSizeService.createProductSize(CreateProductSizeRequest.builder()
-                    .categoryId(categoryForProductList.getId())
-                    .name("PRODUCT_SIZE_"+i)
-                    .build()));
-        }
-
-        entityManager.clear();
-    }
+    CategoryService categoryService;
 
     @Test
     @DisplayName("치수 등록 실패 - 중복")
@@ -84,10 +43,17 @@ public class ProductSizeServiceTests {
         // given
         String name = "TEST";
 
+        CreateCategoryResponse response = categoryService.createCategory(CreateCategoryRequest.builder()
+                .masterCategoryId(null)
+                .categoryName(name)
+                .build());
+
         CreateProductSizeRequest createProductSizeRequest = CreateProductSizeRequest.builder()
-                .categoryId(category.getId())
+                .categoryId(response.getCategoryId())
                 .name(name)
                 .build();
+
+        productSizeService.createProductSize(createProductSizeRequest);
 
         // when, then
         assertThrows(UniqueException.class, () -> productSizeService.createProductSize(createProductSizeRequest));
@@ -97,7 +63,7 @@ public class ProductSizeServiceTests {
     @DisplayName("치수 등록 실패 - 존재하지 않는 카테고리 id")
     public void createProductSizeFail2() {
         // given
-        String name = "TEST1";
+        String name = "TEST";
 
         CreateProductSizeRequest createProductSizeRequest = CreateProductSizeRequest.builder()
                 .categoryId(0L)
@@ -112,45 +78,70 @@ public class ProductSizeServiceTests {
     @DisplayName("치수 등록 성공 - 다른 카테고리, 같은 name")
     public void createProductSizeSuccess1() {
         // given
-        // beforeEach에 (category, "TEST")로 product_size 생성했음
-        Category category1 = categoryService.createCategory(CreateCategoryRequest.builder()
+        CreateCategoryResponse response = categoryService.createCategory(CreateCategoryRequest.builder()
                 .masterCategoryId(null)
-                .categoryName("OTHER")
+                .categoryName("ROOT")
+                .build());
+
+        CreateCategoryResponse another = categoryService.createCategory(CreateCategoryRequest.builder()
+                .masterCategoryId(null)
+                .categoryName("ANOTHER")
                 .build());
 
         // when
-        ProductSize productSize1 = productSizeService.createProductSize(CreateProductSizeRequest.builder()
-                .categoryId(category1.getId())
-                .name("TEST")
+        productSizeService.createProductSize(CreateProductSizeRequest.builder()
+                .categoryId(response.getCategoryId())
+                .name("PRODUCT_SIZE")
                 .build());
 
         // then
-        assertEquals(productSize1.getName(), productSize.getName());
-        assertNotEquals(productSize1.getCategory().getId(), productSize.getCategory().getId());
+        productSizeService.createProductSize(CreateProductSizeRequest.builder()
+                        .categoryId(another.getCategoryId())
+                        .name("PRODUCT_SIZE")
+                        .build());
     }
 
     @Test
     @DisplayName("치수 등록 성공 - 같은 카테고리, 다른 name")
     public void createProductSizeSuccess2() {
         // given
-        // beforeEach에 (category, "TEST")로 product_size 생성했음
+        CreateCategoryResponse response = categoryService.createCategory(CreateCategoryRequest.builder()
+                .masterCategoryId(null)
+                .categoryName("ROOT")
+                .build());
 
         // when
-        ProductSize productSize1 = productSizeService.createProductSize(CreateProductSizeRequest.builder()
-                .categoryId(category.getId())
-                .name("TEST1")
+        productSizeService.createProductSize(CreateProductSizeRequest.builder()
+                .categoryId(response.getCategoryId())
+                .name("PRODUCT_SIZE")
                 .build());
 
         // then
-        assertNotEquals(productSize1.getName(), productSize.getName());
-        assertEquals(productSize1.getCategory().getId(), productSize.getCategory().getId());
+        productSizeService.createProductSize(CreateProductSizeRequest.builder()
+                .categoryId(response.getCategoryId())
+                .name("ANOTHER_NAME")
+                .build());
     }
 
     @Test
     @DisplayName("카테고리에 해당하는 치수 목록 조회")
     public void readProductSizeList() {
-        // given, when
-        ReadProductSizeListResponse productSizeList = productSizeService.readProductSizeListByCategory(categoryForProductList.getId());
+        // given
+        CreateCategoryResponse category = categoryService.createCategory(CreateCategoryRequest.builder()
+                .masterCategoryId(null)
+                .categoryName("ROOT")
+                .build());
+
+        List<CreateProductSizeResponse> productSizes = new ArrayList<>();
+        for(int i=0; i<3; i++) {
+            productSizes.add(productSizeService.createProductSize(CreateProductSizeRequest.builder()
+                    .categoryId(category.getCategoryId())
+                    .name("PRODUCT_SIZE_"+i)
+                    .build()));
+        }
+
+        // when
+        ReadProductSizeListResponse productSizeList = productSizeService.readProductSizeListByCategory(category.getCategoryId());
 
         // then
         assertEquals(productSizeList.getProductSizes().size(), productSizes.size());
@@ -160,16 +151,26 @@ public class ProductSizeServiceTests {
     @DisplayName("치수 수정 성공")
     void updateProductSizeSuccess() {
         // given
+        CreateCategoryResponse category = categoryService.createCategory(CreateCategoryRequest.builder()
+                .masterCategoryId(null)
+                .categoryName("ROOT")
+                .build());
+
+        CreateProductSizeResponse productSize = productSizeService.createProductSize(CreateProductSizeRequest.builder()
+                .categoryId(category.getCategoryId())
+                .name("PRODUCT_SIZE")
+                .build());
+
+        // when
         String updateName = "UPDATED";
         UpdateProductSizeRequest updateProductSizeRequest = UpdateProductSizeRequest.builder()
                 .name(updateName)
                 .build();
 
-        // when
-        productSizeService.updateProductSizeName(productSize.getId(), updateProductSizeRequest);
+        productSizeService.updateProductSizeName(productSize.getProductSizeId(), updateProductSizeRequest);
 
-        ProductSize updated = productSizeRepository.readProductSizeById(productSize.getId()).get();
         // then
+        ProductSize updated = productSizeRepository.readProductSizeById(productSize.getProductSizeId()).get();
         assertEquals(updateName, updated.getName());
     }
 
@@ -191,13 +192,25 @@ public class ProductSizeServiceTests {
     @DisplayName("치수 수정 실패 - 중복 이름")
     void updateProductSizeFail2() {
         // given
-        String updateName = "TEST";
-        UpdateProductSizeRequest updateProductSizeRequest = UpdateProductSizeRequest.builder()
-                .name(updateName)
-                .build();
+        CreateCategoryResponse response = categoryService.createCategory(CreateCategoryRequest.builder()
+                .masterCategoryId(null)
+                .categoryName("ROOT")
+                .build());
+
+        CreateProductSizeResponse productSize = productSizeService.createProductSize(CreateProductSizeRequest.builder()
+                .categoryId(response.getCategoryId())
+                .name("PRODUCT_SIZE")
+                .build());
+
+        CreateProductSizeResponse toUpdate = productSizeService.createProductSize(CreateProductSizeRequest.builder()
+                .categoryId(response.getCategoryId())
+                .name("ANOTHER")
+                .build());
+
+        UpdateProductSizeRequest updateProductSizeRequest = UpdateProductSizeRequest.builder().name("PRODUCT_SIZE").build();
 
         // when, then
         assertThrows(UniqueException.class, () ->
-                productSizeService.updateProductSizeName(productSize.getId(), updateProductSizeRequest));
+                productSizeService.updateProductSizeName(toUpdate.getProductSizeId(), updateProductSizeRequest));
     }
 }
