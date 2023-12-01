@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin("*") // TODO : gateway 이후 삭제
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
@@ -17,16 +18,8 @@ public class CategoryController {
      * master_category_id가 {masterCategoryId}인 카테고리의 목록을 반환
      */
     @GetMapping("/master")
-    public ResponseEntity<ReadChildrenCategoryListResponse> readCategoriesByMaster(@RequestParam(required = false) Long masterCategoryId) {
-        return ResponseEntity.ok(categoryService.readChildrenCategoriesByMaster(masterCategoryId));
-    }
-
-    /**
-     * {id}라는 id를 가지는 카테고리의 자식 카테고리의 목록을 반환
-     */
-    @GetMapping("/id/{id}")
-    public ResponseEntity<ReadChildrenCategoryListResponse> readChildren(@PathVariable Long id) {
-        return ResponseEntity.ok(categoryService.readChildrenCategoriesOf(id));
+    public ResponseEntity<ReadChildrenCategoryListResponse> readCategoriesByMaster(@RequestParam(required = false) Long id) {
+        return ResponseEntity.ok(categoryService.readChildrenCategoriesByMaster(id));
     }
 
     @GetMapping("/breadcrumb/{categoryId}")
