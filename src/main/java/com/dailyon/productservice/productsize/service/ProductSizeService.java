@@ -2,6 +2,7 @@ package com.dailyon.productservice.productsize.service;
 
 import com.dailyon.productservice.productsize.dto.request.CreateProductSizeRequest;
 import com.dailyon.productservice.productsize.dto.request.UpdateProductSizeRequest;
+import com.dailyon.productservice.productsize.dto.response.CreateProductSizeResponse;
 import com.dailyon.productservice.productsize.dto.response.ReadProductSizeListResponse;
 import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.productsize.entity.ProductSize;
@@ -21,7 +22,7 @@ public class ProductSizeService {
     private final CategoryRepository categoryRepository;
 
     @Transactional
-    public ProductSize createProductSize(CreateProductSizeRequest createProductSizeRequest) {
+    public CreateProductSizeResponse createProductSize(CreateProductSizeRequest createProductSizeRequest) {
         Category category = categoryRepository
                 .findById(createProductSizeRequest.getCategoryId())
                 .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
@@ -30,7 +31,8 @@ public class ProductSizeService {
             throw new UniqueException(UniqueException.DUPLICATE_PRODUCT_SIZE_NAME);
         }
 
-        return productSizeRepository.save(ProductSize.create(category, createProductSizeRequest.getName()));
+        return CreateProductSizeResponse
+                .fromEntity(productSizeRepository.save(ProductSize.create(category, createProductSizeRequest.getName())));
     }
 
     public ReadProductSizeListResponse readProductSizeListByCategory(Long id) {
