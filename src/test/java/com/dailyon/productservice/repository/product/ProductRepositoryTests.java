@@ -18,6 +18,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SpringBootTest
 @Transactional
 @ActiveProfiles(value = {"test"})
@@ -60,5 +63,39 @@ public class ProductRepositoryTests {
         assertEquals(imgUrl, product.getImgUrl());
         assertEquals(price, product.getPrice());
         assertEquals(ProductType.NORMAL, product.getType());
+    }
+
+    @Test
+    @DisplayName("OOTD 상품 상세 정보 조회")
+    void readOOTDProductDetails() {
+        // given
+        String imgUrl = "imgUrl";
+        Integer price = 1000;
+        Product product1 = productRepository.save(Product.create(
+                brand, category, ProductType.NORMAL, Gender.COMMON,
+                "name", "code", imgUrl, price
+        ));
+
+        Product product2 = productRepository.save(Product.create(
+                brand, category, ProductType.NORMAL, Gender.COMMON,
+                "name1", "code1", imgUrl, price
+        ));
+
+        Product product3 = productRepository.save(Product.create(
+                brand, category, ProductType.NORMAL, Gender.COMMON,
+                "name2", "code2", imgUrl, price
+        ));
+
+        List<Long> id = new ArrayList<>();
+        id.add(product1.getId());
+        id.add(product2.getId());
+        id.add(product3.getId());
+
+        // when
+
+        List<Product> productInfos = productRepository.findOOTDProductDetails(id);
+
+        // then
+        assertEquals(productInfos.size(), id.size());
     }
 }
