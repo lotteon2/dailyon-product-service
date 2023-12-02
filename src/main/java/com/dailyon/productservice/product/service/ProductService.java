@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class ProductService {
+public class ProductService { // TODO : Feign할 때 Facade 계층 추가
     private final S3Util s3Util;
 
     private final BrandRepository brandRepository;
@@ -227,8 +227,12 @@ public class ProductService {
         return UpdateProductResponse.create(imgPresignedUrl, describeImgPresignedUrls);
     }
 
-    public ReadProductSliceResponse readProductSlice(Long brandId, Long categoryId, Gender gender, ProductType type, String query, Pageable pageable) {
-        return ReadProductSliceResponse.fromEntity(productRepository.findProductSlice(brandId, categoryId, gender, type, query, pageable));
+    public ReadProductSliceResponse readProductSlice(Long lastId, Long brandId, Long categoryId, Gender gender, ProductType type) {
+        List<Category> childCategories = null;
+        if(categoryId != null) {
+            childCategories = categoryRepository.findAllChildCategories(categoryId);
+        }
+        return ReadProductSliceResponse.fromEntity(productRepository.findProductSlice(lastId, brandId, childCategories, gender, type));
     }
 
     public ReadProductPageResponse readProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable) {
