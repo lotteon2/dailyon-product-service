@@ -6,6 +6,7 @@ import static com.dailyon.productservice.product.entity.QProduct.product;
 import static com.dailyon.productservice.reviewaggregate.entity.QReviewAggregate.reviewAggregate;
 import static com.dailyon.productservice.describeimage.entity.QDescribeImage.describeImage;
 
+import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.product.entity.Product;
@@ -23,10 +24,11 @@ import java.util.List;
 public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
-    // TODO : no-offset, 하위 카테고리의 상품들도 포함하도록 native query로 수정.
     @Override
-    public Slice<Product> findProductSlice(Long brandId, Long categoryId, Gender gender, ProductType productType, String query, Pageable pageable) {
-        JPAQuery<Product> jpaQuery = jpaQueryFactory
+    public Slice<Product> findProductSlice(Long lastId, Long brandId, List<Category> childCategories, Gender gender, ProductType productType) {
+        Pageable pageable = Pageable.ofSize(8);
+
+        List<Product> idx = jpaQueryFactory
                 .select(product)
                 .from(product)
                 .leftJoin(product.brand, brand).fetchJoin()
@@ -34,16 +36,19 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
                 .where(
                         product.deleted.eq(false),
+                        product.id.gt(lastId),
                         brandIdEq(brandId),
-                        categoryIdEq(categoryId),
+                        categoryIn(childCategories),
                         genderEq(gender),
-                        productTypeEq(productType),
-                        nameEq(query)
-                )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() + 1);
+                        productTypeEq(productType)
+                ).fetch();
 
-        List<Product> result = jpaQuery.fetch();
+        List<Product> result = jpaQueryFactory
+                .select(product)
+                .from(product)
+                .where(product.in(idx))
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
 
         boolean hasNext = false;
         if(result.size() > pageable.getPageSize()) {
@@ -54,7 +59,6 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         return new SliceImpl<>(result, pageable, hasNext);
     }
 
-    // TODO : 하위 카테고리의 상품들도 포함하도록 native query로 수정.
     @Override
     public Page<Product> findProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable) {
         JPAQuery<Product> jpaQuery = jpaQueryFactory
@@ -66,7 +70,6 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .where(
                         product.deleted.eq(false),
                         brandIdEq(brandId),
-                        categoryIdEq(categoryId),
                         productTypeEq(type)
                 )
                 .offset(pageable.getOffset())
@@ -78,7 +81,6 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .where(
                         product.deleted.eq(false),
                         brandIdEq(brandId),
-                        categoryIdEq(categoryId),
                         productTypeEq(type)
                 )
                 .fetchOne();
@@ -90,8 +92,8 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         return brandId == null ? null : brand.id.eq(brandId);
     }
 
-    private BooleanExpression categoryIdEq(Long categoryId) {
-        return categoryId == null ? null : category.id.eq(categoryId);
+    private BooleanExpression categoryIn(List<Category> childCategories) {
+        return childCategories == null ? null : category.in(childCategories);
     }
 
     private BooleanExpression genderEq(Gender gender) {
@@ -102,7 +104,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         return productType == null ? null : product.type.eq(productType);
     }
 
-    private BooleanExpression nameEq(String query) {
-        return query == null ? null : product.name.eq(query);
+    private BooleanExpression nameLike(String name) {
+        return name == null ? null : product.name.like("%"+name+"%");
     }
 }
