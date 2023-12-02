@@ -257,12 +257,11 @@ public class ProductServiceTests {
     void readProductSlice() {
         // given, when
         ReadProductSliceResponse response = productService.readProductSlice(
+                0L,
                 null,
                 null,
                 null,
-                ProductType.valueOf("NORMAL"),
-                null,
-                PageRequest.of(0, 8)
+                ProductType.valueOf("NORMAL")
         );
 
         // then
