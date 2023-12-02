@@ -11,4 +11,5 @@ public interface CategoryRepository {
     Optional<Category> findById(Long id);
     List<Category> findAll();
     List<Category> findByMasterCategoryId(Long masterCategoryId);
+    List<Category> findLeafCategories();
 }

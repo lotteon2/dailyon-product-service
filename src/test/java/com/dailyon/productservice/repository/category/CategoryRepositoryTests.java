@@ -77,4 +77,37 @@ public class CategoryRepositoryTests {
 
         assertEquals(2L, categories.size());
     }
+
+    @Test
+    @DisplayName("리프 카테고리 조회")
+    public void findLeafCategories() {
+        // given
+        Category root1 = categoryRepository.save(Category.createRootCategory("root1"));
+        Category root2 = categoryRepository.save(Category.createRootCategory("root2"));
+
+        Category mid1 = categoryRepository.save(Category.createCategory(root1, "mid1"));
+        Category mid2 = categoryRepository.save(Category.createCategory(root2, "mid2"));
+
+        Category leaf1 = categoryRepository.save(Category.createCategory(mid1, "leaf1"));
+
+        // when
+        List<Category> leaves = categoryRepository.findLeafCategories();
+
+        // then
+        assertEquals(2, leaves.size()); // mid2와 leaf1
+    }
+
+    @Test
+    @DisplayName("리프 카테고리 조회 - root 카테고리만 있을 때")
+    public void findLeafCategories1() {
+        // given
+        Category root1 = categoryRepository.save(Category.createRootCategory("root1"));
+        Category root2 = categoryRepository.save(Category.createRootCategory("root2"));
+
+        // when
+        List<Category> leaves = categoryRepository.findLeafCategories();
+
+        // then
+        assertEquals(2, leaves.size()); // root1과 root2
+    }
 }
