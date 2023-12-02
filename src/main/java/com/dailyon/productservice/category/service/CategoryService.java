@@ -66,4 +66,8 @@ public class CategoryService {
 
         category.updateName(updateCategoryRequest.getName());
     }
+
+    public ReadChildrenCategoryListResponse readLeafCategories() {
+        return ReadChildrenCategoryListResponse.fromEntity(categoryRepository.findLeafCategories());
+    }
 }
