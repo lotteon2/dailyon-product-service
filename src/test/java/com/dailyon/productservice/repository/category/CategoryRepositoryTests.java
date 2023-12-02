@@ -110,4 +110,23 @@ public class CategoryRepositoryTests {
         // then
         assertEquals(2, leaves.size()); // root1과 root2
     }
+
+    @Test
+    @DisplayName("자신을 포함한 모든 자식 카테고리 id 조회")
+    public void findAllChildCategoyIds() {
+        // given
+        Category root1 = categoryRepository.save(Category.createRootCategory("root1"));
+
+        Category mid1 = categoryRepository.save(Category.createCategory(root1, "mid1"));
+        Category mid2 = categoryRepository.save(Category.createCategory(root1, "mid2"));
+
+        Category leaf1 = categoryRepository.save(Category.createCategory(mid1, "leaf1"));
+        Category leaf2 = categoryRepository.save(Category.createCategory(mid2, "leaf2"));
+
+        // when
+        List<Category> allChildCategories = categoryRepository.findAllChildCategories(root1.getId());
+
+        // then
+        assertEquals(5, allChildCategories.size());
+    }
 }

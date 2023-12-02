@@ -30,4 +30,20 @@ public interface CategoryJpaRepository extends JpaRepository<Category, Long> {
                     "WHERE c.is_deleted = false) " +
             "SELECT * FROM LeafCategory")
     List<Category> findLeafCategories();
+
+    @Query(nativeQuery = true, value =
+            "WITH RECURSIVE CategoryTree(id) AS (" +
+                "SELECT c.id " +
+                "FROM category AS c " +
+                "WHERE c.id = :categoryId AND c.is_deleted = false " +
+            "UNION ALL " +
+                "SELECT c.id " +
+                "FROM category AS c " +
+                "INNER JOIN CategoryTree AS ct " +
+                "ON c.master_category_id = ct.id " +
+                "WHERE c.is_deleted = false)" +
+            "SELECT c.* FROM category AS c " +
+            "INNER JOIN CategoryTree AS ct ON c.id = ct.id AND " +
+            "c.is_deleted = false")
+    List<Category> findAllChildCategories(Long categoryId);
 }

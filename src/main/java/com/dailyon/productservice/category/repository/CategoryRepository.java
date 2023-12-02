@@ -12,4 +12,5 @@ public interface CategoryRepository {
     List<Category> findAll();
     List<Category> findByMasterCategoryId(Long masterCategoryId);
     List<Category> findLeafCategories();
+    List<Category> findAllChildCategories(Long categoryId);
 }

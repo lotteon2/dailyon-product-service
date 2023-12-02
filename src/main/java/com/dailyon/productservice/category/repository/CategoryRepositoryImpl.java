@@ -41,4 +41,9 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     public List<Category> findLeafCategories() {
         return categoryJpaRepository.findLeafCategories();
     }
+
+    @Override
+    public List<Category> findAllChildCategories(Long categoryId) {
+        return categoryJpaRepository.findAllChildCategories(categoryId);
+    }
 }
