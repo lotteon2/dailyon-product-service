@@ -22,12 +22,12 @@ public interface CategoryJpaRepository extends JpaRepository<Category, Long> {
                 "WHERE c.id NOT IN (" +
                     "SELECT DISTINCT c.master_category_id " +
                     "FROM category AS c " +
-                    "WHERE c.master_category_id IS NOT NULL) " +
+                    "WHERE c.master_category_id IS NOT NULL AND c.is_deleted = false) " +
                 "UNION ALL " +
                     "SELECT c.id, c.master_category_id, c.name " +
                     "FROM category AS c " +
-                    "INNER JOIN LeafCategory AS lc " +
-                    "ON c.master_category_id = lc.id) " +
+                    "INNER JOIN LeafCategory AS lc ON c.master_category_id = lc.id " +
+                    "WHERE c.is_deleted = false) " +
             "SELECT * FROM LeafCategory")
     List<Category> findLeafCategories();
 }
