@@ -31,9 +31,6 @@ public class CategoryAdminController {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.readAllCategories());
     }
 
-    /*
-     TODO : 리프 카테고리 조회 -> 관리자 사용
-     */
     @GetMapping("/categories/leaf")
     public ResponseEntity<ReadChildrenCategoryListResponse> readLeafCategories(@RequestHeader String role) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.readLeafCategories());
