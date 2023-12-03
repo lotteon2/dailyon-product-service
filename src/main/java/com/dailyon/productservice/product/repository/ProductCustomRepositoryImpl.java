@@ -102,7 +102,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .where(
                         product.deleted.eq(false),
                         product.id.gt(lastId),
-                        nameLike(query),
+                        nameContains(query),
                         codeEq(code),
                         productTypeEq(ProductType.NORMAL)
                 ).fetch();
@@ -135,7 +135,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .where(
                         product.deleted.eq(false),
                         product.id.gt(lastId),
-                        nameLike(query),
+                        nameContains(query),
                         codeEq(code),
                         productTypeEq(ProductType.NORMAL)
                 ).fetch();
@@ -172,8 +172,8 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         return productType == null ? null : product.type.eq(productType);
     }
 
-    private BooleanExpression nameLike(String name) {
-        return name == null ? null : product.name.like("%"+name+"%");
+    private BooleanExpression nameContains(String name) {
+        return name == null ? null : product.name.contains(name);
     }
 
     private BooleanExpression codeEq(String code) {
