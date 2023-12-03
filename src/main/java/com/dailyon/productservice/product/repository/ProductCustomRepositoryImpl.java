@@ -88,6 +88,40 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         return new PageImpl<>(jpaQuery.fetch(), pageable, total);
     }
 
+    @Override
+    public Slice<Product> searchProducts(Long lastId, String query, String code) {
+        Pageable pageable = Pageable.ofSize(8);
+
+        List<Product> idx = jpaQueryFactory
+                .select(product)
+                .from(product)
+                .leftJoin(product.brand, brand).fetchJoin()
+                .leftJoin(product.category, category).fetchJoin()
+                .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
+                .where(
+                        product.deleted.eq(false),
+                        product.id.gt(lastId),
+                        nameLike(query),
+                        codeEq(code),
+                        productTypeEq(ProductType.NORMAL)
+                ).fetch();
+
+        List<Product> result = jpaQueryFactory
+                .select(product)
+                .from(product)
+                .where(product.in(idx))
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        boolean hasNext = false;
+        if(result.size() > pageable.getPageSize()) {
+            result.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+
+        return new SliceImpl<>(result, pageable, hasNext);
+    }
+
     private BooleanExpression brandIdEq(Long brandId) {
         return brandId == null ? null : brand.id.eq(brandId);
     }
@@ -106,5 +140,9 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
     private BooleanExpression nameLike(String name) {
         return name == null ? null : product.name.like("%"+name+"%");
+    }
+
+    private BooleanExpression codeEq(String code) {
+        return code == null ? null : product.code.eq(code);
     }
 }
