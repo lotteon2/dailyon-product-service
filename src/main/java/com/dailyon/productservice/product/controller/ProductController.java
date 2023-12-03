@@ -31,4 +31,11 @@ public class ProductController {
                                                               @RequestParam ProductType type) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.readProductSlice(lastId, brandId, categoryId, gender, type));
     }
+
+    @GetMapping("/search")
+    ResponseEntity<ReadProductSliceResponse> searchProducts(@RequestParam Long lastId,
+                                                            @RequestParam(required = false) String query,
+                                                            @RequestParam(required = false) String code) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.searchProductSlice(lastId, query, code));
+    }
 }
