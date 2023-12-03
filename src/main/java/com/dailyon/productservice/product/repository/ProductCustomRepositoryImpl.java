@@ -5,6 +5,7 @@ import static com.dailyon.productservice.category.entity.QCategory.category;
 import static com.dailyon.productservice.product.entity.QProduct.product;
 import static com.dailyon.productservice.reviewaggregate.entity.QReviewAggregate.reviewAggregate;
 import static com.dailyon.productservice.describeimage.entity.QDescribeImage.describeImage;
+import static com.dailyon.productservice.productstock.entity.QProductStock.productStock;
 
 import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.common.enums.Gender;
@@ -98,6 +99,39 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .leftJoin(product.brand, brand).fetchJoin()
                 .leftJoin(product.category, category).fetchJoin()
                 .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
+                .where(
+                        product.deleted.eq(false),
+                        product.id.gt(lastId),
+                        nameLike(query),
+                        codeEq(code),
+                        productTypeEq(ProductType.NORMAL)
+                ).fetch();
+
+        List<Product> result = jpaQueryFactory
+                .select(product)
+                .from(product)
+                .where(product.in(idx))
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        boolean hasNext = false;
+        if(result.size() > pageable.getPageSize()) {
+            result.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+
+        return new SliceImpl<>(result, pageable, hasNext);
+    }
+
+    @Override
+    public Slice<Product> searchProductsFromOOTD(Long lastId, String query, String code) {
+        Pageable pageable = Pageable.ofSize(8);
+
+        List<Product> idx = jpaQueryFactory
+                .select(product)
+                .from(product)
+                .leftJoin(product.brand, brand).fetchJoin()
+                .leftJoin(product.productStocks, productStock).fetchJoin()
                 .where(
                         product.deleted.eq(false),
                         product.id.gt(lastId),
