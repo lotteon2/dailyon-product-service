@@ -26,7 +26,7 @@ public class ProductFeignControllerTests {
     void readOOTDProductDetailFail() throws Exception {
         // given, when
         ResultActions resultActions = mockMvc.perform(
-                get("/clients/post-image/products")
+                get("/clients/products/post-image")
         );
 
         // then
