@@ -270,6 +270,19 @@ public class ProductServiceTests {
     }
 
     @Test
+    @DisplayName("상품 목록 검색")
+    void searchProductsTest() {
+        // given, when
+        ReadProductSliceResponse response = productService.searchProductSlice(
+                0L, null, null
+        );
+
+        // then
+        assertFalse(response.isHasNext());
+        assertEquals(1, response.getProductResponses().size());
+    }
+
+    @Test
     @DisplayName("상품 목록 조회 - 관리자")
     void readProductPage() {
         // given, when
