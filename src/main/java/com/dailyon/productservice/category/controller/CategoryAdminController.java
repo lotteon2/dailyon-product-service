@@ -4,6 +4,7 @@ import com.dailyon.productservice.category.dto.request.CreateCategoryRequest;
 import com.dailyon.productservice.category.dto.request.UpdateCategoryRequest;
 import com.dailyon.productservice.category.dto.response.CreateCategoryResponse;
 import com.dailyon.productservice.category.dto.response.ReadAllCategoryListResponse;
+import com.dailyon.productservice.category.dto.response.ReadChildrenCategoryListResponse;
 import com.dailyon.productservice.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,9 +31,10 @@ public class CategoryAdminController {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.readAllCategories());
     }
 
-    /*
-     TODO : 리프 카테고리 조회 -> 관리자 사용
-     */
+    @GetMapping("/categories/leaf")
+    public ResponseEntity<ReadChildrenCategoryListResponse> readLeafCategories(@RequestHeader String role) {
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.readLeafCategories());
+    }
 
     @PutMapping("/categories/{categoryId}")
     public ResponseEntity<Void> updateCategory(@RequestHeader String role,

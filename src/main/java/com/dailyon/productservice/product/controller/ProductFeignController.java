@@ -18,7 +18,7 @@ import java.util.List;
 public class ProductFeignController {
     private final ProductService productService;
 
-    @GetMapping("/post-image/products")
+    @GetMapping("/products/post-image")
     ResponseEntity<ReadOOTDProductListResponse> readOOTDProductDetail(@RequestParam List<Long> id) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.readOOTDProductDetails(id));
     }

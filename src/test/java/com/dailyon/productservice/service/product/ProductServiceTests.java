@@ -10,6 +10,7 @@ import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.ProductStockRequest;
 import com.dailyon.productservice.brand.entity.Brand;
 import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.product.dto.response.ReadOOTDSearchSliceResponse;
 import com.dailyon.productservice.product.dto.response.ReadProductPageResponse;
 import com.dailyon.productservice.product.dto.response.ReadProductSliceResponse;
 import com.dailyon.productservice.product.entity.Product;
@@ -257,17 +258,42 @@ public class ProductServiceTests {
     void readProductSlice() {
         // given, when
         ReadProductSliceResponse response = productService.readProductSlice(
+                0L,
                 null,
                 null,
                 null,
-                ProductType.valueOf("NORMAL"),
-                null,
-                PageRequest.of(0, 8)
+                ProductType.valueOf("NORMAL")
         );
 
         // then
         assertFalse(response.isHasNext());
         assertEquals(1, response.getProductResponses().size());
+    }
+
+    @Test
+    @DisplayName("상품 목록 검색")
+    void searchProductsTest() {
+        // given, when
+        ReadProductSliceResponse response = productService.searchProductSlice(
+                0L, null, null
+        );
+
+        // then
+        assertFalse(response.isHasNext());
+        assertEquals(1, response.getProductResponses().size());
+    }
+
+    @Test
+    @DisplayName("OOTD에서 상품 검색")
+    void searchProductsFromOOTDTest() {
+        // given, when
+        ReadOOTDSearchSliceResponse response = productService.searchFromOOTD(
+                0L, null, null
+        );
+
+        // then
+        assertFalse(response.isHasNext());
+        assertEquals(1, response.getProducts().size());
     }
 
     @Test
