@@ -16,6 +16,7 @@ public class ReadOOTDProductResponse {
     public static ReadOOTDProductResponse fromEntity(Product product) {
         return ReadOOTDProductResponse.builder()
                 .id(product.getId())
+                .name(product.getName())
                 .brandName(product.getBrand().getName())
                 .imgUrl(product.getImgUrl())
                 .price(product.getPrice())
