@@ -24,6 +24,9 @@ spring:
   config:
     activate:
       on-profile: test
+  sql:
+    init:
+      mode: never
 
 cloud:
   aws:
