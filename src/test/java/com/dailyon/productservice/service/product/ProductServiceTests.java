@@ -274,9 +274,8 @@ public class ProductServiceTests {
     @DisplayName("상품 목록 검색")
     void searchProductsTest() {
         // given, when
-        ReadProductSliceResponse response = productService.searchProductSlice(
-                0L, null, null
-        );
+        ReadProductSliceResponse response
+                = productService.searchProductSlice(0L, "TEST");
 
         // then
         assertFalse(response.isHasNext());
@@ -287,9 +286,8 @@ public class ProductServiceTests {
     @DisplayName("OOTD에서 상품 검색")
     void searchProductsFromOOTDTest() {
         // given, when
-        ReadOOTDSearchSliceResponse response = productService.searchFromOOTD(
-                0L, null, null
-        );
+        ReadOOTDSearchSliceResponse response
+                = productService.searchFromOOTD(0L, "TEST");
 
         // then
         assertFalse(response.isHasNext());

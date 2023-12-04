@@ -33,15 +33,13 @@ public class ProductController {
 
     @GetMapping("/search")
     ResponseEntity<ReadProductSliceResponse> searchProducts(@RequestParam Long lastId,
-                                                            @RequestParam(required = false) String query,
-                                                            @RequestParam(required = false) String code) {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.searchProductSlice(lastId, query, code));
+                                                            @RequestParam(required = false) String query) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.searchProductSlice(lastId, query));
     }
 
     @GetMapping("/search/ootd")
     ResponseEntity<ReadOOTDSearchSliceResponse> searchProductsFromOOTD(@RequestParam Long lastId,
-                                                                       @RequestParam(required = false) String query,
-                                                                       @RequestParam(required = false) String code) {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.searchFromOOTD(lastId, query, code));
+                                                                       @RequestParam String query) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.searchFromOOTD(lastId, query));
     }
 }

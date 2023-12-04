@@ -235,12 +235,12 @@ public class ProductService { // TODO : Feign할 때 Facade 계층 추가
         return ReadProductSliceResponse.fromEntity(productRepository.findProductSlice(lastId, brandId, childCategories, gender, type));
     }
 
-    public ReadProductSliceResponse searchProductSlice(Long lastId, String query, String code) {
-        return ReadProductSliceResponse.fromEntity(productRepository.searchProducts(lastId, query, code));
+    public ReadProductSliceResponse searchProductSlice(Long lastId, String query) {
+        return ReadProductSliceResponse.fromEntity(productRepository.searchProducts(lastId, query));
     }
 
-    public ReadOOTDSearchSliceResponse searchFromOOTD(Long lastId, String query, String code) {
-        return ReadOOTDSearchSliceResponse.fromEntity(productRepository.searchProductsFromOOTD(lastId, query, code));
+    public ReadOOTDSearchSliceResponse searchFromOOTD(Long lastId, String query) {
+        return ReadOOTDSearchSliceResponse.fromEntity(productRepository.searchProductsFromOOTD(lastId, query));
     }
 
     public ReadProductPageResponse readProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable) {

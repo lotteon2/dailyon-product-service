@@ -90,7 +90,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     }
 
     @Override
-    public Slice<Product> searchProducts(Long lastId, String query, String code) {
+    public Slice<Product> searchProducts(Long lastId, String query) {
         Pageable pageable = Pageable.ofSize(8);
 
         List<Product> idx = jpaQueryFactory
@@ -102,8 +102,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .where(
                         product.deleted.eq(false),
                         product.id.gt(lastId),
-                        nameContains(query),
-                        codeEq(code),
+                        nameContains(query).or(codeEq(query)),
                         productTypeEq(ProductType.NORMAL)
                 ).fetch();
 
@@ -124,7 +123,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     }
 
     @Override
-    public Slice<Product> searchProductsFromOOTD(Long lastId, String query, String code) {
+    public Slice<Product> searchProductsFromOOTD(Long lastId, String query) {
         Pageable pageable = Pageable.ofSize(8);
 
         List<Product> idx = jpaQueryFactory
@@ -135,8 +134,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .where(
                         product.deleted.eq(false),
                         product.id.gt(lastId),
-                        nameContains(query),
-                        codeEq(code),
+                        nameContains(query).or(codeEq(query)),
                         productTypeEq(ProductType.NORMAL)
                 ).fetch();
 
