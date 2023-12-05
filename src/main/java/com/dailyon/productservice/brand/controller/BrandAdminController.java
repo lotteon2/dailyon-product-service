@@ -18,14 +18,12 @@ public class BrandAdminController {
     private final BrandService brandService;
 
     @PostMapping("/brands")
-    public ResponseEntity<CreateBrandResponse> createBrand(@RequestHeader(name = "Role") String role,
-                                                           @Valid @RequestBody CreateBrandRequest createBrandRequest) {
+    public ResponseEntity<CreateBrandResponse> createBrand(@Valid @RequestBody CreateBrandRequest createBrandRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(brandService.createBrand(createBrandRequest));
     }
 
     @PutMapping("/brands/{brandId}")
-    public ResponseEntity<Void> updateBrand(@RequestHeader(name = "Role") String role,
-                                            @PathVariable Long brandId,
+    public ResponseEntity<Void> updateBrand(@PathVariable Long brandId,
                                             @Valid @RequestBody UpdateBrandRequest updateBrandRequest) {
         brandService.updateBrand(brandId, updateBrandRequest);
         return ResponseEntity.status(HttpStatus.OK).build();
