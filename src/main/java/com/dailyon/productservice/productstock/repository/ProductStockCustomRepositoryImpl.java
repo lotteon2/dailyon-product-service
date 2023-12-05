@@ -12,6 +12,7 @@ import java.util.List;
 import static com.dailyon.productservice.product.entity.QProduct.product;
 import static com.dailyon.productservice.productsize.entity.QProductSize.productSize;
 import static com.dailyon.productservice.productstock.entity.QProductStock.productStock;
+import static com.dailyon.productservice.category.entity.QCategory.category;
 
 
 @Repository
@@ -34,6 +35,7 @@ public class ProductStockCustomRepositoryImpl implements ProductStockCustomRepos
 
         return jpaQueryFactory.selectFrom(productStock)
                 .leftJoin(productStock.product, product).fetchJoin()
+                .leftJoin(productStock.product.category, category).fetchJoin()
                 .leftJoin(productStock.productSize, productSize).fetchJoin()
                 .where(builder)
                 .fetch();
