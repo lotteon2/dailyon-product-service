@@ -8,11 +8,13 @@ import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.brand.repository.BrandRepository;
 import com.dailyon.productservice.category.repository.CategoryRepository;
+import com.dailyon.productservice.product.dto.request.ReadOrderProductRequest;
 import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.product.repository.ProductRepository;
 import com.dailyon.productservice.productsize.entity.ProductSize;
 import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import com.dailyon.productservice.productstock.entity.ProductStock;
+import com.dailyon.productservice.productstock.entity.ProductStockId;
 import com.dailyon.productservice.productstock.repository.ProductStockRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,8 +24,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 @Transactional
@@ -45,7 +49,9 @@ public class ProductStockRepositoryTests {
     ProductSizeRepository productSizeRepository;
 
     private Product product;
+    private Product product1;
     private List<ProductSize> productSizes = new ArrayList<>();
+    private List<ProductStock> productStocks = new ArrayList<>();
 
     @BeforeEach
     void before() {
@@ -57,9 +63,21 @@ public class ProductStockRepositoryTests {
                 "name", "code", "imgUrl", 1000
         ));
 
+        product1 = productRepository.save(Product.create(
+                brand, category, ProductType.NORMAL, Gender.COMMON,
+                "name1", "code1", "imgUrl", 2000
+        ));
+
         for(int i=0; i<3; i++) {
             productSizes.add(productSizeRepository.save(ProductSize.create(category, "Product Size_"+i)));
         }
+
+        for(ProductSize productSize: productSizes) {
+            productStocks.add(ProductStock.create(product, productSize, 50L));
+            productStocks.add(ProductStock.create(product1, productSize, 50L));
+        }
+
+        productStocks = productStockRepository.saveAll(productStocks);
     }
 
     @Test
@@ -76,5 +94,22 @@ public class ProductStockRepositoryTests {
 
         // then
         assertEquals(productStocks.size(), created.size());
+    }
+
+    @Test
+    @DisplayName("주문 상품 목록 조회 시 상품 정보, 재고 조회")
+    void readOrderProductsTest() {
+        // given
+        List<ReadOrderProductRequest.ProductDto> productDtos = new ArrayList<>();
+        productDtos.add(ReadOrderProductRequest.ProductDto.builder().productId(product.getId()).sizeId(productSizes.get(0).getId()).build());
+        productDtos.add(ReadOrderProductRequest.ProductDto.builder().productId(product.getId()).sizeId(productSizes.get(1).getId()).build());
+
+        productDtos.add(ReadOrderProductRequest.ProductDto.builder().productId(product1.getId()).sizeId(productSizes.get(1).getId()).build());
+        productDtos.add(ReadOrderProductRequest.ProductDto.builder().productId(product1.getId()).sizeId(productSizes.get(2).getId()).build());
+        // when
+        List<ProductStock> orderProducts = productStockRepository.findOrderProductsBy(productDtos);
+
+        // then
+        assertEquals(productDtos.size(), orderProducts.size());
     }
 }

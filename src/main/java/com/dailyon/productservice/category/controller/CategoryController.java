@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin("*") // TODO : gateway 이후 삭제
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
