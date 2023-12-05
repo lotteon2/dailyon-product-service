@@ -35,7 +35,6 @@ public class ProductStockCustomRepositoryImpl implements ProductStockCustomRepos
 
         return jpaQueryFactory.selectFrom(productStock)
                 .leftJoin(productStock.product, product).fetchJoin()
-                .leftJoin(productStock.product.category, category).fetchJoin()
                 .leftJoin(productStock.productSize, productSize).fetchJoin()
                 .where(builder)
                 .fetch();
