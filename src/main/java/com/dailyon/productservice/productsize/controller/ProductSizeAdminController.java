@@ -19,20 +19,17 @@ public class ProductSizeAdminController {
     private final ProductSizeService productSizeService;
 
     @PostMapping("/product-size")
-    public ResponseEntity<CreateProductSizeResponse> createProductSize(@RequestHeader String role,
-                                                                       @Valid @RequestBody CreateProductSizeRequest createProductSizeRequest) {
+    public ResponseEntity<CreateProductSizeResponse> createProductSize(@Valid @RequestBody CreateProductSizeRequest createProductSizeRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productSizeService.createProductSize(createProductSizeRequest));
     }
 
     @GetMapping("/product-size/{categoryId}")
-    public ResponseEntity<ReadProductSizeListResponse> readProductSizeList(@RequestHeader String role,
-                                                                           @PathVariable Long categoryId) {
+    public ResponseEntity<ReadProductSizeListResponse> readProductSizeList(@PathVariable Long categoryId) {
         return ResponseEntity.status(HttpStatus.OK).body(productSizeService.readProductSizeListByCategory(categoryId));
     }
 
     @PutMapping("/product-size/{productSizeId}")
-    public ResponseEntity<Void> updateProductSizeName(@RequestHeader String role,
-                                                      @PathVariable Long productSizeId,
+    public ResponseEntity<Void> updateProductSizeName(@PathVariable Long productSizeId,
                                                       @Valid @RequestBody UpdateProductSizeRequest updateProductSizeRequest) {
         productSizeService.updateProductSizeName(productSizeId, updateProductSizeRequest);
         return ResponseEntity.status(HttpStatus.OK).build();

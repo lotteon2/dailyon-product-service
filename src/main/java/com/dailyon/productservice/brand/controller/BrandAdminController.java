@@ -17,10 +17,6 @@ import javax.validation.Valid;
 public class BrandAdminController {
     private final BrandService brandService;
 
-    /*
-     TODO : role Authorization 관련 코드 공통화
-     */
-
     @PostMapping("/brands")
     public ResponseEntity<CreateBrandResponse> createBrand(@RequestHeader(name = "Role") String role,
                                                            @Valid @RequestBody CreateBrandRequest createBrandRequest) {
