@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@CrossOrigin("*") // TODO : gateway 이후 삭제
 @RestController
 @RequestMapping("/admin")
 @RequiredArgsConstructor
