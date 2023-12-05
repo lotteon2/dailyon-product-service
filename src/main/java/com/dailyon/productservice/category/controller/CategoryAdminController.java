@@ -20,24 +20,22 @@ public class CategoryAdminController {
     private final CategoryService categoryService;
 
     @PostMapping("/categories")
-    public ResponseEntity<CreateCategoryResponse> createCategory(@RequestHeader String role,
-                                                                 @Valid @RequestBody CreateCategoryRequest createCategoryRequest) {
+    public ResponseEntity<CreateCategoryResponse> createCategory(@Valid @RequestBody CreateCategoryRequest createCategoryRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(createCategoryRequest));
     }
 
     @GetMapping("/categories")
-    public ResponseEntity<ReadAllCategoryListResponse> readAllCategories(@RequestHeader String role) {
+    public ResponseEntity<ReadAllCategoryListResponse> readAllCategories() {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.readAllCategories());
     }
 
     @GetMapping("/categories/leaf")
-    public ResponseEntity<ReadChildrenCategoryListResponse> readLeafCategories(@RequestHeader String role) {
+    public ResponseEntity<ReadChildrenCategoryListResponse> readLeafCategories() {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.readLeafCategories());
     }
 
     @PutMapping("/categories/{categoryId}")
-    public ResponseEntity<Void> updateCategory(@RequestHeader String role,
-                                               @PathVariable Long categoryId,
+    public ResponseEntity<Void> updateCategory(@PathVariable Long categoryId,
                                                @Valid @RequestBody UpdateCategoryRequest updateCategoryRequest) {
         categoryService.updateCategoryName(categoryId, updateCategoryRequest);
         return ResponseEntity.status(HttpStatus.OK).build();

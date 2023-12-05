@@ -23,21 +23,18 @@ public class ProductAdminController {
     private final ProductService productService;
 
     @PostMapping("/products")
-    public ResponseEntity<CreateProductResponse> createProduct(@RequestHeader String role,
-                                                               @Valid @RequestBody CreateProductRequest createProductRequest) {
+    public ResponseEntity<CreateProductResponse> createProduct(@Valid @RequestBody CreateProductRequest createProductRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(createProductRequest));
     }
 
     @PutMapping("/products/{productId}")
-    public ResponseEntity<UpdateProductResponse> updateProduct(@RequestHeader String role,
-                                                               @PathVariable Long productId,
+    public ResponseEntity<UpdateProductResponse> updateProduct(@PathVariable Long productId,
                                                                @RequestBody UpdateProductRequest updateProductRequest) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(productId, updateProductRequest));
     }
 
     @GetMapping("/products")
-    ResponseEntity<ReadProductPageResponse> readProductPage(@RequestHeader String role,
-                                                            @RequestParam(required = false) Long brandId,
+    ResponseEntity<ReadProductPageResponse> readProductPage(@RequestParam(required = false) Long brandId,
                                                             @RequestParam(required = false) Long categoryId,
                                                             @RequestParam ProductType type,
                                                             @PageableDefault Pageable pageable) {
