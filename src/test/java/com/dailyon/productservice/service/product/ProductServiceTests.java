@@ -80,6 +80,8 @@ public class ProductServiceTests {
     private List<ProductStockRequest> productStocks = new ArrayList<>();
     private List<String> describeImages = new ArrayList<>();
 
+    private Product product;
+
     @BeforeEach
     void before() {
         brand = brandRepository.save(Brand.createBrand("brand"));
@@ -94,7 +96,7 @@ public class ProductServiceTests {
         describeImages.add("testDescribeImg.jpg");
         describeImages.add("testDescribeImg1.jpg");
 
-        Product product = productRepository.save(Product.create(
+        product = productRepository.save(Product.create(
                 brand,
                 category,
                 ProductType.NORMAL,

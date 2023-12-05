@@ -165,7 +165,7 @@ public class ProductService { // TODO : Feign할 때 Facade 계층 추가
             throw new NotExistsException(NotExistsException.PRODUCT_SIZE_NOT_FOUND);
         }
 
-        List<ProductStock> productStocks = productStockRepository.findProductsByProduct(product);
+        List<ProductStock> productStocks = productStockRepository.findProductStocksByProductOrderByProductSize(product);
         // TODO : REFACTOR for-for-if
         for(ProductStockRequest productStockRequest: updateProductRequest.getProductStocks()) {
             for(ProductStock productStock: productStocks) {
