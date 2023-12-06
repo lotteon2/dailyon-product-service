@@ -19,7 +19,7 @@ public class ReadBrandListResponse {
     public static ReadBrandListResponse fromEntity(List<Brand> brands) {
         return ReadBrandListResponse.builder()
                 .brandResponses(brands.stream()
-                        .map(brand -> new ReadBrandResponse(brand.getId(), brand.getName()))
+                        .map(ReadBrandResponse::fromEntity)
                         .collect(Collectors.toList()))
                 .build();
     }
