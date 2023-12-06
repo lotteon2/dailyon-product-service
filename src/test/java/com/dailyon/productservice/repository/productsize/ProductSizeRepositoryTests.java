@@ -11,6 +11,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,5 +67,20 @@ public class ProductSizeRepositoryTests {
 
         // then
         assertEquals(result.size(), productSizes.size());
+    }
+
+    @Test
+    @DisplayName("카테고리에 해당하는 치수 페이징 조회")
+    public void readProductSizePage() {
+        // given
+        Long categoryId = category.getId();
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "updatedAt"));
+
+        // when
+        Page<ProductSize> result = productSizeRepository.readProductSizePagesByCategoryId(categoryId, pageable);
+
+        // then
+        assertEquals(3, result.getTotalElements());
+        assertEquals(1, result.getTotalPages());
     }
 }

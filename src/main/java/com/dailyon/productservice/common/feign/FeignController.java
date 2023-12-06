@@ -1,8 +1,8 @@
 package com.dailyon.productservice.common.feign;
 
-import com.dailyon.productservice.product.dto.request.ReadOrderProductRequest;
-import com.dailyon.productservice.product.dto.response.ReadOOTDProductListResponse;
-import com.dailyon.productservice.product.dto.response.ReadOrderProductListResponse;
+import com.dailyon.productservice.common.feign.request.OrderProductDto;
+import com.dailyon.productservice.common.feign.response.ReadOOTDProductListResponse;
+import com.dailyon.productservice.common.feign.response.ReadOrderProductListResponse;
 import com.dailyon.productservice.product.service.ProductService;
 import com.dailyon.productservice.productstock.service.ProductStockService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @RestController
@@ -26,8 +27,7 @@ public class FeignController {
     }
 
     @PostMapping("/orders")
-    ResponseEntity<ReadOrderProductListResponse> readOrderProducts(@Valid
-                                                                   @RequestBody ReadOrderProductRequest request) {
+    ResponseEntity<ReadOrderProductListResponse> readOrderProducts(@Valid @Size(min = 1) @RequestBody List<OrderProductDto> request) {
         return ResponseEntity.status(HttpStatus.OK).body(productStockService.readOrderProducts(request));
     }
 }

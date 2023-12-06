@@ -1,4 +1,4 @@
-package com.dailyon.productservice.product.dto.response;
+package com.dailyon.productservice.common.feign.response;
 
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.productstock.entity.ProductStock;

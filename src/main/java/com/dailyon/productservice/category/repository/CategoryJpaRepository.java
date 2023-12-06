@@ -6,14 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CategoryJpaRepository extends JpaRepository<Category, Long> {
-    boolean existsByNameAndDeletedIsFalse(String name);
-    Optional<Category> findByIdAndDeletedIsFalse(Long id);
-    List<Category> findByDeletedIsFalse();
-    List<Category> findByDeletedIsFalseAndMasterCategory_Id(Long masterCategoryId);
+    boolean existsByName(String name);
+    List<Category> findByMasterCategory_Id(Long masterCategoryId);
 
     @Query(nativeQuery = true, value =
             "WITH RECURSIVE LeafCategory(id, master_category_id, name) AS (" +

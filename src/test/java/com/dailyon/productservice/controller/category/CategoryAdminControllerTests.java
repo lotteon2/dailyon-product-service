@@ -200,4 +200,20 @@ public class CategoryAdminControllerTests {
 
         resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+
+    @Test
+    @DisplayName("카테고리 페이지 조회")
+    void readCategoryPages() throws Exception {
+        // given, when
+        ResultActions resultActions = mockMvc.perform(
+                get("/admin/page/categories")
+        );
+
+        // then
+        resultActions
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.responses.size()").value(0))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value(0))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPages").value(0));
+    }
 }

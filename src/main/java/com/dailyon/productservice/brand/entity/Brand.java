@@ -4,6 +4,7 @@ import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.common.entity.BaseEntity;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Where(clause = "is_deleted = false")
 public class Brand extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +36,7 @@ public class Brand extends BaseEntity {
         return Brand.builder().name(name).build();
     }
 
-    public void updateName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 }

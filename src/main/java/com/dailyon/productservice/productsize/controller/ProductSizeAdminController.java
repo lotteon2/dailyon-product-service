@@ -4,8 +4,12 @@ import com.dailyon.productservice.productsize.dto.request.CreateProductSizeReque
 import com.dailyon.productservice.productsize.dto.request.UpdateProductSizeRequest;
 import com.dailyon.productservice.productsize.dto.response.CreateProductSizeResponse;
 import com.dailyon.productservice.productsize.dto.response.ReadProductSizeListResponse;
+import com.dailyon.productservice.productsize.dto.response.ReadProductSizePageResponse;
 import com.dailyon.productservice.productsize.service.ProductSizeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +30,12 @@ public class ProductSizeAdminController {
     @GetMapping("/product-size/{categoryId}")
     public ResponseEntity<ReadProductSizeListResponse> readProductSizeList(@PathVariable Long categoryId) {
         return ResponseEntity.status(HttpStatus.OK).body(productSizeService.readProductSizeListByCategory(categoryId));
+    }
+
+    @GetMapping("/page/product-size/{categoryId}")
+    public ResponseEntity<ReadProductSizePageResponse> readProductSizePage(@PathVariable Long categoryId,
+                                                                           @PageableDefault(sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(productSizeService.readProductSizePage(categoryId, pageable));
     }
 
     @PutMapping("/product-size/{productSizeId}")
