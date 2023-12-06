@@ -2,11 +2,12 @@ package com.dailyon.productservice.common.interceptor;
 
 import com.dailyon.productservice.common.exception.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Iterator;
 
 public class SimpleAuthorizeInterceptor implements HandlerInterceptor {
 
@@ -21,6 +22,7 @@ public class SimpleAuthorizeInterceptor implements HandlerInterceptor {
     }
 
     private boolean isAuthorized(HttpServletRequest request) {
-        return request.getHeader("role") != null && request.getHeader("role").equals("ADMIN");
+        String role = request.getHeader("role");
+        return role != null && role.equals("ADMIN");
     }
 }

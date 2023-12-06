@@ -6,18 +6,21 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-// TODO : 게이트웨이 설정 이후 삭제
+
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Override
+    @Override // TODO : 게이트웨이 설정 이후 삭제
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("*");
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedHeaders("*")
+                .allowedMethods("*");
     }
 
-    @Override
+    /*@Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new SimpleAuthorizeInterceptor())
                 .addPathPatterns("/admin/**");
-    }
+    }*/
 }
