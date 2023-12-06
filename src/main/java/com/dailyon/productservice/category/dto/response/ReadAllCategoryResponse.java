@@ -17,8 +17,6 @@ public class ReadAllCategoryResponse {
     private String name;
     private Long masterCategoryId;
     private String masterCategoryName;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
     public static ReadAllCategoryResponse fromEntity(Category category) {
         return ReadAllCategoryResponse.builder()
@@ -26,8 +24,6 @@ public class ReadAllCategoryResponse {
                 .masterCategoryId(category.getMasterCategory() == null ? null : category.getMasterCategory().getId())
                 .masterCategoryName(category.getMasterCategory() == null ? null : category.getMasterCategory().getName())
                 .name(category.getName())
-                .createdAt(category.getCreatedAt())
-                .updatedAt(category.getUpdatedAt())
                 .build();
     }
 }
