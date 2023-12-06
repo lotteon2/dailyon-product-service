@@ -153,4 +153,35 @@ public class ProductSizeAdminControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.productSizes").isArray())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.productSizes.size()").value(3));
     }
+
+    @Test
+    @DisplayName("치수 페이징 조회")
+    void readProductSizePages() throws Exception {
+        // given
+        CreateCategoryResponse categoryForProductList = categoryService.createCategory(CreateCategoryRequest.builder()
+                .masterCategoryId(null)
+                .categoryName("CATEGORY_FOR_LIST")
+                .build());
+
+        List<CreateProductSizeResponse> productSizes = new ArrayList<>();
+        for(int i=0; i<3; i++) {
+            productSizes.add(productSizeService.createProductSize(CreateProductSizeRequest.builder()
+                    .categoryId(categoryForProductList.getCategoryId())
+                    .name("PRODUCT_SIZE_"+i)
+                    .build()));
+        }
+
+        entityManager.clear();
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                get("/admin/page/product-size/"+categoryForProductList.getCategoryId())
+                        .header("role", "ADMIN")
+        );
+
+        resultActions
+                .andExpect(MockMvcResultMatchers.jsonPath("$.productSizes.size()").value(3))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value(3))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPages").value(1));
+    }
 }
