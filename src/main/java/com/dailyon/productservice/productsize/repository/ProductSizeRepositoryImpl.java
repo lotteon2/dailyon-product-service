@@ -3,6 +3,8 @@ package com.dailyon.productservice.productsize.repository;
 import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.productsize.entity.ProductSize;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -37,5 +39,10 @@ public class ProductSizeRepositoryImpl implements ProductSizeRepository {
     @Override
     public Optional<ProductSize> readProductSizeById(Long id) {
         return productSizeJpaRepository.findProductSizeById(id);
+    }
+
+    @Override
+    public Page<ProductSize> readProductSizePagesByCategoryId(Long categoryId, Pageable pageable) {
+        return productSizeJpaRepository.findProductSizePagesByCategoryId(categoryId, pageable);
     }
 }
