@@ -2,15 +2,13 @@ package com.dailyon.productservice.category.service;
 
 import com.dailyon.productservice.category.dto.request.CreateCategoryRequest;
 import com.dailyon.productservice.category.dto.request.UpdateCategoryRequest;
-import com.dailyon.productservice.category.dto.response.CreateCategoryResponse;
-import com.dailyon.productservice.category.dto.response.ReadAllCategoryListResponse;
-import com.dailyon.productservice.category.dto.response.ReadBreadCrumbListResponse;
-import com.dailyon.productservice.category.dto.response.ReadChildrenCategoryListResponse;
+import com.dailyon.productservice.category.dto.response.*;
 import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.common.exception.UniqueException;
 import com.dailyon.productservice.category.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,5 +67,9 @@ public class CategoryService {
 
     public ReadChildrenCategoryListResponse readLeafCategories() {
         return ReadChildrenCategoryListResponse.fromEntity(categoryRepository.findLeafCategories());
+    }
+
+    public ReadCategoryPageResponse readCategoryPages(Pageable pageable) {
+        return ReadCategoryPageResponse.fromEntity(categoryRepository.findCategoryPages(pageable));
     }
 }
