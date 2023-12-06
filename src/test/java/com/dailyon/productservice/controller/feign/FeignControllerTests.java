@@ -1,6 +1,6 @@
 package com.dailyon.productservice.controller.feign;
 
-import com.dailyon.productservice.product.dto.request.ReadOrderProductRequest;
+import com.dailyon.productservice.common.feign.request.OrderProductDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -45,9 +46,7 @@ public class FeignControllerTests {
     @DisplayName("request body의 리스트가 비어선 안된다")
     void readOrderProductsFail() throws Exception {
         // given
-        ReadOrderProductRequest request = ReadOrderProductRequest.builder()
-                .productRequest(new ArrayList<>())
-                .build();
+        List<OrderProductDto> request = new ArrayList<>();
 
         // when
         ResultActions resultActions = mockMvc.perform(

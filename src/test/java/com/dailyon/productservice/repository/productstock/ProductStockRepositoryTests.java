@@ -8,13 +8,12 @@ import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.brand.repository.BrandRepository;
 import com.dailyon.productservice.category.repository.CategoryRepository;
-import com.dailyon.productservice.product.dto.request.ReadOrderProductRequest;
+import com.dailyon.productservice.common.feign.request.OrderProductDto;
 import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.product.repository.ProductRepository;
 import com.dailyon.productservice.productsize.entity.ProductSize;
 import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import com.dailyon.productservice.productstock.entity.ProductStock;
-import com.dailyon.productservice.productstock.entity.ProductStockId;
 import com.dailyon.productservice.productstock.repository.ProductStockRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,10 +23,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @SpringBootTest
 @Transactional
@@ -100,12 +97,12 @@ public class ProductStockRepositoryTests {
     @DisplayName("주문 상품 목록 조회 시 상품 정보, 재고 조회")
     void readOrderProductsTest() {
         // given
-        List<ReadOrderProductRequest.ProductDto> productDtos = new ArrayList<>();
-        productDtos.add(ReadOrderProductRequest.ProductDto.builder().productId(product.getId()).sizeId(productSizes.get(0).getId()).build());
-        productDtos.add(ReadOrderProductRequest.ProductDto.builder().productId(product.getId()).sizeId(productSizes.get(1).getId()).build());
+        List<OrderProductDto> productDtos = new ArrayList<>();
+        productDtos.add(OrderProductDto.builder().productId(product.getId()).sizeId(productSizes.get(0).getId()).build());
+        productDtos.add(OrderProductDto.builder().productId(product.getId()).sizeId(productSizes.get(1).getId()).build());
 
-        productDtos.add(ReadOrderProductRequest.ProductDto.builder().productId(product1.getId()).sizeId(productSizes.get(1).getId()).build());
-        productDtos.add(ReadOrderProductRequest.ProductDto.builder().productId(product1.getId()).sizeId(productSizes.get(2).getId()).build());
+        productDtos.add(OrderProductDto.builder().productId(product1.getId()).sizeId(productSizes.get(1).getId()).build());
+        productDtos.add(OrderProductDto.builder().productId(product1.getId()).sizeId(productSizes.get(2).getId()).build());
         // when
         List<ProductStock> orderProducts = productStockRepository.findOrderProductsBy(productDtos);
 

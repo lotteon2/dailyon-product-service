@@ -8,9 +8,9 @@ import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
+import com.dailyon.productservice.common.feign.request.OrderProductDto;
 import com.dailyon.productservice.product.dto.request.ProductStockRequest;
-import com.dailyon.productservice.product.dto.request.ReadOrderProductRequest;
-import com.dailyon.productservice.product.dto.response.ReadOrderProductListResponse;
+import com.dailyon.productservice.common.feign.response.ReadOrderProductListResponse;
 import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.product.repository.ProductRepository;
 import com.dailyon.productservice.productsize.entity.ProductSize;
@@ -96,16 +96,12 @@ public class ProductStockServiceTests {
     @Test
     @DisplayName("주문 시 상품 정보 조회")
     void test1() {
-        List<ReadOrderProductRequest.ProductDto> list = new ArrayList<>();
-        list.add(ReadOrderProductRequest.ProductDto.builder().productId(product.getId()).sizeId(productSize1.getId()).build());
-        list.add(ReadOrderProductRequest.ProductDto.builder().productId(product.getId()).sizeId(productSize2.getId()).build());
-
-        ReadOrderProductRequest request = ReadOrderProductRequest.builder()
-                .productRequest(list)
-                .build();
+        List<OrderProductDto> request = new ArrayList<>();
+        request.add(OrderProductDto.builder().productId(product.getId()).sizeId(productSize1.getId()).build());
+        request.add(OrderProductDto.builder().productId(product.getId()).sizeId(productSize2.getId()).build());
 
         ReadOrderProductListResponse response = productStockService.readOrderProducts(request);
 
-        assertEquals(request.getProductRequest().size(), response.getResponse().size());
+        assertEquals(request.size(), response.getResponse().size());
     }
 }

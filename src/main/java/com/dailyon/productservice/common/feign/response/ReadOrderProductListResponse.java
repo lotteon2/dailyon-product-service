@@ -1,4 +1,4 @@
-package com.dailyon.productservice.product.dto.response;
+package com.dailyon.productservice.common.feign.response;
 import com.dailyon.productservice.productstock.entity.ProductStock;
 import lombok.Builder;
 import lombok.Getter;
