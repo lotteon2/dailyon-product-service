@@ -2,6 +2,8 @@ package com.dailyon.productservice.category.repository;
 
 import com.dailyon.productservice.category.entity.Category;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -45,5 +47,10 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     @Override
     public List<Category> findAllChildCategories(Long categoryId) {
         return categoryJpaRepository.findAllChildCategories(categoryId);
+    }
+
+    @Override
+    public Page<Category> findCategoryPages(Pageable pageable) {
+        return categoryJpaRepository.findAll(pageable);
     }
 }
