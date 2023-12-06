@@ -149,4 +149,20 @@ public class BrandAdminControllerTests {
         // then
         resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+
+    @Test
+    @DisplayName("브랜드 페이지 조회")
+    void readBrandPageTest() throws Exception {
+        // given, when
+        ResultActions resultActions = mockMvc.perform(
+                get("/admin/page/brands")
+        );
+
+        // then
+        resultActions
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.brandResponses.size()").value(0))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value(0))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPages").value(0));
+    }
 }

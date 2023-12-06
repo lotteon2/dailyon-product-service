@@ -2,6 +2,7 @@ package com.dailyon.productservice.service.brand;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.dailyon.productservice.brand.dto.response.ReadBrandPageResponse;
 import com.dailyon.productservice.brand.service.BrandService;
 import com.dailyon.productservice.brand.dto.request.CreateBrandRequest;
 import com.dailyon.productservice.brand.dto.request.UpdateBrandRequest;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -113,5 +116,23 @@ public class BrandServiceTests {
         assertThrows(UniqueException.class, () ->
                 brandService.updateBrand(createBrandResponse.getBrandId(), updateBrandRequest)
         );
+    }
+
+    @Test
+    @DisplayName("페이지네이션 브랜드 조회")
+    void readBrandPageTest() {
+        // given
+        for(int i=0; i<5; i++) {
+            brandService.createBrand(CreateBrandRequest.builder().name("test_"+i).build());
+        }
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "updatedAt"));
+
+        // when
+        ReadBrandPageResponse response = brandService.readBrandPage(pageRequest);
+
+        // then
+        assertEquals(1, response.getTotalPages());
+        assertEquals(5, response.getTotalElements());
+        assertEquals("test_4", response.getBrandResponses().get(0).getName());
     }
 }

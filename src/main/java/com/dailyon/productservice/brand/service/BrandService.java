@@ -4,11 +4,13 @@ import com.dailyon.productservice.brand.dto.request.CreateBrandRequest;
 import com.dailyon.productservice.brand.dto.request.UpdateBrandRequest;
 import com.dailyon.productservice.brand.dto.response.CreateBrandResponse;
 import com.dailyon.productservice.brand.dto.response.ReadBrandListResponse;
+import com.dailyon.productservice.brand.dto.response.ReadBrandPageResponse;
 import com.dailyon.productservice.brand.entity.Brand;
 import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.common.exception.UniqueException;
 import com.dailyon.productservice.brand.repository.BrandRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +45,10 @@ public class BrandService {
         if(brandRepository.isDuplicatedName(updateBrandRequest.getName())) {
             throw new UniqueException(UniqueException.DUPLICATE_BRAND_NAME);
         }
-        brand.updateName(updateBrandRequest.getName());
+        brand.setName(updateBrandRequest.getName());
+    }
+
+    public ReadBrandPageResponse readBrandPage(Pageable pageable) {
+        return ReadBrandPageResponse.fromEntity(brandRepository.readBrandPages(pageable));
     }
 }
