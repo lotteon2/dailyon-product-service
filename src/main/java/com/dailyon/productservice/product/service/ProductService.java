@@ -3,6 +3,7 @@ package com.dailyon.productservice.product.service;
 import com.dailyon.productservice.brand.entity.Brand;
 import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.common.exception.UniqueException;
+import com.dailyon.productservice.common.feign.response.ReadOOTDProductListResponse;
 import com.dailyon.productservice.describeimage.entity.DescribeImage;
 import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.ProductStockRequest;
@@ -138,7 +139,7 @@ public class ProductService { // TODO : Feign할 때 Facade 계층 추가
 
     @Transactional
     public UpdateProductResponse updateProduct(Long productId, UpdateProductRequest updateProductRequest) {
-        Product product = productRepository.findByIdAndDeletedIsFalse(productId)
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.PRODUCT_NOT_FOUND));
 
         Brand newBrand = brandRepository.findById(updateProductRequest.getBrandId())

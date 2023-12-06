@@ -64,7 +64,7 @@ public class CategoryService {
             throw new UniqueException(UniqueException.DUPLICATE_CATEGORY_NAME);
         }
 
-        category.updateName(updateCategoryRequest.getName());
+        category.setName(updateCategoryRequest.getName());
     }
 
     public ReadChildrenCategoryListResponse readLeafCategories() {

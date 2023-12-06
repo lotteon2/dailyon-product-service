@@ -19,22 +19,22 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public Optional<Category> findById(Long id) {
-        return categoryJpaRepository.findByIdAndDeletedIsFalse(id);
+        return categoryJpaRepository.findById(id);
     }
 
     @Override
     public boolean isDuplicatedName(String name) {
-        return categoryJpaRepository.existsByNameAndDeletedIsFalse(name);
+        return categoryJpaRepository.existsByName(name);
     }
 
     @Override
     public List<Category> findAll() {
-        return categoryJpaRepository.findByDeletedIsFalse();
+        return categoryJpaRepository.findAll();
     }
 
     @Override
     public List<Category> findByMasterCategoryId(Long masterCategoryId) {
-        return categoryJpaRepository.findByDeletedIsFalseAndMasterCategory_Id(masterCategoryId);
+        return categoryJpaRepository.findByMasterCategory_Id(masterCategoryId);
     }
 
     @Override

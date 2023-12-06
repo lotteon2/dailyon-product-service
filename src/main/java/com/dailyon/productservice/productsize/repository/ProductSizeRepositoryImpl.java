@@ -16,7 +16,7 @@ public class ProductSizeRepositoryImpl implements ProductSizeRepository {
 
     @Override
     public boolean isDuplicated(Category category, String name) {
-        return productSizeJpaRepository.existsByCategoryAndNameAndDeletedIsFalse(category, name);
+        return productSizeJpaRepository.existsByCategoryAndName(category, name);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class ProductSizeRepositoryImpl implements ProductSizeRepository {
 
     @Override
     public Optional<ProductSize> readProductSizeById(Long id) {
-        return productSizeJpaRepository.findProductSizeByIdAndDeletedIsFalse(id);
+        return productSizeJpaRepository.findProductSizeById(id);
     }
 }

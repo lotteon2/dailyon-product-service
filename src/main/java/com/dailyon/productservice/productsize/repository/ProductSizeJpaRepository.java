@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Repository
 public interface ProductSizeJpaRepository extends JpaRepository<ProductSize, Long> {
-    boolean existsByCategoryAndNameAndDeletedIsFalse(Category category, String name);
+    boolean existsByCategoryAndName(Category category, String name);
     @Query(value = "SELECT ps " +
             "FROM ProductSize ps " +
             "JOIN FETCH ps.category c " +
@@ -24,5 +24,5 @@ public interface ProductSizeJpaRepository extends JpaRepository<ProductSize, Lon
             "WHERE ps.id IN :productSizeIds AND ps.deleted = false ")
     List<ProductSize> findProductSizesByIds(Set<Long> productSizeIds);
 
-    Optional<ProductSize> findProductSizeByIdAndDeletedIsFalse(Long id);
+    Optional<ProductSize> findProductSizeById(Long id);
 }
