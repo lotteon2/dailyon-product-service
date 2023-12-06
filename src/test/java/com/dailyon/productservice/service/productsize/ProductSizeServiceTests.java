@@ -8,6 +8,7 @@ import com.dailyon.productservice.productsize.dto.request.CreateProductSizeReque
 import com.dailyon.productservice.productsize.dto.request.UpdateProductSizeRequest;
 import com.dailyon.productservice.productsize.dto.response.CreateProductSizeResponse;
 import com.dailyon.productservice.productsize.dto.response.ReadProductSizeListResponse;
+import com.dailyon.productservice.productsize.dto.response.ReadProductSizePageResponse;
 import com.dailyon.productservice.productsize.entity.ProductSize;
 import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.common.exception.UniqueException;
@@ -18,6 +19,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -212,5 +216,33 @@ public class ProductSizeServiceTests {
         // when, then
         assertThrows(UniqueException.class, () ->
                 productSizeService.updateProductSizeName(toUpdate.getProductSizeId(), updateProductSizeRequest));
+    }
+
+    @Test
+    @DisplayName("카테고리에 해당하는 치수 페이징 조회")
+    public void readProductSizePages() {
+        // given
+        CreateCategoryResponse response = categoryService.createCategory(CreateCategoryRequest.builder()
+                .masterCategoryId(null)
+                .categoryName("ROOT")
+                .build());
+
+        for(int i=0; i<3; i++) {
+            productSizeService.createProductSize(CreateProductSizeRequest.builder()
+                    .categoryId(response.getCategoryId())
+                    .name("PRODUCT_SIZE_" + i)
+                    .build());
+        }
+
+        // when
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "updatedAt");
+        ReadProductSizePageResponse result =
+                productSizeService.readProductSizePage(response.getCategoryId(), pageable);
+
+        // then
+        assertEquals(3, result.getProductSizes().size());
+        assertEquals(3, result.getTotalElements());
+        assertEquals(1, result.getTotalPages());
+        assertEquals("PRODUCT_SIZE_2", result.getProductSizes().get(0).getName());
     }
 }

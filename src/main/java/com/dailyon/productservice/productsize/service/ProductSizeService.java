@@ -5,12 +5,14 @@ import com.dailyon.productservice.productsize.dto.request.UpdateProductSizeReque
 import com.dailyon.productservice.productsize.dto.response.CreateProductSizeResponse;
 import com.dailyon.productservice.productsize.dto.response.ReadProductSizeListResponse;
 import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.productsize.dto.response.ReadProductSizePageResponse;
 import com.dailyon.productservice.productsize.entity.ProductSize;
 import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.common.exception.UniqueException;
 import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,5 +54,10 @@ public class ProductSizeService {
         }
 
         productSize.updateName(updateProductSizeRequest.getName());
+    }
+
+    public ReadProductSizePageResponse readProductSizePage(Long categoryId, Pageable pageable) {
+        return ReadProductSizePageResponse
+                .fromEntity(productSizeRepository.readProductSizePagesByCategoryId(categoryId, pageable));
     }
 }
