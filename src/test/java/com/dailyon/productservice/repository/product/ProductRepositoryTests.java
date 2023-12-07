@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,9 @@ public class ProductRepositoryTests {
 
     @Autowired
     CategoryRepository categoryRepository;
+
+    @Autowired
+    EntityManager entityManager;
 
     Brand brand = null;
     Category category = null;
@@ -97,5 +101,26 @@ public class ProductRepositoryTests {
 
         // then
         assertEquals(productInfos.size(), id.size());
+    }
+
+    @Test
+    @DisplayName("상품 삭제 이후 조회 시 false")
+    void existsProductByBrandTest() {
+        // given
+        Product product1 = productRepository.save(Product.create(
+                brand, category, ProductType.NORMAL, Gender.COMMON,
+                "name", "code", "imgUrl", 1000
+        ));
+
+        product1.softDelete();
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        boolean result = productRepository.existsProductByBrand(brand);
+
+        // then
+        assertFalse(result);
     }
 }
