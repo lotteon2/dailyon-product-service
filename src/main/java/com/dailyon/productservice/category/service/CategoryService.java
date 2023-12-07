@@ -4,9 +4,11 @@ import com.dailyon.productservice.category.dto.request.CreateCategoryRequest;
 import com.dailyon.productservice.category.dto.request.UpdateCategoryRequest;
 import com.dailyon.productservice.category.dto.response.*;
 import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.common.exception.DeleteException;
 import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.common.exception.UniqueException;
 import com.dailyon.productservice.category.repository.CategoryRepository;
+import com.dailyon.productservice.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
     @Transactional
     public CreateCategoryResponse createCategory(CreateCategoryRequest createCategoryRequest) {
@@ -71,5 +74,15 @@ public class CategoryService {
 
     public ReadCategoryPageResponse readCategoryPages(Pageable pageable) {
         return ReadCategoryPageResponse.fromEntity(categoryRepository.findCategoryPages(pageable));
+    }
+
+    @Transactional
+    public void deleteCategory(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
+        if(productRepository.existsProductByCategory(category)) {
+            throw new DeleteException(DeleteException.CATEGORY_PRODUCT_EXISTS);
+        }
+        category.softDelete();
     }
 }
