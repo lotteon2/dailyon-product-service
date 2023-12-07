@@ -6,9 +6,11 @@ import com.dailyon.productservice.brand.dto.response.CreateBrandResponse;
 import com.dailyon.productservice.brand.dto.response.ReadBrandListResponse;
 import com.dailyon.productservice.brand.dto.response.ReadBrandPageResponse;
 import com.dailyon.productservice.brand.entity.Brand;
+import com.dailyon.productservice.common.exception.DeleteException;
 import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.common.exception.UniqueException;
 import com.dailyon.productservice.brand.repository.BrandRepository;
+import com.dailyon.productservice.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BrandService {
     private final BrandRepository brandRepository;
+    private final ProductRepository productRepository;
 
     @Transactional
     public CreateBrandResponse createBrand(CreateBrandRequest createBrandRequest) {
@@ -50,5 +53,15 @@ public class BrandService {
 
     public ReadBrandPageResponse readBrandPage(Pageable pageable) {
         return ReadBrandPageResponse.fromEntity(brandRepository.readBrandPages(pageable));
+    }
+
+    @Transactional
+    public void deleteBrand(Long id) {
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new NotExistsException(NotExistsException.BRAND_NOT_FOUND));
+        if(productRepository.existsProductByBrand(brand)) {
+            throw new DeleteException(DeleteException.BRAND_PRODUCT_EXISTS);
+        }
+        brand.softDelete();
     }
 }
