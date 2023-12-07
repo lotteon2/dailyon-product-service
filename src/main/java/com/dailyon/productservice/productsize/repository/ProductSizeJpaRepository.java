@@ -5,6 +5,7 @@ import com.dailyon.productservice.productsize.entity.ProductSize;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -33,4 +34,8 @@ public interface ProductSizeJpaRepository extends JpaRepository<ProductSize, Lon
             "LEFT JOIN ps.category AS c " +
             "WHERE c.id = :categoryId AND c.deleted = false AND ps.deleted = false")
     Page<ProductSize> findProductSizePagesByCategoryId(Long categoryId, Pageable pageable);
+
+    @Modifying(flushAutomatically = true)
+    @Query(value = "UPDATE ProductSize AS ps SET ps.deleted = true WHERE ps.category = :category")
+    void deleteProductSizesByCategory(Category category);
 }

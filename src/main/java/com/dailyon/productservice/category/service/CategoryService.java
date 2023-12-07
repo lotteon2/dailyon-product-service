@@ -9,6 +9,7 @@ import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.common.exception.UniqueException;
 import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.product.repository.ProductRepository;
+import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final ProductSizeRepository productSizeRepository;
 
     @Transactional
     public CreateCategoryResponse createCategory(CreateCategoryRequest createCategoryRequest) {
@@ -84,5 +86,6 @@ public class CategoryService {
             throw new DeleteException(DeleteException.CATEGORY_PRODUCT_EXISTS);
         }
         category.softDelete();
+        productSizeRepository.deleteProductSizesByCategory(category);
     }
 }

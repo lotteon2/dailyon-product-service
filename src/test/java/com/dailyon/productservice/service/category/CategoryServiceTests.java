@@ -20,6 +20,8 @@ import com.dailyon.productservice.common.exception.UniqueException;
 import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.product.repository.ProductRepository;
+import com.dailyon.productservice.productsize.entity.ProductSize;
+import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +48,9 @@ public class CategoryServiceTests {
 
     @Autowired
     BrandRepository brandRepository;
+
+    @Autowired
+    ProductSizeRepository productSizeRepository;
 
     @Autowired
     EntityManager em;
@@ -277,15 +282,16 @@ public class CategoryServiceTests {
     @DisplayName("카테고리 삭제 성공")
     void deleteCategorySuccess() {
         // given
-        CreateCategoryResponse response = categoryService.createCategory(CreateCategoryRequest.builder()
-                .categoryName("root")
-                .build());
+        Category category = categoryRepository.save(Category.createRootCategory("root"));
+        productSizeRepository.save(ProductSize.create(category, "PS_1"));
 
         // when
-        categoryService.deleteCategory(response.getCategoryId());
+        Long categoryId = category.getId();
+        categoryService.deleteCategory(categoryId);
 
         // then
         assertEquals(0, categoryService.readAllCategories().getAllCategories().size());
+        assertEquals(0, productSizeRepository.readProductSizesByCategoryId(categoryId).size());
     }
 
     @Test
