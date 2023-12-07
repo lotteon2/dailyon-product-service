@@ -16,4 +16,5 @@ public interface ProductSizeRepository {
     List<ProductSize> readProductSizesByProductSizeIds(Set<Long> productSizeIds);
     Optional<ProductSize> readProductSizeById(Long id);
     Page<ProductSize> readProductSizePagesByCategoryId(Long categoryId, Pageable pageable);
+    void deleteProductSizesByCategory(Category category);
 }

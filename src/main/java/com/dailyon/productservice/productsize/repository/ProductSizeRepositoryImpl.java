@@ -45,4 +45,9 @@ public class ProductSizeRepositoryImpl implements ProductSizeRepository {
     public Page<ProductSize> readProductSizePagesByCategoryId(Long categoryId, Pageable pageable) {
         return productSizeJpaRepository.findProductSizePagesByCategoryId(categoryId, pageable);
     }
+
+    @Override
+    public void deleteProductSizesByCategory(Category category) {
+        productSizeJpaRepository.deleteProductSizesByCategory(category);
+    }
 }

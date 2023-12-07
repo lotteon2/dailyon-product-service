@@ -83,4 +83,14 @@ public class ProductSizeRepositoryTests {
         assertEquals(3, result.getTotalElements());
         assertEquals(1, result.getTotalPages());
     }
+
+    @Test
+    @DisplayName("카테고리에 해당하는 치수 삭제")
+    public void deleteProductSizesByCategory() {
+        // given, when
+        productSizeRepository.deleteProductSizesByCategory(category);
+
+        // then
+        assertEquals(0, productSizeRepository.readProductSizesByCategoryId(category.getId()).size());
+    }
 }
