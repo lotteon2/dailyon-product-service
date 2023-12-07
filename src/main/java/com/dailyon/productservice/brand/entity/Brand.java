@@ -40,5 +40,7 @@ public class Brand extends BaseEntity {
         this.name = name;
     }
 
-    public void softDelete() { this.deleted = true; }
+    public void softDelete() {
+        this.deleted = true;
+    }
 }
