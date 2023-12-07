@@ -26,16 +26,16 @@ VALUES (3, 'Size1', NOW(), NOW()),
        (6, 'Size2', NOW(), NOW());
 
 INSERT INTO product (brand_id, category_id, name, code, img_url, price, gender, type, created_at, updated_at)
-VALUES (1, 3, 'Product1',  'P001', 'https://via.placeholder.com/400',  100000, 'COMMON', 'NORMAL', NOW(), NOW()),
-       (2, 3, 'Product2',  'P002', 'https://via.placeholder.com/400',  150000, 'MALE',   'NORMAL', NOW(), NOW()),
-       (3, 3, 'Product3',  'P003', 'https://via.placeholder.com/400',  200000, 'FEMALE', 'NORMAL', NOW(), NOW()),
-       (4, 4, 'Product4',  'P004', 'https://via.placeholder.com/400',  120000, 'COMMON', 'NORMAL', NOW(), NOW()),
-       (5, 4, 'Product5',  'P005', 'https://via.placeholder.com/400',  180000, 'MALE',   'NORMAL', NOW(), NOW()),
-       (1, 4, 'Product6',  'P006', 'https://via.placeholder.com/400',  130000, 'FEMALE', 'NORMAL', NOW(), NOW()),
-       (2, 5, 'Product7',  'P007', 'https://via.placeholder.com/400',  90000,  'COMMON', 'NORMAL', NOW(), NOW()),
-       (3, 5, 'Product8',  'P008', 'https://via.placeholder.com/400',  160000, 'MALE',   'NORMAL', NOW(), NOW()),
-       (4, 6, 'Product9',  'P009', 'https://via.placeholder.com/400',  220000, 'FEMALE', 'NORMAL', NOW(), NOW()),
-       (5, 6, 'Product10', 'P010', 'https://via.placeholder.com/400',  110000, 'COMMON', 'NORMAL', NOW(), NOW());
+VALUES (1, 3, 'Product1',  'P001', '/product-img/default-product-img.png',  100000, 'COMMON', 'NORMAL', NOW(), NOW()),
+       (2, 3, 'Product2',  'P002', '/product-img/default-product-img.png',  150000, 'MALE',   'NORMAL', NOW(), NOW()),
+       (3, 3, 'Product3',  'P003', '/product-img/default-product-img.png',  200000, 'FEMALE', 'NORMAL', NOW(), NOW()),
+       (4, 4, 'Product4',  'P004', '/product-img/default-product-img.png',  120000, 'COMMON', 'NORMAL', NOW(), NOW()),
+       (5, 4, 'Product5',  'P005', '/product-img/default-product-img.png',  180000, 'MALE',   'NORMAL', NOW(), NOW()),
+       (1, 4, 'Product6',  'P006', '/product-img/default-product-img.png',  130000, 'FEMALE', 'NORMAL', NOW(), NOW()),
+       (2, 5, 'Product7',  'P007', '/product-img/default-product-img.png',  90000,  'COMMON', 'NORMAL', NOW(), NOW()),
+       (3, 5, 'Product8',  'P008', '/product-img/default-product-img.png',  160000, 'MALE',   'NORMAL', NOW(), NOW()),
+       (4, 6, 'Product9',  'P009', '/product-img/default-product-img.png',  220000, 'FEMALE', 'NORMAL', NOW(), NOW()),
+       (5, 6, 'Product10', 'P010', '/product-img/default-product-img.png',  110000, 'COMMON', 'NORMAL', NOW(), NOW());
 
 INSERT INTO product_stock (product_id, product_size_id, quantity)
 VALUES (1, 1, 50), (2, 2, 30), (3, 3, 40), (4, 4, 25), (5, 5, 35),
