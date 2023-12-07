@@ -2,6 +2,8 @@ package com.dailyon.productservice.service.category;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.dailyon.productservice.brand.entity.Brand;
+import com.dailyon.productservice.brand.repository.BrandRepository;
 import com.dailyon.productservice.category.dto.request.CreateCategoryRequest;
 import com.dailyon.productservice.category.dto.response.CreateCategoryResponse;
 import com.dailyon.productservice.category.service.CategoryService;
@@ -10,9 +12,14 @@ import com.dailyon.productservice.category.dto.response.ReadAllCategoryListRespo
 import com.dailyon.productservice.category.dto.response.ReadBreadCrumbListResponse;
 import com.dailyon.productservice.category.dto.response.ReadChildrenCategoryListResponse;
 import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.common.enums.Gender;
+import com.dailyon.productservice.common.enums.ProductType;
+import com.dailyon.productservice.common.exception.DeleteException;
 import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.common.exception.UniqueException;
 import com.dailyon.productservice.category.repository.CategoryRepository;
+import com.dailyon.productservice.product.entity.Product;
+import com.dailyon.productservice.product.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +40,12 @@ public class CategoryServiceTests {
 
     @Autowired
     CategoryRepository categoryRepository;
+
+    @Autowired
+    ProductRepository productRepository;
+
+    @Autowired
+    BrandRepository brandRepository;
 
     @Autowired
     EntityManager em;
@@ -258,5 +271,46 @@ public class CategoryServiceTests {
 
         // then
         assertEquals(2, result.getCategoryResponses().size());
+    }
+
+    @Test
+    @DisplayName("카테고리 삭제 성공")
+    void deleteCategorySuccess() {
+        // given
+        CreateCategoryResponse response = categoryService.createCategory(CreateCategoryRequest.builder()
+                .categoryName("root")
+                .build());
+
+        // when
+        categoryService.deleteCategory(response.getCategoryId());
+
+        // then
+        assertEquals(0, categoryService.readAllCategories().getAllCategories().size());
+    }
+
+    @Test
+    @DisplayName("카테고리 삭제 실패 - 상품 존재")
+    void deleteCategoryFail1() {
+        // given
+        Category category = categoryRepository.save(Category.createRootCategory("root"));
+        Brand brand = brandRepository.save(Brand.createBrand("test"));
+
+        productRepository.save(Product.create(
+                brand, category, ProductType.NORMAL, Gender.COMMON,
+                "name", "code", "imgUrl", 1000
+        ));
+
+        // when, then
+        assertThrows(DeleteException.class, () -> categoryService.deleteCategory(category.getId()));
+    }
+
+    @Test
+    @DisplayName("카테고리 삭제 실패 - 존재하지 않는 카테고리")
+    void deleteCategoryFail2() {
+        // given
+        Long wrongCategoryId = 0L;
+
+        // when, then
+        assertThrows(NotExistsException.class, () -> categoryService.deleteCategory(wrongCategoryId));
     }
 }

@@ -49,4 +49,10 @@ public class CategoryAdminController {
         categoryService.updateCategoryName(categoryId, updateCategoryRequest);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @DeleteMapping("/categories/{categoryId}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long categoryId) {
+        categoryService.deleteCategory(categoryId);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }
