@@ -3,13 +3,22 @@ package com.dailyon.productservice.service.brand;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.dailyon.productservice.brand.dto.response.ReadBrandPageResponse;
+import com.dailyon.productservice.brand.entity.Brand;
+import com.dailyon.productservice.brand.repository.BrandRepository;
 import com.dailyon.productservice.brand.service.BrandService;
 import com.dailyon.productservice.brand.dto.request.CreateBrandRequest;
 import com.dailyon.productservice.brand.dto.request.UpdateBrandRequest;
 import com.dailyon.productservice.brand.dto.response.CreateBrandResponse;
 import com.dailyon.productservice.brand.dto.response.ReadBrandListResponse;
+import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.category.repository.CategoryRepository;
+import com.dailyon.productservice.common.enums.Gender;
+import com.dailyon.productservice.common.enums.ProductType;
+import com.dailyon.productservice.common.exception.DeleteException;
 import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.common.exception.UniqueException;
+import com.dailyon.productservice.product.entity.Product;
+import com.dailyon.productservice.product.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +28,26 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+
 @SpringBootTest
 @Transactional
 @ActiveProfiles(value = {"test"})
 public class BrandServiceTests {
     @Autowired
     BrandService brandService;
+
+    @Autowired
+    CategoryRepository categoryRepository;
+
+    @Autowired
+    ProductRepository productRepository;
+
+    @Autowired
+    BrandRepository brandRepository;
+
+    @Autowired
+    EntityManager entityManager;
 
     @Test
     @DisplayName("브랜드 등록 성공")
@@ -134,5 +157,58 @@ public class BrandServiceTests {
         assertEquals(1, response.getTotalPages());
         assertEquals(5, response.getTotalElements());
         assertEquals("test_4", response.getBrandResponses().get(0).getName());
+    }
+
+    @Test
+    @DisplayName("브랜드 삭제 성공")
+    void deleteBrandSuccess() {
+        // given
+        Brand brand = brandRepository.save(Brand.createBrand("test"));
+        Category category = categoryRepository.save(Category.createRootCategory("root"));
+        Product product = productRepository.save(Product.create(
+                brand, category, ProductType.NORMAL, Gender.COMMON,
+                "name", "code", "imgUrl", 1000
+        ));
+        product.softDelete();
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when, then
+        assertDoesNotThrow(() -> brandService.deleteBrand(brand.getId()));
+    }
+
+    @Test
+    @DisplayName("브랜드 삭제 실패 - 존재하지 않는 브랜드")
+    void deleteBrandFail1() {
+        // given
+        Brand brand = brandRepository.save(Brand.createBrand("test"));
+        Category category = categoryRepository.save(Category.createRootCategory("root"));
+        Product product = productRepository.save(Product.create(
+                brand, category, ProductType.NORMAL, Gender.COMMON,
+                "name", "code", "imgUrl", 1000
+        ));
+        entityManager.flush();
+        entityManager.clear();
+
+        // when, then
+        assertThrows(NotExistsException.class, () -> brandService.deleteBrand(0L));
+    }
+
+    @Test
+    @DisplayName("브랜드 삭제 실패 - 상품 존재")
+    void deleteBrandFail2() {
+        // given
+        Brand brand = brandRepository.save(Brand.createBrand("test"));
+        Category category = categoryRepository.save(Category.createRootCategory("root"));
+        Product product = productRepository.save(Product.create(
+                brand, category, ProductType.NORMAL, Gender.COMMON,
+                "name", "code", "imgUrl", 1000
+        ));
+        entityManager.flush();
+        entityManager.clear();
+
+        // when, then
+        assertThrows(DeleteException.class, () -> brandService.deleteBrand(brand.getId()));
     }
 }

@@ -1,5 +1,6 @@
 package com.dailyon.productservice.product.repository;
 
+import com.dailyon.productservice.brand.entity.Brand;
 import com.dailyon.productservice.product.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,4 +26,6 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
             "JOIN FETCH p.brand " +
             "WHERE p.id IN :id AND p.deleted = false")
     List<Product> findOOTDProductDetails(List<Long> id);
+
+    boolean existsProductByBrand(Brand brand);
 }

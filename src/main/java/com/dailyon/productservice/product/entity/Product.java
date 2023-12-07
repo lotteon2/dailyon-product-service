@@ -108,4 +108,6 @@ public class Product extends BaseEntity {
     public void setPrice(Integer price) {
         this.price = price;
     }
+
+    public void softDelete() { this.deleted = true; }
 }

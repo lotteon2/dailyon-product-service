@@ -7,6 +7,7 @@ import com.dailyon.productservice.brand.dto.request.CreateBrandRequest;
 import com.dailyon.productservice.brand.dto.request.UpdateBrandRequest;
 import com.dailyon.productservice.brand.dto.response.CreateBrandResponse;
 import com.dailyon.productservice.brand.service.BrandService;
+import com.dailyon.productservice.common.exception.NotExistsException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -164,5 +165,18 @@ public class BrandAdminControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.brandResponses.size()").value(0))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value(0))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.totalPages").value(0));
+    }
+
+    @Test
+    @DisplayName("브랜드 삭제 실패 - 존재하지 않는 브랜드")
+    void deleteBrandFail1() throws Exception {
+        // given, when
+        ResultActions resultActions = mockMvc.perform(
+                delete("/admin/brands/"+0)
+        );
+
+        resultActions
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(NotExistsException.BRAND_NOT_FOUND));
     }
 }
