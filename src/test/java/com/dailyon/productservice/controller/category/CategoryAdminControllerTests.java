@@ -7,6 +7,7 @@ import com.dailyon.productservice.category.dto.request.UpdateCategoryRequest;
 import com.dailyon.productservice.category.dto.response.CreateCategoryResponse;
 import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.category.service.CategoryService;
+import com.dailyon.productservice.common.exception.NotExistsException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -215,5 +216,20 @@ public class CategoryAdminControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.responses.size()").value(0))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value(0))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.totalPages").value(0));
+    }
+
+    @Test
+    @DisplayName("카테고리 삭제 실패 - 존재하지 않는 카테고리")
+    void deleteCategoryFail() throws Exception {
+        // given, when
+        ResultActions resultActions = mockMvc.perform(
+                delete("/admin/categories/"+0)
+        );
+
+        // then
+        resultActions
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message")
+                        .value(NotExistsException.CATEGORY_NOT_FOUND));
     }
 }
