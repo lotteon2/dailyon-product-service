@@ -88,7 +88,9 @@ public class ProductSizeRepositoryTests {
     @DisplayName("카테고리에 해당하는 치수 삭제")
     public void deleteProductSizesByCategory() {
         // given, when
-        productSizeRepository.deleteProductSizesByCategory(category);
+        List<Category> toDelete = new ArrayList<>();
+        toDelete.add(category);
+        productSizeRepository.deleteProductSizesByCategories(toDelete);
 
         // then
         assertEquals(0, productSizeRepository.readProductSizesByCategoryId(category.getId()).size());
