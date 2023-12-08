@@ -82,5 +82,6 @@ public class Category extends BaseEntity {
 
     public void softDelete() {
         this.deleted = true;
+        this.name = this.name + "_" + System.currentTimeMillis();
     }
 }
