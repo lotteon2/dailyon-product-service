@@ -123,4 +123,25 @@ public class ProductRepositoryTests {
         // then
         assertFalse(result);
     }
+
+    @Test
+    @DisplayName("카테고리 목록에 포함된 상품 목록 조회")
+    void findProductsFromCategories() {
+        Product product = productRepository.save(Product.create(
+                brand, category, ProductType.NORMAL, Gender.COMMON,
+                "name", "code", "imgUrl", 1000
+        ));
+
+        Product product1 = productRepository.save(Product.create(
+                brand, category, ProductType.NORMAL, Gender.COMMON,
+                "name1", "code1", "imgUrl", 1000
+        ));
+
+        List<Category> categories = new ArrayList<>();
+        categories.add(category);
+
+        List<Product> products = productRepository.findProductsFromCategories(categories);
+
+        assertEquals(2, products.size());
+    }
 }

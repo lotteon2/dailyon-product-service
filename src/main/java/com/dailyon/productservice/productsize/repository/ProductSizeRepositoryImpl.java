@@ -47,7 +47,7 @@ public class ProductSizeRepositoryImpl implements ProductSizeRepository {
     }
 
     @Override
-    public void deleteProductSizesByCategory(Category category) {
-        productSizeJpaRepository.deleteProductSizesByCategory(category);
+    public void deleteProductSizesByCategories(List<Category> categories) {
+        productSizeJpaRepository.deleteProductSizesByCategory(categories);
     }
 }

@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -80,12 +82,15 @@ public class CategoryService {
 
     @Transactional
     public void deleteCategory(Long categoryId) {
-        Category category = categoryRepository.findById(categoryId)
+        categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
-        if(productRepository.existsProductByCategory(category)) {
+
+        List<Category> categories = categoryRepository.findAllChildCategories(categoryId);
+        if(!productRepository.findProductsFromCategories(categories).isEmpty()) {
             throw new DeleteException(DeleteException.CATEGORY_PRODUCT_EXISTS);
         }
-        category.softDelete();
-        productSizeRepository.deleteProductSizesByCategory(category);
+
+        categories.forEach(Category::softDelete);
+        productSizeRepository.deleteProductSizesByCategories(categories);
     }
 }

@@ -36,6 +36,6 @@ public interface ProductSizeJpaRepository extends JpaRepository<ProductSize, Lon
     Page<ProductSize> findProductSizePagesByCategoryId(Long categoryId, Pageable pageable);
 
     @Modifying(flushAutomatically = true)
-    @Query(value = "UPDATE ProductSize AS ps SET ps.deleted = true WHERE ps.category = :category")
-    void deleteProductSizesByCategory(Category category);
+    @Query(value = "UPDATE ProductSize AS ps SET ps.deleted = true WHERE ps.category IN :category")
+    void deleteProductSizesByCategory(List<Category> category);
 }

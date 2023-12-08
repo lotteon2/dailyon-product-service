@@ -30,5 +30,9 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
 
     boolean existsProductByBrand(Brand brand);
 
-    boolean existsProductByCategory(Category category);
+    @Query(value = "SELECT p " +
+            "FROM Product p " +
+            "JOIN FETCH p.category " +
+            "WHERE p.category IN :categories AND p.deleted = false")
+    List<Product> findProductsFromCategories(List<Category> categories);
 }
