@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class ProductService { // TODO : Feign할 때 Facade 계층 추가
+public class ProductService {
     private final S3Util s3Util;
 
     private final BrandRepository brandRepository;
