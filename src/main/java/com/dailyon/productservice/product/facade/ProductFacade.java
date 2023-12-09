@@ -2,7 +2,9 @@ package com.dailyon.productservice.product.facade;
 
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
+import com.dailyon.productservice.common.exception.DeleteException;
 import com.dailyon.productservice.common.feign.client.PromotionFeignClient;
+import com.dailyon.productservice.common.feign.response.CouponForProductResponse;
 import com.dailyon.productservice.product.dto.UpdateProductDto;
 import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.UpdateProductRequest;
@@ -12,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -30,6 +35,25 @@ public class ProductFacade {
         // TODO : notification kafka.send
 
         return UpdateProductResponse.create(updateProductDto);
+    }
+
+    @Transactional
+    public void deleteProducts(List<Long> ids) {
+        throwExceptionIfCouponExists(promotionFeignClient.checkCouponExistence(ids).getBody());
+        productService.deleteProductsByIds(ids);
+    }
+
+    private void throwExceptionIfCouponExists(List<CouponForProductResponse> body) {
+        List<String> couponExists = new ArrayList<>();
+        for(CouponForProductResponse product: body) {
+            if(product.isHasAvailableCoupon()) {
+                couponExists.add(String.valueOf(product.getProductId()));
+            }
+        }
+
+        if(!couponExists.isEmpty()) {
+            throw new DeleteException(String.join(", ", couponExists) + DeleteException.COUPON_EXISTS);
+        }
     }
 
     public ReadProductDetailResponse readProductDetail(Long productId) {

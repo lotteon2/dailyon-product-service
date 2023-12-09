@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
@@ -38,5 +39,11 @@ public class ProductAdminController {
                                                             @RequestParam ProductType type,
                                                             @PageableDefault Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(productFacade.readProductPage(brandId, categoryId, type, pageable));
+    }
+
+    @DeleteMapping("/products")
+    ResponseEntity<Void> deleteProducts(@RequestParam List<Long> ids) {
+        productFacade.deleteProducts(ids);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
