@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -43,4 +45,10 @@ public class UpdateProductRequest {
 
     @Size(max = 5, message = "상품 설명 이미지는 최대 5개까지 등록 가능합니다")
     private List<String> describeImages;
+
+    public Set<Long> extractProductSizeIds() {
+        return productStocks.stream()
+                .map(ProductStockRequest::getProductSizeId)
+                .collect(Collectors.toSet());
+    }
 }
