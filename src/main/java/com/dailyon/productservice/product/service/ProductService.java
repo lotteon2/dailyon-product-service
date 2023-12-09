@@ -203,6 +203,11 @@ public class ProductService {
         return describeImgPresignedUrls;
     }
 
+    @Transactional
+    public void deleteProductsByIds(List<Long> ids) {
+        productRepository.findAllById(ids).forEach(Product::softDelete);
+    }
+
     public ReadProductDetailResponse readProductDetail(Long productId) {
         Product product = productRepository.findProductDetailById(productId)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.PRODUCT_NOT_FOUND));
