@@ -6,7 +6,7 @@ import com.dailyon.productservice.product.dto.request.UpdateProductRequest;
 import com.dailyon.productservice.product.dto.response.CreateProductResponse;
 import com.dailyon.productservice.product.dto.response.ReadProductPageResponse;
 import com.dailyon.productservice.product.dto.response.UpdateProductResponse;
-import com.dailyon.productservice.product.service.ProductService;
+import com.dailyon.productservice.product.facade.ProductFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,17 +20,16 @@ import javax.validation.Valid;
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 public class ProductAdminController {
-    private final ProductService productService;
-
+    private final ProductFacade productFacade;
     @PostMapping("/products")
     public ResponseEntity<CreateProductResponse> createProduct(@Valid @RequestBody CreateProductRequest createProductRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(createProductRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(productFacade.createProduct(createProductRequest));
     }
 
     @PutMapping("/products/{productId}")
     public ResponseEntity<UpdateProductResponse> updateProduct(@PathVariable Long productId,
                                                                @RequestBody UpdateProductRequest updateProductRequest) {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(productId, updateProductRequest));
+        return ResponseEntity.status(HttpStatus.OK).body(productFacade.updateProduct(productId, updateProductRequest));
     }
 
     @GetMapping("/products")
@@ -38,6 +37,6 @@ public class ProductAdminController {
                                                             @RequestParam(required = false) Long categoryId,
                                                             @RequestParam ProductType type,
                                                             @PageableDefault Pageable pageable) {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.readProductPage(brandId, categoryId, type, pageable));
+        return ResponseEntity.status(HttpStatus.OK).body(productFacade.readProductPage(brandId, categoryId, type, pageable));
     }
 }
