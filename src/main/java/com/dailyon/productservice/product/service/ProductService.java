@@ -76,30 +76,24 @@ public class ProductService {
                 .collect(Collectors.toList());
 
         // create product
-        Product product = productRepository.save(
-                Product.create(
-                        brand,
-                        category,
-                        ProductType.validate(createProductRequest.getType()),
-                        Gender.validate(createProductRequest.getGender()),
-                        createProductRequest.getName(),
-                        createProductRequest.getCode(),
-                        filePath,
-                        createProductRequest.getPrice()
-                )
-        );
+        Product product = productRepository.save(Product.create(
+                brand,
+                category,
+                ProductType.validate(createProductRequest.getType()),
+                Gender.validate(createProductRequest.getGender()),
+                createProductRequest.getName(),
+                createProductRequest.getCode(),
+                filePath,
+                createProductRequest.getPrice()
+        ));
 
         // create productStocks
         // [1], [2]를 병렬로 돌면서 상품의 치수당 재고를 생성
         List<ProductStock> productStocks = new ArrayList<>();
         for(int i=0; i<productSizes.size(); i++) {
-            productStocks.add(
-                    ProductStock.create(
-                            product,
-                            productSizes.get(i),
-                            createProductRequest.getProductStocks().get(i).getQuantity()
-                    )
-            );
+            productStocks.add(ProductStock.create(
+                    product, productSizes.get(i), createProductRequest.getProductStocks().get(i).getQuantity()
+            ));
         }
         productStockRepository.saveAll(productStocks);
 
@@ -161,13 +155,9 @@ public class ProductService {
 
         List<ProductStock> newProductStocks = new ArrayList<>();
         for(int i=0; i<productSizes.size(); i++) {
-            newProductStocks.add(
-                    ProductStock.create(
-                            product,
-                            productSizes.get(i),
-                            updateProductRequest.getProductStocks().get(i).getQuantity()
-                    )
-            );
+            newProductStocks.add(ProductStock.create(
+                    product, productSizes.get(i), updateProductRequest.getProductStocks().get(i).getQuantity()
+            ));
         }
 
         String newfilePath = s3Util.createFilePath(updateProductRequest.getImage());
