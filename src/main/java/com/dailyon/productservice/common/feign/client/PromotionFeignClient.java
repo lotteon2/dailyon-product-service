@@ -14,6 +14,6 @@ import java.util.List;
     configuration = FeignClientConfig.class
 )
 public interface PromotionFeignClient {
-    @GetMapping("/clients/coupons/coupon-existence")
-    ResponseEntity<List<CouponForProductResponse>> checkCouponExistence(@RequestParam(name = "productIds") List<Long> productIds);
+    @GetMapping(value = "/clients/coupons/coupon-existence", params = "productIds")
+    ResponseEntity<List<CouponForProductResponse>> checkCouponExistence(@RequestParam(name = "productIds") String productIds);
 }

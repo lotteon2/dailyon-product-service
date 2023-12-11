@@ -15,8 +15,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -39,7 +43,8 @@ public class ProductFacade {
 
     @Transactional
     public void deleteProducts(List<Long> ids) {
-        throwExceptionIfCouponExists(promotionFeignClient.checkCouponExistence(ids).getBody());
+        String productIds = ids.stream().map(String::valueOf).collect(Collectors.joining(","));
+        throwExceptionIfCouponExists(promotionFeignClient.checkCouponExistence(productIds).getBody());
         productService.deleteProductsByIds(ids);
     }
 
