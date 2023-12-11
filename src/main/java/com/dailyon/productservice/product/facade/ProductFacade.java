@@ -28,7 +28,6 @@ public class ProductFacade {
     private final ProductService productService;
     private final PromotionFeignClient promotionFeignClient;
 
-    @Transactional
     public CreateProductResponse createProduct(CreateProductRequest createProductRequest) {
         return productService.createProduct(createProductRequest);
     }
@@ -41,10 +40,8 @@ public class ProductFacade {
         return UpdateProductResponse.create(updateProductDto);
     }
 
-    @Transactional
     public void deleteProducts(List<Long> ids) {
-        String productIds = ids.stream().map(String::valueOf).collect(Collectors.joining(","));
-        throwExceptionIfCouponExists(promotionFeignClient.checkCouponExistence(productIds).getBody());
+        throwExceptionIfCouponExists(promotionFeignClient.checkCouponExistence(ids).getBody());
         productService.deleteProductsByIds(ids);
     }
 
