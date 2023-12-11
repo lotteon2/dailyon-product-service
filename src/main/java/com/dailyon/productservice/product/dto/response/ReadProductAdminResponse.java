@@ -21,6 +21,7 @@ public class ReadProductAdminResponse {
     private Long categoryId;
     private String name;
     private Gender gender;
+    private Integer price;
     private String code;
     private String imgUrl;
     private List<ReadProductStockAdminResponse> productStocks;
@@ -33,7 +34,9 @@ public class ReadProductAdminResponse {
                 .categoryId(product.getCategory().getId())
                 .name(product.getName())
                 .gender(product.getGender())
+                .price(product.getPrice())
                 .code(product.getCode())
+                .imgUrl(product.getImgUrl())
                 .productStocks(product.getProductStocks().stream()
                         .map(ReadProductStockAdminResponse::fromEntity)
                         .collect(Collectors.toList()))

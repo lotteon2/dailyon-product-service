@@ -222,16 +222,20 @@ public class ProductService {
         return ReadProductSliceResponse.fromEntity(productRepository.findProductSlice(lastId, brandId, childCategories, gender, type));
     }
 
+    public ReadProductPageResponse readProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable) {
+        List<Category> childCategories = null;
+        if(categoryId != null) {
+            childCategories = categoryRepository.findAllChildCategories(categoryId);
+        }
+        return ReadProductPageResponse.fromEntity(productRepository.findProductPage(brandId, childCategories, type, pageable));
+    }
+
     public ReadProductSliceResponse searchProductSlice(Long lastId, String query) {
         return ReadProductSliceResponse.fromEntity(productRepository.searchProducts(lastId, query));
     }
 
     public ReadOOTDSearchSliceResponse searchFromOOTD(Long lastId, String query) {
         return ReadOOTDSearchSliceResponse.fromEntity(productRepository.searchProductsFromOOTD(lastId, query));
-    }
-
-    public ReadProductPageResponse readProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable) {
-        return ReadProductPageResponse.fromEntity(productRepository.findProductPage(brandId, categoryId, type, pageable));
     }
 
     public ReadOOTDProductListResponse readOOTDProductDetails(List<Long> id) {

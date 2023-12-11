@@ -12,11 +12,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReadProductStockAdminResponse {
     private Long productSizeId;
+    private String productSizeName;
     private Long quantity;
 
     public static ReadProductStockAdminResponse fromEntity(ProductStock productStock) {
         return ReadProductStockAdminResponse.builder()
                 .productSizeId(productStock.getProductSize().getId())
+                .productSizeName(productStock.getProductSize().getName())
                 .quantity(productStock.getQuantity())
                 .build();
     }

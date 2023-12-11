@@ -35,13 +35,11 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .leftJoin(product.brand, brand).fetchJoin()
                 .leftJoin(product.category, category).fetchJoin()
                 .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
-                .where(
-                        product.deleted.eq(false),
-                        product.id.gt(lastId),
-                        brandIdEq(brandId),
-                        categoryIn(childCategories),
-                        genderEq(gender),
-                        productTypeEq(productType)
+                .where(product.deleted.eq(false)
+                        .and(product.id.gt(lastId))
+                        .and(brandIdEq(brandId))
+                        .and(categoryIn(childCategories)).and(genderEq(gender))
+                        .and(productTypeEq(productType))
                 ).fetch();
 
         List<Product> result = jpaQueryFactory
@@ -61,29 +59,27 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     }
 
     @Override
-    public Page<Product> findProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable) {
+    public Page<Product> findProductPage(Long brandId, List<Category> childCategories, ProductType type, Pageable pageable) {
         JPAQuery<Product> jpaQuery = jpaQueryFactory
                 .select(product)
                 .from(product)
                 .leftJoin(product.brand, brand).fetchJoin()
                 .leftJoin(product.category, category).fetchJoin()
                 .leftJoin(product.describeImages, describeImage).fetchJoin()
-                .where(
-                        product.deleted.eq(false),
-                        brandIdEq(brandId),
-                        productTypeEq(type)
-                )
+                .where(product.deleted.eq(false)
+                        .and(brandIdEq(brandId))
+                        .and(categoryIn(childCategories))
+                        .and(productTypeEq(type)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
         Long total = jpaQueryFactory
                 .select(product.count())
                 .from(product)
-                .where(
-                        product.deleted.eq(false),
-                        brandIdEq(brandId),
-                        productTypeEq(type)
-                )
+                .where(product.deleted.eq(false)
+                        .and(brandIdEq(brandId))
+                        .and(categoryIn(childCategories))
+                        .and(productTypeEq(type)))
                 .fetchOne();
 
         return new PageImpl<>(jpaQuery.fetch(), pageable, total);
@@ -99,11 +95,10 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .leftJoin(product.brand, brand).fetchJoin()
                 .leftJoin(product.category, category).fetchJoin()
                 .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
-                .where(
-                        product.deleted.eq(false),
-                        product.id.gt(lastId),
-                        nameContains(query).or(codeEq(query)),
-                        productTypeEq(ProductType.NORMAL)
+                .where(product.deleted.eq(false)
+                        .and(product.id.gt(lastId))
+                        .and(nameContains(query).or(codeEq(query)))
+                        .and(productTypeEq(ProductType.NORMAL))
                 ).fetch();
 
         List<Product> result = jpaQueryFactory
@@ -131,11 +126,10 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .from(product)
                 .leftJoin(product.brand, brand).fetchJoin()
                 .leftJoin(product.productStocks, productStock).fetchJoin()
-                .where(
-                        product.deleted.eq(false),
-                        product.id.gt(lastId),
-                        nameContains(query).or(codeEq(query)),
-                        productTypeEq(ProductType.NORMAL)
+                .where(product.deleted.eq(false)
+                        .and(product.id.gt(lastId))
+                        .and(nameContains(query).or(codeEq(query)))
+                        .and(productTypeEq(ProductType.NORMAL))
                 ).fetch();
 
         List<Product> result = jpaQueryFactory

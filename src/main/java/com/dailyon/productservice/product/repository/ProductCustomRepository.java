@@ -14,7 +14,7 @@ public interface ProductCustomRepository {
     Slice<Product> findProductSlice(Long lastId, Long brandId, List<Category> childCategories,
                                     Gender gender, ProductType productType);
 
-    Page<Product> findProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable);
+    Page<Product> findProductPage(Long brandId, List<Category> childCategories, ProductType type, Pageable pageable);
 
     Slice<Product> searchProducts(Long lastId, String query);
 
