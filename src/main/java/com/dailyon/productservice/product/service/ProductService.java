@@ -5,6 +5,7 @@ import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.common.exception.UniqueException;
 import com.dailyon.productservice.common.feign.response.ReadOOTDProductListResponse;
 import com.dailyon.productservice.describeimage.entity.DescribeImage;
+import com.dailyon.productservice.product.dto.UpdateProductDto;
 import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.ProductStockRequest;
 import com.dailyon.productservice.product.dto.request.UpdateProductRequest;
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class ProductService { // TODO : Feign할 때 Facade 계층 추가
+public class ProductService {
     private final S3Util s3Util;
 
     private final BrandRepository brandRepository;
@@ -47,9 +48,6 @@ public class ProductService { // TODO : Feign할 때 Facade 계층 추가
     private final DescribeImageRepository describeImageRepository;
     private final ReviewAggregateRepository reviewAggregateRepository;
 
-    private final static String IMG_BUCKET = "dailyon-static-dev";
-    private final static String PRODUCT_IMG_BUCKET_PREFIX = "product-img";
-
     @Transactional
     public CreateProductResponse createProduct(CreateProductRequest createProductRequest) {
         Brand brand = brandRepository.findById(createProductRequest.getBrandId())
@@ -59,10 +57,7 @@ public class ProductService { // TODO : Feign할 때 Facade 계층 추가
                 .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
 
         // {productSizeId, quantity}의 목록에서 productSizeId의 목록만 추출
-        Set<Long> productSizeIds = createProductRequest.getProductStocks()
-                .stream()
-                .map(ProductStockRequest::getProductSizeId)
-                .collect(Collectors.toSet());
+        Set<Long> productSizeIds = createProductRequest.extractProductSizeIds();
 
         // productSizeId의 목록으로부터 product의 목록 조회(db는 id 기준으로 자동 오름차순 정렬) ... [1]
         List<ProductSize> productSizes = productSizeRepository.readProductSizesByProductSizeIds(productSizeIds);
@@ -73,39 +68,32 @@ public class ProductService { // TODO : Feign할 때 Facade 계층 추가
         Collections.sort(createProductRequest.getProductStocks());
 
         // 상품 이미지 경로(bucket/random_uuid.확장자) 생성
-        String imgUrl = String.format("/%s/%s.%s", PRODUCT_IMG_BUCKET_PREFIX, UUID.randomUUID(),
-                createProductRequest.getImage().split("\\.")[1]);
+        String filePath = s3Util.createFilePath(createProductRequest.getImage());
 
         // 상품 설명 이미지(bucket/random_uuid.확장자) 목록 생성
         List<String> describeImgUrls = createProductRequest.getDescribeImages().stream()
-                .map(descImg -> String.format("/%s/%s.%s", PRODUCT_IMG_BUCKET_PREFIX, UUID.randomUUID(), descImg.split("\\.")[1]))
+                .map(s3Util::createFilePath)
                 .collect(Collectors.toList());
 
         // create product
-        Product product = productRepository.save(
-                Product.create(
-                        brand,
-                        category,
-                        ProductType.validate(createProductRequest.getType()),
-                        Gender.validate(createProductRequest.getGender()),
-                        createProductRequest.getName(),
-                        createProductRequest.getCode(),
-                        imgUrl,
-                        createProductRequest.getPrice()
-                )
-        );
+        Product product = productRepository.save(Product.create(
+                brand,
+                category,
+                ProductType.validate(createProductRequest.getType()),
+                Gender.validate(createProductRequest.getGender()),
+                createProductRequest.getName(),
+                createProductRequest.getCode(),
+                filePath,
+                createProductRequest.getPrice()
+        ));
 
         // create productStocks
         // [1], [2]를 병렬로 돌면서 상품의 치수당 재고를 생성
         List<ProductStock> productStocks = new ArrayList<>();
         for(int i=0; i<productSizes.size(); i++) {
-            productStocks.add(
-                    ProductStock.create(
-                            product,
-                            productSizes.get(i),
-                            createProductRequest.getProductStocks().get(i).getQuantity()
-                    )
-            );
+            productStocks.add(ProductStock.create(
+                    product, productSizes.get(i), createProductRequest.getProductStocks().get(i).getQuantity()
+            ));
         }
         productStockRepository.saveAll(productStocks);
 
@@ -119,26 +107,15 @@ public class ProductService { // TODO : Feign할 때 Facade 계층 추가
         reviewAggregateRepository.save(ReviewAggregate.create(product, 0F, 0L));
 
         // presignedUrls for response dto
-        String imgPresignedUrl = s3Util.getPreSignedUrl(IMG_BUCKET, imgUrl.substring(1));
-        Map<String, String> describeImgPresignedUrls = new HashMap<>();
-        for(int i=0; i<describeImgUrls.size(); i++) {
-            describeImgPresignedUrls.put(
-                    createProductRequest.getDescribeImages().get(i),
-                    s3Util.getPreSignedUrl(IMG_BUCKET, describeImgUrls.get(i).substring(1))
-            );
-        }
+        String imgPresignedUrl = s3Util.getPreSignedUrl(filePath);
+        Map<String, String> describeImgPresignedUrls =
+                createDescribeImgPresignedUrls(createProductRequest.getDescribeImages(), describeImgUrls);
 
         return CreateProductResponse.create(product.getId(), imgPresignedUrl, describeImgPresignedUrls);
     }
 
-    public ReadProductDetailResponse readProductDetail(Long productId) {
-        Product product = productRepository.findProductDetailById(productId)
-                .orElseThrow(() -> new NotExistsException(NotExistsException.PRODUCT_NOT_FOUND));
-        return ReadProductDetailResponse.fromEntity(product);
-    }
-
     @Transactional
-    public UpdateProductResponse updateProduct(Long productId, UpdateProductRequest updateProductRequest) {
+    public UpdateProductDto updateProduct(Long productId, UpdateProductRequest updateProductRequest) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.PRODUCT_NOT_FOUND));
 
@@ -155,10 +132,7 @@ public class ProductService { // TODO : Feign할 때 Facade 계층 추가
         }
 
         // {productSizeId, quantity}의 목록에서 productSizeId의 목록만 추출
-        Set<Long> productSizeIds = updateProductRequest.getProductStocks()
-                .stream()
-                .map(ProductStockRequest::getProductSizeId)
-                .collect(Collectors.toSet());
+        Set<Long> productSizeIds = updateProductRequest.extractProductSizeIds();
 
         // productSizeId의 목록으로부터 product의 목록 조회(db는 id 기준으로 자동 오름차순 정렬)
         List<ProductSize> productSizes = productSizeRepository.readProductSizesByProductSizeIds(productSizeIds);
@@ -167,12 +141,13 @@ public class ProductService { // TODO : Feign할 때 Facade 계층 추가
         }
 
         List<ProductStock> productStocks = productStockRepository.findProductStocksByProductOrderByProductSize(product);
+        List<ProductStock> productStocksToNotify = new ArrayList<>();
         // TODO : REFACTOR for-for-if
         for(ProductStockRequest productStockRequest: updateProductRequest.getProductStocks()) {
             for(ProductStock productStock: productStocks) {
                 if(productStock.getProductSize().getId().equals(productStockRequest.getProductSizeId())) {
                     if(productStock.getQuantity().equals(0L)) { // 기존 재고가 0개였다면
-                        // TODO : 재입고 알림 발송
+                        productStocksToNotify.add(productStock);
                     }
                 }
             }
@@ -180,21 +155,16 @@ public class ProductService { // TODO : Feign할 때 Facade 계층 추가
 
         List<ProductStock> newProductStocks = new ArrayList<>();
         for(int i=0; i<productSizes.size(); i++) {
-            newProductStocks.add(
-                    ProductStock.create(
-                            product,
-                            productSizes.get(i),
-                            updateProductRequest.getProductStocks().get(i).getQuantity()
-                    )
-            );
+            newProductStocks.add(ProductStock.create(
+                    product, productSizes.get(i), updateProductRequest.getProductStocks().get(i).getQuantity()
+            ));
         }
 
-        String newImgUrl = String.format("/%s/%s.%s", PRODUCT_IMG_BUCKET_PREFIX, UUID.randomUUID(),
-                updateProductRequest.getImage().split("\\.")[1]);
+        String newfilePath = s3Util.createFilePath(updateProductRequest.getImage());
 
         // 저장할 describe image list 생성
         List<String> describeImgUrls = updateProductRequest.getDescribeImages().stream()
-                .map(descImg -> String.format("/%s/%s.%s", PRODUCT_IMG_BUCKET_PREFIX, UUID.randomUUID(), descImg.split("\\.")[1]))
+                .map(s3Util::createFilePath)
                 .collect(Collectors.toList());
 
         List<DescribeImage> newDescribeImages = describeImgUrls.stream()
@@ -205,7 +175,7 @@ public class ProductService { // TODO : Feign할 때 Facade 계층 추가
         product.setCategory(newCategory);
         product.setPrice(updateProductRequest.getPrice());
         product.setName(updateProductRequest.getName());
-        product.setImgUrl(newImgUrl);
+        product.setImgUrl(newfilePath);
         product.setGender(Gender.validate(updateProductRequest.getGender()));
         product.setCode(updateProductRequest.getCode());
 
@@ -216,16 +186,32 @@ public class ProductService { // TODO : Feign할 때 Facade 계층 추가
         describeImageRepository.saveAll(newDescribeImages);
 
         // presignedUrls for response dto
-        String imgPresignedUrl = s3Util.getPreSignedUrl(IMG_BUCKET, newImgUrl.substring(1));
+        String imgPresignedUrl = s3Util.getPreSignedUrl(newfilePath);
+        Map<String, String> describeImgPresignedUrls =
+                createDescribeImgPresignedUrls(updateProductRequest.getDescribeImages(), describeImgUrls);
+
+        return UpdateProductDto.create(imgPresignedUrl, describeImgPresignedUrls, productStocksToNotify);
+    }
+
+    private Map<String, String> createDescribeImgPresignedUrls(List<String> describeImages, List<String> describeImgUrls) {
         Map<String, String> describeImgPresignedUrls = new HashMap<>();
-        for(int i=0; i<describeImgUrls.size(); i++) {
+        for(int i=0; i<describeImages.size(); i++) {
             describeImgPresignedUrls.put(
-                    updateProductRequest.getDescribeImages().get(i),
-                    s3Util.getPreSignedUrl(IMG_BUCKET, describeImgUrls.get(i).substring(1))
+                    describeImages.get(i), s3Util.getPreSignedUrl(describeImgUrls.get(i))
             );
         }
+        return describeImgPresignedUrls;
+    }
 
-        return UpdateProductResponse.create(imgPresignedUrl, describeImgPresignedUrls);
+    @Transactional
+    public void deleteProductsByIds(List<Long> ids) {
+        productRepository.findAllById(ids).forEach(Product::softDelete);
+    }
+
+    public ReadProductDetailResponse readProductDetail(Long productId) {
+        Product product = productRepository.findProductDetailById(productId)
+                .orElseThrow(() -> new NotExistsException(NotExistsException.PRODUCT_NOT_FOUND));
+        return ReadProductDetailResponse.fromEntity(product);
     }
 
     public ReadProductSliceResponse readProductSlice(Long lastId, Long brandId, Long categoryId, Gender gender, ProductType type) {

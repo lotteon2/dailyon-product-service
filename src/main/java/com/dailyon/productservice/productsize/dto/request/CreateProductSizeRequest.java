@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateProductSizeRequest {
-    @NotNull
+    @NotNull(message = "카테고리를 입력해주세요")
     private Long categoryId;
 
     @NotBlank(message = "치수값을 입력해주세요")

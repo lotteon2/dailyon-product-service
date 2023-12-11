@@ -109,5 +109,8 @@ public class Product extends BaseEntity {
         this.price = price;
     }
 
-    public void softDelete() { this.deleted = true; }
+    public void softDelete() {
+        this.code = this.code + "_" + System.currentTimeMillis();
+        this.deleted = true;
+    }
 }

@@ -38,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @SpringBootTest
 @Transactional
@@ -309,5 +310,23 @@ public class ProductServiceTests {
         assertEquals(1, response.getTotalPages());
         assertEquals(2, response.getProductResponses().get(0).getProductStocks().size());
         assertEquals(2, response.getProductResponses().get(0).getDescribeImgUrls().size());
+    }
+
+    @Test
+    @DisplayName("상품 삭제")
+    void deleteProductsTest() {
+        // given
+        Long productId = product.getId();
+        List<Long> ids = new ArrayList<>();
+        ids.add(productId);
+
+        // when
+        productService.deleteProductsByIds(ids);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // then
+        assertThrows(NoSuchElementException.class, () -> productRepository.findById(productId).get());
     }
 }

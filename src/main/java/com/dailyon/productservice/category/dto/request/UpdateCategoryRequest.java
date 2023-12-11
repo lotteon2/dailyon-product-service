@@ -12,6 +12,6 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateCategoryRequest {
-    @NotBlank(message = "브랜드명을 입력해주세요")
+    @NotBlank(message = "카테고리명을 입력해주세요")
     private String name;
 }

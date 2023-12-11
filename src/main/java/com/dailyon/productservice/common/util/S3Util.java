@@ -9,19 +9,27 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class S3Util {
     private final AmazonS3 amazonS3;
 
-    public String getPreSignedUrl(String bucket, String filePath) {
-        GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePreSignedUrlRequest(bucket, filePath);
+    private final static String IMG_BUCKET = "dailyon-static-dev";
+    private final static String PRODUCT_IMG_BUCKET_PREFIX = "product-img";
+
+    public String createFilePath(String img) {
+        return String.format("/%s/%s.%s", PRODUCT_IMG_BUCKET_PREFIX, UUID.randomUUID(), img.split("\\.")[1]);
+    }
+
+    public String getPreSignedUrl(String filePath) {
+        GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePreSignedUrlRequest(filePath.substring(1));
         return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
     }
 
-    private GeneratePresignedUrlRequest getGeneratePreSignedUrlRequest(String bucket, String fileName) {
-        GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, fileName)
+    private GeneratePresignedUrlRequest getGeneratePreSignedUrlRequest(String fileName) {
+        GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(IMG_BUCKET, fileName)
                 .withMethod(HttpMethod.PUT)
                 .withExpiration(getPreSignedUrlExpiration());
 
