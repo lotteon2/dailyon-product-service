@@ -44,16 +44,16 @@ VALUES (1, 1, 50), (2, 2, 30), (3, 3, 40), (4, 4, 25), (5, 5, 35),
        (6, 2, 20), (7, 3, 35), (8, 4, 50), (9, 5, 25), (10, 6, 40);
 
 INSERT INTO describe_image (product_id, img_url)
-VALUES (1, 'https://via.placeholder.com/500'),
-       (2, 'https://via.placeholder.com/500'),
-       (3, 'https://via.placeholder.com/500'),
-       (4, 'https://via.placeholder.com/500'),
-       (5, 'https://via.placeholder.com/500'),
-       (6, 'https://via.placeholder.com/500'),
-       (7, 'https://via.placeholder.com/500'),
-       (8, 'https://via.placeholder.com/500'),
-       (9, 'https://via.placeholder.com/500'),
-       (10, 'https://via.placeholder.com/500');
+VALUES (1,  '/product-img/default-product-img.png'),
+       (2,  '/product-img/default-product-img.png'),
+       (3,  '/product-img/default-product-img.png'),
+       (4,  '/product-img/default-product-img.png'),
+       (5,  '/product-img/default-product-img.png'),
+       (6,  '/product-img/default-product-img.png'),
+       (7,  '/product-img/default-product-img.png'),
+       (8,  '/product-img/default-product-img.png'),
+       (9,  '/product-img/default-product-img.png'),
+       (10, '/product-img/default-product-img.png');
 
 INSERT INTO review_aggregate (product_id, avg_rating, review_count)
 VALUES (1, 0, 0), (2, 0, 0),
