@@ -1,0 +1,10 @@
+[
+  {
+    "productId": 1,
+    "hasAvailableCoupon": false
+  },
+  {
+    "productId": 2,
+    "hasAvailableCoupon": false
+  }
+]
