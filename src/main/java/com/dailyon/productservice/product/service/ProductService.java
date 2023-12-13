@@ -50,6 +50,10 @@ public class ProductService {
 
     @Transactional
     public CreateProductResponse createProduct(CreateProductRequest createProductRequest) {
+        if(productRepository.findProductByCode(createProductRequest.getCode()).isPresent()) {
+            throw new UniqueException(UniqueException.DUPLICATE_PRODUCT_CODE);
+        }
+
         Brand brand = brandRepository.findById(createProductRequest.getBrandId())
                 .orElseThrow(() -> new NotExistsException(NotExistsException.BRAND_NOT_FOUND));
 
