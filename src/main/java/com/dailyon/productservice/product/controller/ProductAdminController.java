@@ -9,6 +9,7 @@ import com.dailyon.productservice.product.dto.response.UpdateProductResponse;
 import com.dailyon.productservice.product.facade.ProductFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class ProductAdminController {
     ResponseEntity<ReadProductPageResponse> readProductPage(@RequestParam(required = false) Long brandId,
                                                             @RequestParam(required = false) Long categoryId,
                                                             @RequestParam ProductType type,
-                                                            @PageableDefault Pageable pageable) {
+                                                            @PageableDefault(sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(productFacade.readProductPage(brandId, categoryId, type, pageable));
     }
 
