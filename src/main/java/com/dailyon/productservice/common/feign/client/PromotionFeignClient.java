@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @FeignClient(
-    name = "promotion-service",
+    name = "${endpoint.promotion-service}",
     configuration = FeignClientConfig.class
 )
 public interface PromotionFeignClient {
