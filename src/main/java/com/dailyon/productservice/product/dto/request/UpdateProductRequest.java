@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,6 @@ public class UpdateProductRequest {
     @NotBlank(message = "상품 코드를 입력해주세요")
     private String code;
 
-    @NotBlank(message = "상품 이미지를 입력해주세요")
     private String image;
 
     @Valid
@@ -44,7 +44,7 @@ public class UpdateProductRequest {
     private List<ProductStockRequest> productStocks;
 
     @Size(max = 5, message = "상품 설명 이미지는 최대 5개까지 등록 가능합니다")
-    private List<String> describeImages;
+    private Map<String, String> describeImages;
 
     public Set<Long> extractProductSizeIds() {
         return productStocks.stream()
