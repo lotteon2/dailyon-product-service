@@ -14,6 +14,7 @@ import com.dailyon.productservice.product.repository.ProductRepository;
 import com.dailyon.productservice.productsize.entity.ProductSize;
 import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import com.dailyon.productservice.productstock.entity.ProductStock;
+import com.dailyon.productservice.productstock.kafka.dto.OrderDto;
 import com.dailyon.productservice.productstock.repository.ProductStockRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -108,5 +109,20 @@ public class ProductStockRepositoryTests {
 
         // then
         assertEquals(productDtos.size(), orderProducts.size());
+    }
+
+    @Test
+    @DisplayName("재고 차감 위한 조회 시 select for update")
+    void selectForUpdateTest() {
+        // given
+        List<OrderDto.ProductInfo> productInfos = new ArrayList<>();
+        productInfos.add(OrderDto.ProductInfo.builder().productId(product.getId()).sizeId(productSizes.get(0).getId()).build());
+        productInfos.add(OrderDto.ProductInfo.builder().productId(product.getId()).sizeId(productSizes.get(1).getId()).build());
+
+        // when
+        List<ProductStock> productStocksToUpdate = productStockRepository.selectProductStocksForUpdate(productInfos);
+
+        // then
+        assertEquals(productInfos.size(), productStocksToUpdate.size());
     }
 }
