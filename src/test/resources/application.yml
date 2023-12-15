@@ -27,6 +27,9 @@ spring:
   sql:
     init:
       mode: never
+  kafka:
+    consumer:
+      group-id: test
 
 cloud:
   aws:
