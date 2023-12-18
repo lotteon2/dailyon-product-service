@@ -14,6 +14,7 @@ public class ReadProductResponse {
     private Long id;
     private String brandName;
     private String categoryName;
+    private Integer price;
     private String name;
     private String code;
     private String imgUrl;
@@ -26,6 +27,7 @@ public class ReadProductResponse {
                 .brandName(product.getBrand().getName())
                 .categoryName(product.getCategory().getName())
                 .name(product.getName())
+                .price(product.getPrice())
                 .code(product.getCode())
                 .imgUrl(product.getImgUrl())
                 .avgRating(product.getReviewAggregate().getAvgRating())
