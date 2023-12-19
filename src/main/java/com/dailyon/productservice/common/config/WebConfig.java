@@ -9,8 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-
-    @Override // TODO : 게이트웨이 설정 이후 삭제
+    @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("*")
@@ -18,9 +17,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedMethods("*");
     }
 
-    /*@Override
+    @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new SimpleAuthorizeInterceptor())
                 .addPathPatterns("/admin/**");
-    }*/
+    }
 }
