@@ -7,26 +7,29 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CreateOrderConsumer {
+public class CreateOrderHandler {
     private final ProductStockService productStockService;
-    private final CancelOrderProducer cancelOrderProducer;
+    private final CancelOrderHandler cancelOrderHandler;
+    private final CreateOrderProductHandler createOrderProductHandler;
     private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = "create-order")
-    public void deductProductStocks(String message, Acknowledgment ack) {
+    public void consume(String message, Acknowledgment ack) {
         OrderDto orderDto = null;
         try {
             orderDto = objectMapper.readValue(message, OrderDto.class);
             productStockService.deductProductStocks(orderDto.getProductInfos());
+            createOrderProductHandler.produce(orderDto);
             ack.acknowledge();
         } catch (InsufficientQuantityException e) {
             assert orderDto != null;
-            cancelOrderProducer.rollbackTransaction(orderDto);
+            cancelOrderHandler.produce(orderDto);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
