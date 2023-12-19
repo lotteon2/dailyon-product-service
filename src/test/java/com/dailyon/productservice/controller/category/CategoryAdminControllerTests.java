@@ -44,7 +44,7 @@ public class CategoryAdminControllerTests {
 
         mockMvc.perform(
                 post("/admin/categories")
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createCategoryRequest))
         );
@@ -52,7 +52,7 @@ public class CategoryAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 post("/admin/categories")
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createCategoryRequest))
         );
@@ -76,7 +76,7 @@ public class CategoryAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 post("/admin/categories")
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody)
         );
@@ -99,7 +99,7 @@ public class CategoryAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 post("/admin/categories")
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody)
         );
@@ -127,7 +127,7 @@ public class CategoryAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 post("/admin/categories")
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(createCategoryRequest1))
         );
@@ -146,7 +146,10 @@ public class CategoryAdminControllerTests {
                 .build());
 
         // when
-        ResultActions resultActions = mockMvc.perform(get("/admin/categories").header("role", "ADMIN"));
+        ResultActions resultActions = mockMvc.perform(
+                get("/admin/categories")
+                        .header("role", "ROLE_ADMIN")
+        );
 
         // then
         resultActions
@@ -170,7 +173,7 @@ public class CategoryAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 put("/admin/categories/"+root.getCategoryId())
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateCategoryRequest))
         );
@@ -194,7 +197,7 @@ public class CategoryAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 put("/admin/categories/"+root.getCategoryId())
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateCategoryRequest))
         );
@@ -208,6 +211,7 @@ public class CategoryAdminControllerTests {
         // given, when
         ResultActions resultActions = mockMvc.perform(
                 get("/admin/page/categories")
+                        .header("role", "ROLE_ADMIN")
         );
 
         // then
@@ -224,6 +228,7 @@ public class CategoryAdminControllerTests {
         // given, when
         ResultActions resultActions = mockMvc.perform(
                 delete("/admin/categories/"+0)
+                        .header("role", "ROLE_ADMIN")
         );
 
         // then

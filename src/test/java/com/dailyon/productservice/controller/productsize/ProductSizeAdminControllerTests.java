@@ -62,7 +62,7 @@ public class ProductSizeAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 post("/admin/product-size")
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createProductSizeRequest))
         );
@@ -83,7 +83,7 @@ public class ProductSizeAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 post("/admin/product-size")
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createProductSizeRequest))
         );
@@ -113,7 +113,7 @@ public class ProductSizeAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 post("/admin/product-size")
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createProductSizeRequest))
         );
@@ -144,7 +144,7 @@ public class ProductSizeAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 get("/admin/product-size/"+categoryForProductList.getCategoryId())
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
         );
 
         // then
@@ -176,7 +176,7 @@ public class ProductSizeAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 get("/admin/page/product-size/"+categoryForProductList.getCategoryId())
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
         );
 
         resultActions

@@ -47,7 +47,7 @@ public class BrandAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 post("/admin/brands")
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody)
         );
@@ -73,7 +73,7 @@ public class BrandAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 post("/admin/brands")
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody)
         );
@@ -96,7 +96,7 @@ public class BrandAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 put("/admin/brands/"+createdBrand.getBrandId())
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody)
         );
@@ -118,7 +118,7 @@ public class BrandAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 put("/admin/brands/"+0)
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody)
         );
@@ -142,7 +142,7 @@ public class BrandAdminControllerTests {
         // when
         ResultActions resultActions = mockMvc.perform(
                 put("/admin/brands/"+createBrandResponse.getBrandId())
-                        .header("role", "ADMIN")
+                        .header("role", "ROLE_ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody)
         );
@@ -157,6 +157,7 @@ public class BrandAdminControllerTests {
         // given, when
         ResultActions resultActions = mockMvc.perform(
                 get("/admin/page/brands")
+                        .header("role", "ROLE_ADMIN")
         );
 
         // then
@@ -173,6 +174,7 @@ public class BrandAdminControllerTests {
         // given, when
         ResultActions resultActions = mockMvc.perform(
                 delete("/admin/brands/"+0)
+                        .header("role", "ROLE_ADMIN")
         );
 
         resultActions

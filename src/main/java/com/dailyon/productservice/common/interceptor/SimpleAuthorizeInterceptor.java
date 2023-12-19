@@ -23,6 +23,6 @@ public class SimpleAuthorizeInterceptor implements HandlerInterceptor {
 
     private boolean isAuthorized(HttpServletRequest request) {
         String role = request.getHeader("role");
-        return role != null && role.equals("ADMIN");
+        return role != null && role.equals("ROLE_ADMIN");
     }
 }
