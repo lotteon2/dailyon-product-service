@@ -42,4 +42,20 @@ public class ProductStockService {
             productStocks.get(i).setQuantity(quantity);
         }
     }
+
+    @Transactional
+    public void addProductStocks(List<OrderDto.ProductInfo> productInfos) {
+        List<ProductStock> productStocks = productStockRepository.selectProductStocksForUpdate(productInfos);
+        if(productStocks.size() != productInfos.size()) {
+            throw new NotExistsException(NotExistsException.PRODUCT_NOT_FOUND);
+        }
+        // 둘은 같은 정렬 기준을 공유.
+        Collections.sort(productStocks);
+        Collections.sort(productInfos);
+
+        for(int i=0; i<productStocks.size(); i++) {
+            long quantity = productStocks.get(i).getQuantity() + productInfos.get(i).getQuantity();
+            productStocks.get(i).setQuantity(quantity);
+        }
+    }
 }
