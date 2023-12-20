@@ -35,9 +35,10 @@ public class CancelOrderHandler {
             if(orderDto.getOrderEvent() != OrderEvent.STOCK_FAIL) {
                 productStockService.addProductStocks(orderDto.getProductInfos());
             }
-            ack.acknowledge();
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+        } finally {
+            ack.acknowledge();
         }
     }
 }
