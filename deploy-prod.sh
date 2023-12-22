@@ -4,19 +4,30 @@ export ECR_REGISTRY=${ECR_REGISTRY}
 export AWS_ECR_REPOSITORY=${AWS_ECR_REPOSITORY}
 export IMAGE_TAG=${IMAGE_TAG}
 
-deployment_name="product-service-${IMAGE_TAG}"
+deployment_name="product-service"
 service_name="product-service"
+pv_name="product-ebs-pv"
+pvc_name="product-ebs-pvc"
 namespace="prod"
 
 # Update AWS EKS user config
 aws eks update-kubeconfig --region ap-northeast-2 --name $AWS_EKS_CLUSTER_NAME
 
+if kubectl get pv "${service_name}" -n "${namespace}" &> /dev/null; then
+  echo "PersistenceVolume is already exists"
+else
+  kubectl create -f ./pv-prod.yml
+fi
+
+if kubectl get pvc "${service_name}" -n "${namespace}" &> /dev/null; then
+  echo "PersistenceVolumeClaim is already exists"
+else
+  kubectl create -f ./pvc-prod.yml
+fi
+
 # Deploy kubernetes deployment resource
 echo "Apply new kubernetes deployment resources..."
-envsubst < ./deployment-prod.yml | kubectl create -f - -n prod
-
-echo "Labeling new kubernetes deployment resources..."
-kubectl label deployment ${deployment_name} -n ${namespace} version=${IMAGE_TAG}
+envsubst < ./deployment-prod.yml | kubectl apply -f - -n ${namespace}
 
 # 현재 실행중인 Deployment의 Pod 이름들 가져오기
 pod_names=$(kubectl get pods -l app="${deployment_name}" -n "${namespace}" --output=jsonpath='{.items[*].metadata.name}')
@@ -43,17 +54,19 @@ if [[ "${readiness_probe_status}" == "True" ]]; then
   echo "Check service is already available..."
   if kubectl get service "${service_name}" -n "${namespace}" &> /dev/null; then
     echo "Service is already available"
+    echo "Update new service resource..."
+    kubectl apply -f ./service-prod.yml -n ${namespace}
   else
     echo "Service is not founded"
     echo "Create new service resource..."
-    kubectl create -f ./service-prod.yml -n prod
-  fi
+    kubectl create -f ./service-prod.yml -n ${namespace}
 
-  echo "Change service selector from old kubernetes deployment resources to new kubernetes deployment resources"
-  kubectl patch service sns-service -n ${namespace} -p "{\"spec\":{\"selector\":{\"app\": \"${IMAGE_TAG}\"}}}"
+    echo "Success to create new service resource..."
+  fi
 else
   echo "Failed to create new kubernetes deployment resources"
   echo "Delete new kubernetes deployment resources"
-  kubectl delete deployment ${deployment_name} -n prod
+  # rollout
+  kubectl rollout undo deployment ${deployment_name} -n ${namespace}
   exit 1
 fi

@@ -26,12 +26,13 @@ public class CreateOrderHandler {
             orderDto = objectMapper.readValue(message, OrderDto.class);
             productStockService.deductProductStocks(orderDto.getProductInfos());
             createOrderProductHandler.produce(orderDto);
-            ack.acknowledge();
         } catch (InsufficientQuantityException e) {
             assert orderDto != null;
             cancelOrderHandler.produce(orderDto);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+        } finally {
+            ack.acknowledge();
         }
     }
 }
