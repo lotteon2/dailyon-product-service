@@ -75,6 +75,8 @@ spec:
           volumeMounts:
             - name: mysql-config
               mountPath: /etc/mysql/conf.d
+            - name: product-ebs-pv
+              mountPath: /var/lib/mysql
           imagePullPolicy: IfNotPresent
         - name: redis
           image: redis:latest
@@ -91,6 +93,9 @@ spec:
         - name: mysql-config
           configMap:
             name: mysql-config
+        - name: product-ebs-pv
+          persistentVolumeClaim:
+            claimName: product-ebs-pvc
       restartPolicy: Always
       affinity:
         nodeAffinity:
