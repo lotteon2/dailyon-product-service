@@ -38,7 +38,8 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .where(product.deleted.eq(false)
                         .and(product.id.gt(lastId))
                         .and(brandIdEq(brandId))
-                        .and(categoryIn(childCategories)).and(genderEq(gender))
+                        .and(categoryIn(childCategories))
+                        .and(genderEq(gender))
                         .and(productTypeEq(productType))
                 ).fetch();
 

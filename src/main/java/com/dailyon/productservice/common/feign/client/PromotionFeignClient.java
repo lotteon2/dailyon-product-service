@@ -12,7 +12,7 @@ import java.util.List;
 @FeignClient(
         name = "promotion-service",
         url = "${endpoint.promotion-service}",
-    configuration = FeignClientConfig.class
+        configuration = FeignClientConfig.class
 )
 public interface PromotionFeignClient {
     @GetMapping(value = "/clients/coupons/coupons-existence")

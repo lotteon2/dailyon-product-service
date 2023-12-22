@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,12 +21,12 @@ public interface ProductSizeJpaRepository extends JpaRepository<ProductSize, Lon
             "FROM ProductSize ps " +
             "JOIN FETCH ps.category c " +
             "WHERE c.id = :id AND c.deleted = false AND ps.deleted = false")
-    List<ProductSize> findProductSizesByCategoryId(Long id);
+    List<ProductSize> findProductSizesByCategoryId(@Param("id") Long id);
 
     @Query(value = "SELECT ps " +
             "FROM ProductSize ps " +
             "WHERE ps.id IN :productSizeIds AND ps.deleted = false ")
-    List<ProductSize> findProductSizesByIds(Set<Long> productSizeIds);
+    List<ProductSize> findProductSizesByIds(@Param("productSizeIds") Set<Long> productSizeIds);
 
     Optional<ProductSize> findProductSizeById(Long id);
 
@@ -33,9 +34,9 @@ public interface ProductSizeJpaRepository extends JpaRepository<ProductSize, Lon
             "FROM ProductSize AS ps " +
             "LEFT JOIN ps.category AS c " +
             "WHERE c.id = :categoryId AND c.deleted = false AND ps.deleted = false")
-    Page<ProductSize> findProductSizePagesByCategoryId(Long categoryId, Pageable pageable);
+    Page<ProductSize> findProductSizePagesByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
 
     @Modifying(flushAutomatically = true)
-    @Query(value = "UPDATE ProductSize AS ps SET ps.deleted = true WHERE ps.category IN :category")
-    void deleteProductSizesByCategory(List<Category> category);
+    @Query(value = "UPDATE ProductSize AS ps SET ps.deleted = true WHERE ps.category IN :categories")
+    void deleteProductSizesByCategory(@Param("categories") List<Category> categories);
 }

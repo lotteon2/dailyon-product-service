@@ -5,6 +5,7 @@ import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.product.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,13 +21,13 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
         "JOIN FETCH p.productStocks " +
         "JOIN FETCH p.describeImages " +
         "WHERE p.id = :id AND p.deleted = false")
-    Optional<Product> findProductDetailById(Long id);
+    Optional<Product> findProductDetailById(@Param("id") Long id);
     Optional<Product> findProductByCode(String code);
     @Query(value = "SELECT p " +
             "FROM Product p " +
             "JOIN FETCH p.brand " +
-            "WHERE p.id IN :id AND p.deleted = false")
-    List<Product> findOOTDProductDetails(List<Long> id);
+            "WHERE p.id IN :ids AND p.deleted = false")
+    List<Product> findOOTDProductDetails(@Param("ids") List<Long> ids);
 
     boolean existsProductByBrand(Brand brand);
 
@@ -34,5 +35,5 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
             "FROM Product p " +
             "JOIN FETCH p.category " +
             "WHERE p.category IN :categories AND p.deleted = false")
-    List<Product> findProductsFromCategories(List<Category> categories);
+    List<Product> findProductsFromCategories(@Param("categories") List<Category> categories);
 }
