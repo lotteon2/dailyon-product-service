@@ -1,8 +1,10 @@
 package com.dailyon.productservice.common.feign;
 
 import com.dailyon.productservice.common.feign.request.OrderProductDto;
+import com.dailyon.productservice.common.feign.request.ReadWishCartProductRequest;
 import com.dailyon.productservice.common.feign.response.ReadOOTDProductListResponse;
 import com.dailyon.productservice.common.feign.response.ReadOrderProductListResponse;
+import com.dailyon.productservice.common.feign.response.ReadWishCartProductMapResponse;
 import com.dailyon.productservice.product.service.ProductService;
 import com.dailyon.productservice.productstock.service.ProductStockService;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +31,11 @@ public class FeignController {
     @PostMapping("/orders")
     ResponseEntity<ReadOrderProductListResponse> readOrderProducts(@Valid @Size(min = 1) @RequestBody List<OrderProductDto> request) {
         return ResponseEntity.status(HttpStatus.OK).body(productStockService.readOrderProducts(request));
+    }
+
+    @PostMapping("/wish-cart")
+    ResponseEntity<ReadWishCartProductMapResponse> readWishCartProducts(
+            @Valid @Size(min = 1) @RequestBody List<ReadWishCartProductRequest> request) {
+        return ResponseEntity.status(HttpStatus.OK).body(productStockService.readWishCartProducts(request));
     }
 }
