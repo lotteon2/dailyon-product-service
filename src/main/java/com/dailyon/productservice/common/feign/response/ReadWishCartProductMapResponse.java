@@ -38,6 +38,8 @@ public class ReadWishCartProductMapResponse {
         private String productName;
         private String gender;
         private Long productQuantity;
+        private Integer productPrice;
+        private String imgUrl;
 
         public static String toKey(ProductStock productStock) {
             return "pid=" + productStock.getProduct().getId() + "&sid=" + productStock.getProductSize().getId();
@@ -52,6 +54,8 @@ public class ReadWishCartProductMapResponse {
                     .productName(productStock.getProduct().getName())
                     .gender(productStock.getProduct().getGender().getMessage())
                     .productQuantity(productStock.getQuantity())
+                    .productPrice(productStock.getProduct().getPrice())
+                    .imgUrl(productStock.getProduct().getImgUrl())
                     .build();
         }
     }
