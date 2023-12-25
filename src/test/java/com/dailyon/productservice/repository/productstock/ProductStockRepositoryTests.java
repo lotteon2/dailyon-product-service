@@ -9,6 +9,7 @@ import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.brand.repository.BrandRepository;
 import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.common.feign.request.OrderProductDto;
+import com.dailyon.productservice.common.feign.request.ReadWishCartProductRequest;
 import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.product.repository.ProductRepository;
 import com.dailyon.productservice.productsize.entity.ProductSize;
@@ -109,6 +110,22 @@ public class ProductStockRepositoryTests {
 
         // then
         assertEquals(productDtos.size(), orderProducts.size());
+    }
+
+    @Test
+    @DisplayName("찜/장바구니 조회 시 상품 정보, 재고 조회")
+    void readWishCartProductsTest() {
+        // given
+        List<ReadWishCartProductRequest> requests = new ArrayList<>();
+        requests.add(ReadWishCartProductRequest.builder().productId(product.getId()).productSizeId(productSizes.get(0).getId()).build());
+        requests.add(ReadWishCartProductRequest.builder().productId(product.getId()).productSizeId(productSizes.get(1).getId()).build());
+        requests.add(ReadWishCartProductRequest.builder().productId(product1.getId()).productSizeId(productSizes.get(2).getId()).build());
+
+        // when
+        List<ProductStock> wishCartProducts = productStockRepository.findWishCartProductsBy(requests);
+
+        // then
+        assertEquals(requests.size(), wishCartProducts.size());
     }
 
     @Test

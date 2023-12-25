@@ -3,7 +3,9 @@ package com.dailyon.productservice.productstock.service;
 import com.dailyon.productservice.common.exception.InsufficientQuantityException;
 import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.common.feign.request.OrderProductDto;
+import com.dailyon.productservice.common.feign.request.ReadWishCartProductRequest;
 import com.dailyon.productservice.common.feign.response.ReadOrderProductListResponse;
+import com.dailyon.productservice.common.feign.response.ReadWishCartProductMapResponse;
 import com.dailyon.productservice.productstock.entity.ProductStock;
 import com.dailyon.productservice.productstock.kafka.dto.OrderDto;
 import com.dailyon.productservice.productstock.repository.ProductStockRepository;
@@ -22,6 +24,10 @@ public class ProductStockService {
 
     public ReadOrderProductListResponse readOrderProducts(List<OrderProductDto> request) {
         return ReadOrderProductListResponse.fromEntity(productStockRepository.findOrderProductsBy(request));
+    }
+
+    public ReadWishCartProductMapResponse readWishCartProducts(List<ReadWishCartProductRequest> requests) {
+        return ReadWishCartProductMapResponse.fromEntity(productStockRepository.findWishCartProductsBy(requests));
     }
 
     @Transactional

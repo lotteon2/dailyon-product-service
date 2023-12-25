@@ -9,6 +9,8 @@ import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.common.feign.request.OrderProductDto;
+import com.dailyon.productservice.common.feign.request.ReadWishCartProductRequest;
+import com.dailyon.productservice.common.feign.response.ReadWishCartProductMapResponse;
 import com.dailyon.productservice.product.dto.request.ProductStockRequest;
 import com.dailyon.productservice.common.feign.response.ReadOrderProductListResponse;
 import com.dailyon.productservice.product.entity.Product;
@@ -95,7 +97,7 @@ public class ProductStockServiceTests {
 
     @Test
     @DisplayName("주문 시 상품 정보 조회")
-    void test1() {
+    void readOrderProductsTest() {
         List<OrderProductDto> request = new ArrayList<>();
         request.add(OrderProductDto.builder().productId(product.getId()).sizeId(productSize1.getId()).build());
         request.add(OrderProductDto.builder().productId(product.getId()).sizeId(productSize2.getId()).build());
@@ -103,5 +105,20 @@ public class ProductStockServiceTests {
         ReadOrderProductListResponse response = productStockService.readOrderProducts(request);
 
         assertEquals(request.size(), response.getResponse().size());
+    }
+
+    @Test
+    @DisplayName("찜/장바구니 조회 시 상품 정보 조회")
+    void readWishCartProductsTest() {
+        // given
+        List<ReadWishCartProductRequest> requests = new ArrayList<>();
+        requests.add(ReadWishCartProductRequest.builder().productId(product.getId()).productSizeId(productSize1.getId()).build());
+        requests.add(ReadWishCartProductRequest.builder().productId(product.getId()).productSizeId(productSize2.getId()).build());
+
+        // when
+        ReadWishCartProductMapResponse response = productStockService.readWishCartProducts(requests);
+
+        // then
+        assertEquals(requests.size(), response.getResponses().size());
     }
 }
