@@ -18,7 +18,7 @@ public class ReadProductResponse {
     private String name;
     private String code;
     private String imgUrl;
-    private Float avgRating;
+    private Double avgRating;
     private Long reviewCount;
 
     public static ReadProductResponse fromEntity(Product product) {
