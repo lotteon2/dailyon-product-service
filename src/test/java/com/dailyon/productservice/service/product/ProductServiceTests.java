@@ -119,7 +119,7 @@ public class ProductServiceTests {
         createDescribeImages.add(DescribeImage.create(product, "testDescribeImg1.jpg"));
         describeImageRepository.saveAll(createDescribeImages);
 
-        reviewAggregateRepository.save(ReviewAggregate.create(product, 0.0F, 0L));
+        reviewAggregateRepository.save(ReviewAggregate.create(product, 0D, 0L));
 
         entityManager.flush();
         entityManager.clear();

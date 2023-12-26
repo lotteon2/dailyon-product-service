@@ -23,16 +23,24 @@ public class ReviewAggregate {
     private Product product;
 
     @Column(nullable = false)
-    private Float avgRating;
+    private Double avgRating;
 
     @Column(nullable = false)
     private Long reviewCount;
 
-    public static ReviewAggregate create(Product product, Float avgRating, Long reviewCount) {
+    public static ReviewAggregate create(Product product, Double avgRating, Long reviewCount) {
         return ReviewAggregate.builder()
                 .product(product)
                 .avgRating(avgRating)
                 .reviewCount(reviewCount)
                 .build();
+    }
+
+    public void plusReviewCount() {
+        this.reviewCount++;
+    }
+
+    public void setAvgRating(Double avgRating) {
+        this.avgRating = avgRating;
     }
 }

@@ -1,17 +1,18 @@
-package com.dailyon.productservice.repository.reviewaggregate;
-
-import static org.junit.jupiter.api.Assertions.*;
+package com.dailyon.productservice.service.reviewaggregate;
 
 import com.dailyon.productservice.brand.entity.Brand;
+import com.dailyon.productservice.brand.repository.BrandRepository;
 import com.dailyon.productservice.category.entity.Category;
-import com.dailyon.productservice.product.entity.Product;
-import com.dailyon.productservice.reviewaggregate.entity.ReviewAggregate;
+import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
-import com.dailyon.productservice.brand.repository.BrandRepository;
-import com.dailyon.productservice.category.repository.CategoryRepository;
+import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.product.repository.ProductRepository;
+import com.dailyon.productservice.reviewaggregate.entity.ReviewAggregate;
+import com.dailyon.productservice.reviewaggregate.kafka.dto.ReviewDto;
 import com.dailyon.productservice.reviewaggregate.repository.ReviewAggregateRepository;
+import com.dailyon.productservice.reviewaggregate.service.ReviewAggregateService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @Transactional
 @ActiveProfiles(value = {"test"})
-public class ReviewAggregateRepositoryTests {
+public class ReviewAggregateServiceTests {
+    @Autowired
+    ReviewAggregateService reviewAggregateService;
+
     @Autowired
     ReviewAggregateRepository reviewAggregateRepository;
 
@@ -50,11 +54,20 @@ public class ReviewAggregateRepositoryTests {
     }
 
     @Test
-    @DisplayName("리뷰 집계 등록 성공")
-    void createReviewAggregateSuccess() {
-        ReviewAggregate reviewAggregate =
-                reviewAggregateRepository.save(ReviewAggregate.create(product, 0D, 0L));
+    @DisplayName("리뷰 집계 수정")
+    void updateReviewAggregate() {
+        reviewAggregateRepository.save(ReviewAggregate.create(product, 0D, 0L));
 
-        assertEquals(product.getId(), reviewAggregate.getId());
+        ReviewAggregate reviewAggregate = reviewAggregateService.update(ReviewDto.builder()
+                .memberId(1L)
+                .orderDetailNo("TEST")
+                .point(10)
+                .productId(product.getId())
+                .ratingAvg(4.0)
+                .build()
+        );
+
+        Assertions.assertEquals(1, reviewAggregate.getReviewCount());
+        Assertions.assertEquals(4.0, reviewAggregate.getAvgRating());
     }
 }

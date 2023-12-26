@@ -23,7 +23,7 @@ public class ReadProductDetailResponse {
     private Integer price;
     private Gender gender;
 
-    private Float avgRating;
+    private Double avgRating;
     private Long reviewCount;
 
     private List<ReadProductStockResponse> productStocks;
