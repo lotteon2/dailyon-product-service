@@ -35,4 +35,12 @@ public class ReviewAggregate {
                 .reviewCount(reviewCount)
                 .build();
     }
+
+    public void plusReviewCount() {
+        this.reviewCount++;
+    }
+
+    public void setAvgRating(Double avgRating) {
+        this.avgRating = avgRating;
+    }
 }

@@ -108,7 +108,7 @@ public class ProductService {
         describeImageRepository.saveAll(describeImages);
 
         // create reviewAggregate
-        reviewAggregateRepository.save(ReviewAggregate.create(product, 0F, 0L));
+        reviewAggregateRepository.save(ReviewAggregate.create(product, 0D, 0L));
 
         // presignedUrls for response dto
         String imgPresignedUrl = s3Util.getPreSignedUrl(filePath);

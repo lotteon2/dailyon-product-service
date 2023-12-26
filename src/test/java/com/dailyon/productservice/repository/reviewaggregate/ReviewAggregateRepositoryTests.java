@@ -53,7 +53,7 @@ public class ReviewAggregateRepositoryTests {
     @DisplayName("리뷰 집계 등록 성공")
     void createReviewAggregateSuccess() {
         ReviewAggregate reviewAggregate =
-                reviewAggregateRepository.save(ReviewAggregate.create(product, 0F, 0L));
+                reviewAggregateRepository.save(ReviewAggregate.create(product, 0D, 0L));
 
         assertEquals(product.getId(), reviewAggregate.getId());
     }
