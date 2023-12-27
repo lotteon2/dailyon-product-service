@@ -27,6 +27,7 @@ import com.dailyon.productservice.reviewaggregate.entity.ReviewAggregate;
 import com.dailyon.productservice.common.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -213,12 +214,12 @@ public class ProductService {
         return ReadProductDetailResponse.fromEntity(product);
     }
 
-    public ReadProductSliceResponse readProductSlice(Long lastId, Long brandId, Long categoryId, Gender gender, ProductType type) {
+    public Slice<Product> readProductSlice(Long lastId, Long brandId, Long categoryId, Gender gender, ProductType type) {
         List<Category> childCategories = null;
         if(categoryId != null) {
             childCategories = categoryRepository.findAllChildCategories(categoryId);
         }
-        return ReadProductSliceResponse.fromEntity(productRepository.findProductSlice(lastId, brandId, childCategories, gender, type));
+        return productRepository.findProductSlice(lastId, brandId, childCategories, gender, type);
     }
 
     public ReadProductPageResponse readProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable) {
@@ -229,8 +230,8 @@ public class ProductService {
         return ReadProductPageResponse.fromEntity(productRepository.findProductPage(brandId, childCategories, type, pageable));
     }
 
-    public ReadProductSliceResponse searchProductSlice(Long lastId, String query) {
-        return ReadProductSliceResponse.fromEntity(productRepository.searchProducts(lastId, query));
+    public Slice<Product> searchProductSlice(Long lastId, String query) {
+        return productRepository.searchProducts(lastId, query);
     }
 
     public ReadOOTDSearchSliceResponse searchFromOOTD(Long lastId, String query) {
