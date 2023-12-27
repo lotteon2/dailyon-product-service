@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -260,7 +261,7 @@ public class ProductServiceTests {
     @DisplayName("상품 목록 조회")
     void readProductSlice() {
         // given, when
-        ReadProductSliceResponse response = productService.readProductSlice(
+        Slice<Product> response = productService.readProductSlice(
                 0L,
                 null,
                 null,
@@ -269,20 +270,20 @@ public class ProductServiceTests {
         );
 
         // then
-        assertFalse(response.isHasNext());
-        assertEquals(1, response.getProductResponses().size());
+        assertFalse(response.hasNext());
+        assertEquals(1, response.getContent().size());
     }
 
     @Test
     @DisplayName("상품 목록 검색")
     void searchProductsTest() {
         // given, when
-        ReadProductSliceResponse response
+        Slice<Product> response
                 = productService.searchProductSlice(0L, "TEST");
 
         // then
-        assertFalse(response.isHasNext());
-        assertEquals(1, response.getProductResponses().size());
+        assertFalse(response.hasNext());
+        assertEquals(1, response.getContent().size());
     }
 
     @Test

@@ -3,6 +3,7 @@ package com.dailyon.productservice.category.repository;
 import com.dailyon.productservice.category.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -42,5 +43,5 @@ public interface CategoryJpaRepository extends JpaRepository<Category, Long> {
             "SELECT c.* FROM category AS c " +
             "INNER JOIN CategoryTree AS ct ON c.id = ct.id AND " +
             "c.is_deleted = false")
-    List<Category> findAllChildCategories(Long categoryId);
+    List<Category> findAllChildCategories(@Param(value = "categoryId") Long categoryId);
 }

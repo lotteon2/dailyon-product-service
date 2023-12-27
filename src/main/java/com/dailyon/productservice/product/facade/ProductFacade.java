@@ -4,14 +4,18 @@ import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.common.exception.DeleteException;
 import com.dailyon.productservice.common.feign.client.PromotionFeignClient;
+import com.dailyon.productservice.common.feign.request.MultipleProductCouponsRequest;
 import com.dailyon.productservice.common.feign.response.CouponForProductResponse;
+import com.dailyon.productservice.common.feign.response.MultipleProductCouponsResponse;
 import com.dailyon.productservice.product.dto.UpdateProductDto;
 import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.UpdateProductRequest;
 import com.dailyon.productservice.product.dto.response.*;
+import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,11 +68,23 @@ public class ProductFacade {
 
     public ReadProductSliceResponse readProductSlice(Long lastId, Long brandId, Long categoryId,
                                               Gender gender, ProductType productType) {
-        return productService.readProductSlice(lastId, brandId, categoryId, gender, productType);
+        Slice<Product> products = productService.readProductSlice(lastId, brandId, categoryId, gender, productType);
+
+        MultipleProductCouponsResponse response = promotionFeignClient.getCouponsForProducts(
+                MultipleProductCouponsRequest.fromEntity(products.getContent())
+        ).getBody();
+
+        return ReadProductSliceResponse.create(products, response.getCoupons());
     }
 
     public ReadProductSliceResponse searchProductSlice(Long lastId, String query) {
-        return productService.searchProductSlice(lastId, query);
+         Slice<Product> products = productService.searchProductSlice(lastId, query);
+
+        MultipleProductCouponsResponse response = promotionFeignClient.getCouponsForProducts(
+                MultipleProductCouponsRequest.fromEntity(products.getContent())
+        ).getBody();
+
+        return ReadProductSliceResponse.create(products, response.getCoupons());
     }
 
     public ReadOOTDSearchSliceResponse searchFromOOTD(Long lastId, String query) {
