@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 @SpringBootTest
@@ -19,6 +20,9 @@ import java.util.List;
 public class CategoryRepositoryTests {
     @Autowired
     CategoryRepository categoryRepository;
+
+    @Autowired
+    EntityManager entityManager;
 
     @Test
     @DisplayName("최상위 카테고리 등록")
@@ -95,6 +99,31 @@ public class CategoryRepositoryTests {
 
         // then
         assertEquals(2, leaves.size()); // mid2와 leaf1
+    }
+
+    @Test
+    @DisplayName("삭제 이후 리프 카테고리 조회")
+    public void findLeafCategoriesAfterDelete() {
+        // given
+        Category root1 = categoryRepository.save(Category.createRootCategory("root1"));
+        Category root2 = categoryRepository.save(Category.createRootCategory("root2"));
+
+        Category mid1 = categoryRepository.save(Category.createCategory(root1, "mid1"));
+        Category mid2 = categoryRepository.save(Category.createCategory(root2, "mid2"));
+
+        Category leaf1 = categoryRepository.save(Category.createCategory(mid1, "leaf1"));
+
+        leaf1.softDelete();
+        mid2.softDelete();
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        List<Category> leaves = categoryRepository.findLeafCategories();
+
+        // then
+        assertEquals(2, leaves.size()); // root2와 mid1
     }
 
     @Test
