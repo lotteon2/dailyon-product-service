@@ -36,7 +36,6 @@ public class BrandRepositoryTests {
         assertNotNull(createdBrand.getUpdatedAt());
     }
 
-    // TODO : 삭제 api 개발하고 나서 deleted=false만 조회하는지 테스트
     @Test
     @DisplayName("브랜드 전체 조회")
     void readBrandsRepo() {
