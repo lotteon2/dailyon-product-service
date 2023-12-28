@@ -78,17 +78,6 @@ spec:
             - name: product-ebs-pv
               mountPath: /var/lib/mysql
           imagePullPolicy: IfNotPresent
-        - name: redis
-          image: redis:latest
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "250m"
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
-          ports:
-            - containerPort: 6379
       volumes:
         - name: mysql-config
           configMap:
