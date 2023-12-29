@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.dailyon.productservice.brand.entity.Brand;
 import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.describeimage.entity.DescribeImage;
-import com.dailyon.productservice.describeimage.repository.DescribeImageJpaRepository;
 import com.dailyon.productservice.describeimage.repository.DescribeImageRepository;
 import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.common.enums.Gender;
@@ -41,9 +40,6 @@ public class DescribeImageRepositoryTests {
 
     @Autowired
     CategoryRepository categoryRepository;
-
-    @Autowired
-    DescribeImageJpaRepository describeImageJpaRepository;
 
     @Autowired
     EntityManager entityManager;
@@ -86,7 +82,7 @@ public class DescribeImageRepositoryTests {
         describeImageRepository.deleteByProduct(product);
 
         // then
-        assertEquals(0, describeImageJpaRepository.findAll().size());
+        assertEquals(0, describeImageRepository.findAll().size());
     }
 
     @Test

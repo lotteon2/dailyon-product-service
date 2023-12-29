@@ -28,7 +28,7 @@ public class CategoryService {
     @Transactional
     public CreateCategoryResponse createCategory(CreateCategoryRequest createCategoryRequest) {
         // 이미 존재하는 카테고리명이라면 exception
-        if(categoryRepository.isDuplicatedName(createCategoryRequest.getCategoryName())) {
+        if(categoryRepository.existsByName(createCategoryRequest.getCategoryName())) {
             throw new UniqueException(UniqueException.DUPLICATE_CATEGORY_NAME);
         }
 
@@ -47,7 +47,7 @@ public class CategoryService {
     }
 
     public ReadChildrenCategoryListResponse readChildrenCategoriesByMaster(Long masterCategoryId) {
-        return ReadChildrenCategoryListResponse.fromEntity(categoryRepository.findByMasterCategoryId(masterCategoryId));
+        return ReadChildrenCategoryListResponse.fromEntity(categoryRepository.findByMasterCategory_Id(masterCategoryId));
     }
 
     public ReadAllCategoryListResponse readAllCategories() {
@@ -65,7 +65,7 @@ public class CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
 
-        if(categoryRepository.isDuplicatedName(updateCategoryRequest.getName())) {
+        if(categoryRepository.existsByName(updateCategoryRequest.getName())) {
             throw new UniqueException(UniqueException.DUPLICATE_CATEGORY_NAME);
         }
 
@@ -77,7 +77,7 @@ public class CategoryService {
     }
 
     public ReadCategoryPageResponse readCategoryPages(Pageable pageable) {
-        return ReadCategoryPageResponse.fromEntity(categoryRepository.findCategoryPages(pageable));
+        return ReadCategoryPageResponse.fromEntity(categoryRepository.findAll(pageable));
     }
 
     @Transactional
@@ -91,6 +91,6 @@ public class CategoryService {
         }
 
         categories.forEach(Category::softDelete);
-        productSizeRepository.deleteProductSizesByCategories(categories);
+        productSizeRepository.deleteProductSizesByCategory(categories);
     }
 }

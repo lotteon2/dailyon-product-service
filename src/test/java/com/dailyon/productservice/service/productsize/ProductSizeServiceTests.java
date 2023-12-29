@@ -174,7 +174,7 @@ public class ProductSizeServiceTests {
         productSizeService.updateProductSizeName(productSize.getProductSizeId(), updateProductSizeRequest);
 
         // then
-        ProductSize updated = productSizeRepository.readProductSizeById(productSize.getProductSizeId()).get();
+        ProductSize updated = productSizeRepository.findProductSizeById(productSize.getProductSizeId()).get();
         assertEquals(updateName, updated.getName());
     }
 

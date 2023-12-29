@@ -77,7 +77,7 @@ public class CategoryRepositoryTests {
         Category root2 = categoryRepository.save(Category.createRootCategory("root2"));
 
         // when
-        List<Category> categories = categoryRepository.findByMasterCategoryId(null);
+        List<Category> categories = categoryRepository.findByMasterCategory_Id(null);
 
         assertEquals(2L, categories.size());
     }

@@ -63,7 +63,7 @@ public class ProductSizeRepositoryTests {
     @DisplayName("카테고리에 해당하는 치수 목록 조회")
     public void readProductSizeList() {
         // given, when
-        List<ProductSize> result = productSizeRepository.readProductSizesByCategoryId(category.getId());
+        List<ProductSize> result = productSizeRepository.findProductSizesByCategoryId(category.getId());
 
         // then
         assertEquals(result.size(), productSizes.size());
@@ -77,7 +77,7 @@ public class ProductSizeRepositoryTests {
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "updatedAt"));
 
         // when
-        Page<ProductSize> result = productSizeRepository.readProductSizePagesByCategoryId(categoryId, pageable);
+        Page<ProductSize> result = productSizeRepository.findProductSizePagesByCategoryId(categoryId, pageable);
 
         // then
         assertEquals(3, result.getTotalElements());
@@ -90,9 +90,9 @@ public class ProductSizeRepositoryTests {
         // given, when
         List<Category> toDelete = new ArrayList<>();
         toDelete.add(category);
-        productSizeRepository.deleteProductSizesByCategories(toDelete);
+        productSizeRepository.deleteProductSizesByCategory(toDelete);
 
         // then
-        assertEquals(0, productSizeRepository.readProductSizesByCategoryId(category.getId()).size());
+        assertEquals(0, productSizeRepository.findProductSizesByCategoryId(category.getId()).size());
     }
 }
