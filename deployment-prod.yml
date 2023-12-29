@@ -54,37 +54,6 @@ spec:
             initialDelaySeconds: 120
             periodSeconds: 30
             timeoutSeconds: 2
-        - name: mysql
-          image: mysql:8.0.34
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
-          ports:
-            - containerPort: 3306
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-              value: "11111111"
-            - name: MYSQL_DATABASE
-              value: product-service
-            - name: LC_ALL
-              value: C.UTF-8
-          volumeMounts:
-            - name: mysql-config
-              mountPath: /etc/mysql/conf.d
-            - name: product-ebs-pv
-              mountPath: /var/lib/mysql
-          imagePullPolicy: IfNotPresent
-      volumes:
-        - name: mysql-config
-          configMap:
-            name: mysql-config
-        - name: product-ebs-pv
-          persistentVolumeClaim:
-            claimName: product-ebs-pvc
       # SIGTERM을 받아도 바로 종료되지 않고 180초 뒤에 종료
       terminationGracePeriodSeconds: 180
       restartPolicy: Always
