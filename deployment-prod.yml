@@ -36,7 +36,7 @@ spec:
               memory: "384Mi"
               cpu: "250m"
           ports:
-            - containerPort: 8087
+            - containerPort: 8085
           imagePullPolicy: IfNotPresent
           # 애플리케이션이 시작된 뒤 초기화 작업이 마무리되어 준비되었는지 검사
           readinessProbe:
