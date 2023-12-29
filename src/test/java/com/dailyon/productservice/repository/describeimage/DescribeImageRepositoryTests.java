@@ -21,8 +21,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 @Transactional
@@ -42,6 +44,9 @@ public class DescribeImageRepositoryTests {
 
     @Autowired
     DescribeImageJpaRepository describeImageJpaRepository;
+
+    @Autowired
+    EntityManager entityManager;
 
     private Product product;
 
@@ -82,5 +87,16 @@ public class DescribeImageRepositoryTests {
 
         // then
         assertEquals(0, describeImageJpaRepository.findAll().size());
+    }
+
+    @Test
+    @DisplayName("상품 상세 이미지 없는 상품 조회 성공")
+    void readProductDetailWithoutDescribeImg() {
+        entityManager.flush();
+        entityManager.clear();
+
+        Optional<Product> product1 = productRepository.findProductDetailById(product.getId());
+
+        assertNotNull(product1.get());
     }
 }

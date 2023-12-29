@@ -14,13 +14,13 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>, ProductCustomRepository {
     @Query(value = "SELECT p " +
-        "FROM Product p " +
-        "JOIN FETCH p.category " +
-        "JOIN FETCH p.brand " +
-        "JOIN FETCH p.reviewAggregate " +
-        "JOIN FETCH p.productStocks " +
-        "JOIN FETCH p.describeImages " +
-        "WHERE p.id = :id AND p.deleted = false")
+            "FROM Product p " +
+            "LEFT JOIN FETCH p.category " +
+            "LEFT JOIN FETCH p.brand " + 
+            "LEFT JOIN FETCH p.reviewAggregate " +
+            "LEFT JOIN FETCH p.productStocks " +
+            "LEFT JOIN FETCH p.describeImages " +
+            "WHERE p.id = :id AND p.deleted = false")
     Optional<Product> findProductDetailById(@Param("id") Long id);
     Optional<Product> findProductByCode(String code);
     @Query(value = "SELECT p " +
