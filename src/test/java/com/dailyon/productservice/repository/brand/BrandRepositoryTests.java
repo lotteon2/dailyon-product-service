@@ -44,7 +44,7 @@ public class BrandRepositoryTests {
         brandRepository.save(Brand.createBrand("test2"));
 
         // when
-        List<Brand> brands = brandRepository.findAllBrands();
+        List<Brand> brands = brandRepository.findAll();
 
         // then
         assertEquals(2, brands.size());

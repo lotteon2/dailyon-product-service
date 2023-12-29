@@ -2,10 +2,16 @@ package com.dailyon.productservice.describeimage.repository;
 
 import com.dailyon.productservice.describeimage.entity.DescribeImage;
 import com.dailyon.productservice.product.entity.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+@Repository
+public interface DescribeImageRepository extends JpaRepository<DescribeImage, Long> {
 
-public interface DescribeImageRepository {
-    List<DescribeImage> saveAll(List<DescribeImage> describeImages);
-    void deleteByProduct(Product product);
+    @Modifying(clearAutomatically = true)
+    @Query(value = "DELETE FROM DescribeImage d WHERE d.product = :product")
+    void deleteByProduct(@Param("product") Product product);
 }

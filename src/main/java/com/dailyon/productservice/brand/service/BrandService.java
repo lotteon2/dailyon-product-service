@@ -26,7 +26,7 @@ public class BrandService {
     @Transactional
     public CreateBrandResponse createBrand(CreateBrandRequest createBrandRequest) {
         // 이미 존재하는 브랜드 이름이라면 exception
-        if(brandRepository.isDuplicatedName(createBrandRequest.getName())) {
+        if(brandRepository.existsByName(createBrandRequest.getName())) {
             throw new UniqueException(UniqueException.DUPLICATE_BRAND_NAME);
         }
 
@@ -36,7 +36,7 @@ public class BrandService {
     }
 
     public ReadBrandListResponse readAllBrands() {
-        return ReadBrandListResponse.fromEntity(brandRepository.findAllBrands());
+        return ReadBrandListResponse.fromEntity(brandRepository.findAll());
     }
 
     @Transactional
@@ -45,14 +45,14 @@ public class BrandService {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.BRAND_NOT_FOUND));
         // 이미 존재하는 브랜드 이름이라면 exception
-        if(brandRepository.isDuplicatedName(updateBrandRequest.getName())) {
+        if(brandRepository.existsByName(updateBrandRequest.getName())) {
             throw new UniqueException(UniqueException.DUPLICATE_BRAND_NAME);
         }
         brand.setName(updateBrandRequest.getName());
     }
 
     public ReadBrandPageResponse readBrandPage(Pageable pageable) {
-        return ReadBrandPageResponse.fromEntity(brandRepository.readBrandPages(pageable));
+        return ReadBrandPageResponse.fromEntity(brandRepository.findAll(pageable));
     }
 
     @Transactional
