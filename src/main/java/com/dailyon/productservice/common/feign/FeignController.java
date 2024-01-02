@@ -5,6 +5,8 @@ import com.dailyon.productservice.common.feign.request.ReadWishCartProductReques
 import com.dailyon.productservice.common.feign.response.ReadOOTDProductListResponse;
 import com.dailyon.productservice.common.feign.response.ReadOrderProductListResponse;
 import com.dailyon.productservice.common.feign.response.ReadWishCartProductMapResponse;
+import com.dailyon.productservice.product.dto.request.CreateProductRequest;
+import com.dailyon.productservice.product.dto.response.CreateProductResponse;
 import com.dailyon.productservice.product.service.ProductService;
 import com.dailyon.productservice.productstock.service.ProductStockService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,11 @@ public class FeignController {
     @GetMapping("/post-image")
     ResponseEntity<ReadOOTDProductListResponse> readOOTDProductDetail(@RequestParam List<Long> id) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.readOOTDProductDetails(id));
+    }
+
+    @PostMapping("/auction")
+    ResponseEntity<CreateProductResponse> createAuctionProduct(@Valid @RequestBody CreateProductRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(request));
     }
 
     @PostMapping("/orders")
