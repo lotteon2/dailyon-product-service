@@ -35,6 +35,12 @@ public class FeignController {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(request));
     }
 
+    @DeleteMapping("/auction")
+    ResponseEntity<Void> deleteAuctionProduct(@RequestParam List<Long> ids) {
+        productService.deleteProductsByIds(ids);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/orders")
     ResponseEntity<ReadOrderProductListResponse> readOrderProducts(@Valid @Size(min = 1) @RequestBody List<OrderProductDto> request) {
         return ResponseEntity.status(HttpStatus.OK).body(productStockService.readOrderProducts(request));
