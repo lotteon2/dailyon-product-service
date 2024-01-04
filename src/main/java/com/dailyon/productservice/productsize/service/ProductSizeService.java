@@ -29,7 +29,7 @@ public class ProductSizeService {
                 .findById(createProductSizeRequest.getCategoryId())
                 .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
 
-        if(productSizeRepository.isDuplicated(category, createProductSizeRequest.getName())) {
+        if(productSizeRepository.existsByCategoryAndName(category, createProductSizeRequest.getName())) {
             throw new UniqueException(UniqueException.DUPLICATE_PRODUCT_SIZE_NAME);
         }
 
@@ -38,18 +38,18 @@ public class ProductSizeService {
     }
 
     public ReadProductSizeListResponse readProductSizeListByCategory(Long id) {
-        return ReadProductSizeListResponse.fromEntity(productSizeRepository.readProductSizesByCategoryId(id));
+        return ReadProductSizeListResponse.fromEntity(productSizeRepository.findProductSizesByCategoryId(id));
     }
 
     @Transactional
     public void updateProductSizeName(Long productSizeId, UpdateProductSizeRequest updateProductSizeRequest) {
         // 존재하지 않는 product size를 수정하려고 하면 exception
-        ProductSize productSize = productSizeRepository.readProductSizeById(productSizeId)
+        ProductSize productSize = productSizeRepository.findProductSizeById(productSizeId)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.PRODUCT_SIZE_NOT_FOUND));
 
 
         // 이미 존재하는 치수값이라면 exception
-        if(productSizeRepository.isDuplicated(productSize.getCategory(), updateProductSizeRequest.getName())) {
+        if(productSizeRepository.existsByCategoryAndName(productSize.getCategory(), updateProductSizeRequest.getName())) {
             throw new UniqueException(UniqueException.DUPLICATE_PRODUCT_SIZE_NAME);
         }
 
@@ -58,6 +58,6 @@ public class ProductSizeService {
 
     public ReadProductSizePageResponse readProductSizePage(Long categoryId, Pageable pageable) {
         return ReadProductSizePageResponse
-                .fromEntity(productSizeRepository.readProductSizePagesByCategoryId(categoryId, pageable));
+                .fromEntity(productSizeRepository.findProductSizePagesByCategoryId(categoryId, pageable));
     }
 }

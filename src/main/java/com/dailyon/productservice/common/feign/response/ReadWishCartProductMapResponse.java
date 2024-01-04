@@ -33,6 +33,7 @@ public class ReadWishCartProductMapResponse {
     public static class ReadWishCartProductResponse {
         private Long productId;
         private Long productSizeId;
+        private Long categoryId;
         private String productSizeName;
         private String brandName;
         private String productName;
@@ -49,6 +50,7 @@ public class ReadWishCartProductMapResponse {
             return ReadWishCartProductResponse.builder()
                     .productId(productStock.getProduct().getId())
                     .productSizeId(productStock.getProductSize().getId())
+                    .categoryId(productStock.getProduct().getCategory().getId())
                     .productSizeName(productStock.getProductSize().getName())
                     .brandName(productStock.getProduct().getBrand().getName())
                     .productName(productStock.getProduct().getName())

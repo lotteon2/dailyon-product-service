@@ -30,8 +30,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootTest
 @Transactional
@@ -291,7 +289,7 @@ public class CategoryServiceTests {
 
         // then
         assertEquals(0, categoryService.readAllCategories().getAllCategories().size());
-        assertEquals(0, productSizeRepository.readProductSizesByCategoryId(categoryId).size());
+        assertEquals(0, productSizeRepository.findProductSizesByCategoryId(categoryId).size());
     }
 
     @Test

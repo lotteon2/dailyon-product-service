@@ -65,7 +65,7 @@ public class ProductService {
         Set<Long> productSizeIds = createProductRequest.extractProductSizeIds();
 
         // productSizeId의 목록으로부터 product의 목록 조회(db는 id 기준으로 자동 오름차순 정렬) ... [1]
-        List<ProductSize> productSizes = productSizeRepository.readProductSizesByProductSizeIds(productSizeIds);
+        List<ProductSize> productSizes = productSizeRepository.findProductSizesByIds(productSizeIds);
         if(productSizes.size() != productSizeIds.size()) {
             throw new NotExistsException(NotExistsException.PRODUCT_SIZE_NOT_FOUND);
         }
@@ -142,7 +142,7 @@ public class ProductService {
         Set<Long> productSizeIds = updateProductRequest.extractProductSizeIds();
 
         // productSizeId의 목록으로부터 product의 목록 조회(db는 id 기준으로 자동 오름차순 정렬)
-        List<ProductSize> productSizes = productSizeRepository.readProductSizesByProductSizeIds(productSizeIds);
+        List<ProductSize> productSizes = productSizeRepository.findProductSizesByIds(productSizeIds);
         if(productSizes.size() != productSizeIds.size()) {
             throw new NotExistsException(NotExistsException.PRODUCT_SIZE_NOT_FOUND);
         }
