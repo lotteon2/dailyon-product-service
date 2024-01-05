@@ -13,6 +13,7 @@ import com.dailyon.productservice.product.dto.request.UpdateProductRequest;
 import com.dailyon.productservice.product.dto.response.*;
 import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.product.service.ProductService;
+import com.dailyon.productservice.product.sqs.ProductRestockHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 public class ProductFacade {
     private final ProductService productService;
     private final PromotionFeignClient promotionFeignClient;
+    private final ProductRestockHandler productRestockHandler;
 
     public CreateProductResponse createProduct(CreateProductRequest createProductRequest) {
         return productService.createProduct(createProductRequest);
@@ -38,9 +40,7 @@ public class ProductFacade {
 
     public UpdateProductResponse updateProduct(Long productId, UpdateProductRequest updateProductRequest) {
         UpdateProductDto updateProductDto = productService.updateProduct(productId, updateProductRequest);
-
-        // TODO : notification kafka.send
-
+        productRestockHandler.produce(updateProductDto.getProductStocksToNotify());
         return UpdateProductResponse.create(updateProductDto);
     }
 

@@ -46,6 +46,10 @@ public class ProductStock implements Comparable<ProductStock> {
         return result;
     }
 
+    public String toKey() {
+        return "pid=" + this.product.getId() + "&sid=" + this.getProductSize().getId();
+    }
+
     public void setQuantity(Long quantity) {
         this.quantity = quantity;
     }
