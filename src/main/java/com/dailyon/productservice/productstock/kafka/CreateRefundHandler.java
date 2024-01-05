@@ -33,10 +33,9 @@ public class CreateRefundHandler {
                     .build();
 
             productStockService.addProductStocks(List.of(productInfo));
+            ack.acknowledge();
         } catch (Exception e) {
             log.error(e.getMessage());
-        } finally {
-            ack.acknowledge();
         }
     }
 }
