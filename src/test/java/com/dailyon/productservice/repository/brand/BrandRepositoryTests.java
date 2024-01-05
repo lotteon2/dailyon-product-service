@@ -2,6 +2,7 @@ package com.dailyon.productservice.repository.brand;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.dailyon.productservice.IntegrationTestSupport;
 import com.dailyon.productservice.brand.repository.BrandRepository;
 import com.dailyon.productservice.brand.entity.Brand;
 import org.junit.jupiter.api.DisplayName;
@@ -13,10 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@SpringBootTest
-@Transactional
-@ActiveProfiles(value = {"test"})
-public class BrandRepositoryTests {
+public class BrandRepositoryTests extends IntegrationTestSupport {
     @Autowired
     BrandRepository brandRepository;
 

@@ -1,37 +1,33 @@
 package com.dailyon.productservice.service.productsize;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import com.dailyon.productservice.IntegrationTestSupport;
 import com.dailyon.productservice.category.dto.request.CreateCategoryRequest;
 import com.dailyon.productservice.category.dto.response.CreateCategoryResponse;
+import com.dailyon.productservice.category.service.CategoryService;
+import com.dailyon.productservice.common.exception.NotExistsException;
+import com.dailyon.productservice.common.exception.UniqueException;
 import com.dailyon.productservice.productsize.dto.request.CreateProductSizeRequest;
 import com.dailyon.productservice.productsize.dto.request.UpdateProductSizeRequest;
 import com.dailyon.productservice.productsize.dto.response.CreateProductSizeResponse;
 import com.dailyon.productservice.productsize.dto.response.ReadProductSizeListResponse;
 import com.dailyon.productservice.productsize.dto.response.ReadProductSizePageResponse;
 import com.dailyon.productservice.productsize.entity.ProductSize;
-import com.dailyon.productservice.common.exception.NotExistsException;
-import com.dailyon.productservice.common.exception.UniqueException;
-import com.dailyon.productservice.category.service.CategoryService;
 import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import com.dailyon.productservice.productsize.service.ProductSizeService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@SpringBootTest
-@Transactional
-@ActiveProfiles(value = {"test"})
-public class ProductSizeServiceTests {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+public class ProductSizeServiceTests extends IntegrationTestSupport {
     @Autowired
     ProductSizeService productSizeService;
 

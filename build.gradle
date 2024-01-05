@@ -75,6 +75,8 @@ dependencies {
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
 	// aws s3 mock
 	testImplementation 'io.findify:s3mock_2.12:0.2.4'
+	// aws sqs mock
+	testImplementation 'io.findify:sqsmock_2.12:0.4.1'
 }
 
 dependencyManagement {

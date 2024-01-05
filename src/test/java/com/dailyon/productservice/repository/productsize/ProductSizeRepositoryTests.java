@@ -1,31 +1,26 @@
 package com.dailyon.productservice.repository.productsize;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import com.dailyon.productservice.IntegrationTestSupport;
 import com.dailyon.productservice.category.entity.Category;
-import com.dailyon.productservice.productsize.entity.ProductSize;
 import com.dailyon.productservice.category.repository.CategoryRepository;
+import com.dailyon.productservice.productsize.entity.ProductSize;
 import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
-@SpringBootTest
-@Transactional
-@ActiveProfiles(value = {"test"})
-public class ProductSizeRepositoryTests {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class ProductSizeRepositoryTests extends IntegrationTestSupport {
     @Autowired
     ProductSizeRepository productSizeRepository;
 

@@ -1,13 +1,12 @@
 package com.dailyon.productservice.repository.productstock;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import com.dailyon.productservice.IntegrationTestSupport;
 import com.dailyon.productservice.brand.entity.Brand;
+import com.dailyon.productservice.brand.repository.BrandRepository;
 import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
-import com.dailyon.productservice.brand.repository.BrandRepository;
-import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.common.feign.request.OrderProductDto;
 import com.dailyon.productservice.common.feign.request.ReadWishCartProductRequest;
 import com.dailyon.productservice.product.entity.Product;
@@ -21,17 +20,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@SpringBootTest
-@Transactional
-@ActiveProfiles(value = {"test"})
-public class ProductStockRepositoryTests {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class ProductStockRepositoryTests extends IntegrationTestSupport {
     @Autowired
     ProductStockRepository productStockRepository;
 

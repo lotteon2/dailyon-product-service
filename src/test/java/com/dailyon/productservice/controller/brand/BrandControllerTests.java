@@ -1,25 +1,18 @@
 package com.dailyon.productservice.controller.brand;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-
+import com.dailyon.productservice.IntegrationTestSupport;
 import com.dailyon.productservice.brand.dto.request.CreateBrandRequest;
 import com.dailyon.productservice.brand.service.BrandService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-@AutoConfigureMockMvc
-@ActiveProfiles(value = {"test"})
-public class BrandControllerTests {
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+public class BrandControllerTests extends IntegrationTestSupport {
     @Autowired
     MockMvc mockMvc;
 
