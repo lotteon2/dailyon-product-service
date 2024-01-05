@@ -21,6 +21,7 @@ public class RawNotificationData {
     private Map<String, String> parameters;
     private NotificationType notificationType; // 알림 유형
 
+    // K: "restock", V: List.of("pid=1&sid=1", "pid=1&sid=2", "pid=2&sid=1", ...)
     private static Map<String, String> createParameter(List<ProductStock> productStocks) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("restock", productStocks.stream().map(ProductStock::toKey).collect(Collectors.toList()).toString());
