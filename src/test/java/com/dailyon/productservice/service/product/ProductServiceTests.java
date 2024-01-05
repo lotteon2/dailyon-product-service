@@ -1,25 +1,23 @@
 package com.dailyon.productservice.service.product;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import com.dailyon.productservice.IntegrationTestSupport;
+import com.dailyon.productservice.brand.entity.Brand;
+import com.dailyon.productservice.brand.repository.BrandRepository;
+import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
+import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.describeimage.entity.DescribeImage;
 import com.dailyon.productservice.describeimage.repository.DescribeImageRepository;
 import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.ProductStockRequest;
-import com.dailyon.productservice.brand.entity.Brand;
-import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.product.dto.response.ReadOOTDSearchSliceResponse;
 import com.dailyon.productservice.product.dto.response.ReadProductPageResponse;
-import com.dailyon.productservice.product.dto.response.ReadProductSliceResponse;
 import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.product.repository.ProductRepository;
-import com.dailyon.productservice.productsize.entity.ProductSize;
-import com.dailyon.productservice.common.exception.NotExistsException;
-import com.dailyon.productservice.brand.repository.BrandRepository;
-import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.product.service.ProductService;
+import com.dailyon.productservice.productsize.entity.ProductSize;
 import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import com.dailyon.productservice.productstock.entity.ProductStock;
 import com.dailyon.productservice.productstock.repository.ProductStockRepository;
@@ -29,22 +27,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@SpringBootTest
-@Transactional
-@ActiveProfiles(value = {"test"})
-public class ProductServiceTests {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ProductServiceTests extends IntegrationTestSupport {
     static {
         System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
     }

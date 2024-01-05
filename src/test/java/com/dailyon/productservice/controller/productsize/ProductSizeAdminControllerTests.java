@@ -1,23 +1,20 @@
 package com.dailyon.productservice.controller.productsize;
 
+import com.dailyon.productservice.IntegrationTestSupport;
 import com.dailyon.productservice.category.dto.request.CreateCategoryRequest;
 import com.dailyon.productservice.category.dto.response.CreateCategoryResponse;
+import com.dailyon.productservice.category.service.CategoryService;
 import com.dailyon.productservice.productsize.dto.request.CreateProductSizeRequest;
 import com.dailyon.productservice.productsize.dto.response.CreateProductSizeResponse;
-import com.dailyon.productservice.category.service.CategoryService;
 import com.dailyon.productservice.productsize.service.ProductSizeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -26,11 +23,7 @@ import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@SpringBootTest
-@Transactional
-@AutoConfigureMockMvc
-@ActiveProfiles(value = {"test"})
-public class ProductSizeAdminControllerTests {
+public class ProductSizeAdminControllerTests extends IntegrationTestSupport {
     @Autowired
     MockMvc mockMvc;
 

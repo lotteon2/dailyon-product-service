@@ -1,34 +1,10 @@
 package com.dailyon.productservice.facade.product;
 
-import com.dailyon.productservice.common.exception.DeleteException;
-import com.dailyon.productservice.product.facade.ProductFacade;
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import com.dailyon.productservice.IntegrationTestSupport;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ResourceUtils;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-
-@SpringBootTest
-@Transactional
-@AutoConfigureMockMvc
 @AutoConfigureWireMock(port = 0)
-@ActiveProfiles(value = {"test"})
-public class ProductFacadeTests {
+public class ProductFacadeTests extends IntegrationTestSupport {
 
     /*@Autowired
     ProductFacade productFacade;

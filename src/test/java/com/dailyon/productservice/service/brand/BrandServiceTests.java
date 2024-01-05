@@ -1,15 +1,14 @@
 package com.dailyon.productservice.service.brand;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.dailyon.productservice.brand.dto.response.ReadBrandPageResponse;
-import com.dailyon.productservice.brand.entity.Brand;
-import com.dailyon.productservice.brand.repository.BrandRepository;
-import com.dailyon.productservice.brand.service.BrandService;
+import com.dailyon.productservice.IntegrationTestSupport;
 import com.dailyon.productservice.brand.dto.request.CreateBrandRequest;
 import com.dailyon.productservice.brand.dto.request.UpdateBrandRequest;
 import com.dailyon.productservice.brand.dto.response.CreateBrandResponse;
 import com.dailyon.productservice.brand.dto.response.ReadBrandListResponse;
+import com.dailyon.productservice.brand.dto.response.ReadBrandPageResponse;
+import com.dailyon.productservice.brand.entity.Brand;
+import com.dailyon.productservice.brand.repository.BrandRepository;
+import com.dailyon.productservice.brand.service.BrandService;
 import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.common.enums.Gender;
@@ -22,18 +21,14 @@ import com.dailyon.productservice.product.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-@SpringBootTest
-@Transactional
-@ActiveProfiles(value = {"test"})
-public class BrandServiceTests {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class BrandServiceTests extends IntegrationTestSupport {
     @Autowired
     BrandService brandService;
 

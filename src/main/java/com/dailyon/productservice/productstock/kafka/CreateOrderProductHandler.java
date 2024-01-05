@@ -1,12 +1,14 @@
 package com.dailyon.productservice.productstock.kafka;
 
 import com.dailyon.productservice.productstock.kafka.dto.OrderDto;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+import dailyon.domain.common.KafkaTopic;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CreateOrderProductHandler {
@@ -15,9 +17,9 @@ public class CreateOrderProductHandler {
 
     public void produce(OrderDto orderDto) {
         try {
-            kafkaTemplate.send("create-order-product", objectMapper.writeValueAsString(orderDto));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            kafkaTemplate.send(KafkaTopic.CREATE_ORDER_PRODUCT, objectMapper.writeValueAsString(orderDto));
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
     }
 }
