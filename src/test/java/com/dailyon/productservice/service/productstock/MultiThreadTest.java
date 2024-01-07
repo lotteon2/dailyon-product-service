@@ -1,5 +1,6 @@
 package com.dailyon.productservice.service.productstock;
 
+import com.dailyon.productservice.IntegrationTestSupport;
 import com.dailyon.productservice.brand.entity.Brand;
 import com.dailyon.productservice.brand.repository.BrandRepository;
 import com.dailyon.productservice.category.entity.Category;
@@ -14,9 +15,15 @@ import com.dailyon.productservice.productstock.entity.ProductStock;
 import com.dailyon.productservice.productstock.kafka.dto.OrderDto;
 import com.dailyon.productservice.productstock.repository.ProductStockRepository;
 import com.dailyon.productservice.productstock.service.ProductStockService;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
+import org.springframework.cloud.aws.messaging.listener.SimpleMessageListenerContainer;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
@@ -46,6 +53,12 @@ public class MultiThreadTest {
 
     @Autowired
     ProductRepository productRepository;
+
+    @MockBean
+    SimpleMessageListenerContainer simpleMessageListenerContainer;
+
+    @MockBean
+    QueueMessagingTemplate queueMessagingTemplate;
 
     @AfterEach
     void afterEach() {

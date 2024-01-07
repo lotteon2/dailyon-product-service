@@ -1,23 +1,22 @@
 package com.dailyon.productservice.service.category;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import com.dailyon.productservice.IntegrationTestSupport;
 import com.dailyon.productservice.brand.entity.Brand;
 import com.dailyon.productservice.brand.repository.BrandRepository;
 import com.dailyon.productservice.category.dto.request.CreateCategoryRequest;
-import com.dailyon.productservice.category.dto.response.CreateCategoryResponse;
-import com.dailyon.productservice.category.service.CategoryService;
 import com.dailyon.productservice.category.dto.request.UpdateCategoryRequest;
+import com.dailyon.productservice.category.dto.response.CreateCategoryResponse;
 import com.dailyon.productservice.category.dto.response.ReadAllCategoryListResponse;
 import com.dailyon.productservice.category.dto.response.ReadBreadCrumbListResponse;
 import com.dailyon.productservice.category.dto.response.ReadChildrenCategoryListResponse;
 import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.category.repository.CategoryRepository;
+import com.dailyon.productservice.category.service.CategoryService;
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.common.exception.DeleteException;
 import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.common.exception.UniqueException;
-import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.product.repository.ProductRepository;
 import com.dailyon.productservice.productsize.entity.ProductSize;
@@ -25,16 +24,12 @@ import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-@SpringBootTest
-@Transactional
-@ActiveProfiles(value = {"test"})
-public class CategoryServiceTests {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CategoryServiceTests extends IntegrationTestSupport {
     @Autowired
     CategoryService categoryService;
 

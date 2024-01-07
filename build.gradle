@@ -33,6 +33,10 @@ ext {
 }
 
 dependencies {
+	// maven central
+	implementation 'io.github.dailyon-maven:daily-on-common:0.0.7'
+
+	// spring boot
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.cloud:spring-cloud-starter-zipkin:2.2.3.RELEASE'
 	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
@@ -45,16 +49,19 @@ dependencies {
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
+	// Kafka
 	implementation 'org.springframework.kafka:spring-kafka'
 
+	// spring cloud
 	implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
 
-	// aws
+	// AWS
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.4.RELEASE'
+	implementation 'org.springframework.cloud:spring-cloud-aws-messaging:2.2.4.RELEASE'
 
 	compileOnly 'org.projectlombok:lombok'
 
@@ -71,6 +78,8 @@ dependencies {
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
 	// aws s3 mock
 	testImplementation 'io.findify:s3mock_2.12:0.2.4'
+	// aws sqs mock
+	testImplementation 'io.findify:sqsmock_2.12:0.4.1'
 }
 
 dependencyManagement {
