@@ -10,8 +10,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
-import dailyon.domain.common.KafkaTopic;
-
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -26,13 +25,13 @@ public class CreateRefundHandler {
         try {
             RefundDto refundDto = objectMapper.readValue(message, RefundDto.class);
 
-            OrderDto.ProductInfo productInfo = OrderDto.ProductInfo.builder()
+            List<OrderDto.ProductInfo> list = new ArrayList<>();
+            list.add(OrderDto.ProductInfo.builder()
                     .productId(refundDto.getProductInfo().getProductId())
                     .sizeId(refundDto.getProductInfo().getSizeId())
                     .quantity(refundDto.getProductInfo().getQuantity())
-                    .build();
-
-            productStockService.addProductStocks(List.of(productInfo));
+                    .build());
+            productStockService.addProductStocks(list);
             ack.acknowledge();
         } catch (Exception e) {
             log.error(e.getMessage());
