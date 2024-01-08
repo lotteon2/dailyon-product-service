@@ -21,16 +21,18 @@ public class RawNotificationData {
     private Map<String, String> parameters;
     private NotificationType notificationType; // 알림 유형
 
-    // K: "restock", V: List.of("pid=1&sid=1", "pid=1&sid=2", "pid=2&sid=1", ...)
-    private static Map<String, String> createParameter(List<ProductStock> productStocks) {
+    private static Map<String, String> createParameter(ProductStock productStock) {
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("restock", productStocks.stream().map(ProductStock::toKey).collect(Collectors.toList()).toString());
+        parameters.put("productId", productStock.getProduct().getId().toString());
+        parameters.put("sizeId", productStock.getProductSize().getId().toString());
+        parameters.put("productName", productStock.getProduct().getName());
+        parameters.put("sizeName", productStock.getProductSize().getName());
         return parameters;
     }
 
-    public static RawNotificationData create(List<ProductStock> productStocks, NotificationType notificationType) {
+    public static RawNotificationData create(ProductStock productStock, NotificationType notificationType) {
         return RawNotificationData.builder()
-                .parameters(createParameter(productStocks))
+                .parameters(createParameter(productStock))
                 .notificationType(notificationType)
                 .build();
     }
