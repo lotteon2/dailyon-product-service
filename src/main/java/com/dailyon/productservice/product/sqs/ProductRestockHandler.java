@@ -21,14 +21,16 @@ public class ProductRestockHandler {
     private final String notificationQueue = "product-restock-notification-queue";
 
     public void produce(List<ProductStock> productStocksToNotify) {
-        try {
-            Message<String> message = MessageBuilder.withPayload(SQSNotificationDto.create(
-                    RawNotificationData.create(productStocksToNotify, NotificationType.PRODUCT_RESTOCK)
-            ).toString()).build();
+        for(ProductStock productStock: productStocksToNotify) {
+            try {
+                Message<String> message = MessageBuilder.withPayload(SQSNotificationDto.create(
+                        RawNotificationData.create(productStock, NotificationType.PRODUCT_RESTOCK)
+                ).toString()).build();
 
-            sqsTemplate.send(notificationQueue, message);
-        } catch (Exception e) {
-            log.error(e.getMessage());
+                sqsTemplate.send(notificationQueue, message);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
         }
     }
 }
