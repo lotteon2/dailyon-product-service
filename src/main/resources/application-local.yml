@@ -19,6 +19,10 @@ spring:
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:product-service;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MySQL
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 11111111
   jpa:
     hibernate:
       ddl-auto: create
