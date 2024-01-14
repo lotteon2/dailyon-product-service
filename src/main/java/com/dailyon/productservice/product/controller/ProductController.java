@@ -2,6 +2,7 @@ package com.dailyon.productservice.product.controller;
 
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
+import com.dailyon.productservice.product.dto.response.ReadNewProductListResponse;
 import com.dailyon.productservice.product.dto.response.ReadOOTDSearchSliceResponse;
 import com.dailyon.productservice.product.dto.response.ReadProductDetailResponse;
 import com.dailyon.productservice.product.dto.response.ReadProductSliceResponse;
@@ -41,5 +42,10 @@ public class ProductController {
     ResponseEntity<ReadOOTDSearchSliceResponse> searchProductsFromOOTD(@RequestParam Long lastId,
                                                                        @RequestParam String query) {
         return ResponseEntity.status(HttpStatus.OK).body(productFacade.searchFromOOTD(lastId, query));
+    }
+
+    @GetMapping("/new")
+    ResponseEntity<ReadNewProductListResponse> readNewProducts() {
+        return ResponseEntity.status(HttpStatus.OK).body(productFacade.readNewProducts());
     }
 }

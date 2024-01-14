@@ -94,4 +94,8 @@ public class ProductFacade {
     public ReadProductPageResponse readProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable) {
         return productService.readProductPage(brandId, categoryId, type, pageable);
     }
+
+    public ReadNewProductListResponse readNewProducts() {
+        return productService.readNewProducts();
+    }
 }

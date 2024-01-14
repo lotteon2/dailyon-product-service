@@ -5,6 +5,7 @@ import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.common.exception.UniqueException;
 import com.dailyon.productservice.common.feign.response.ReadOOTDProductListResponse;
 import com.dailyon.productservice.describeimage.entity.DescribeImage;
+import com.dailyon.productservice.product.cache.NewProductCacheRepository;
 import com.dailyon.productservice.product.dto.UpdateProductDto;
 import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.ProductStockRequest;
@@ -25,6 +26,7 @@ import com.dailyon.productservice.productstock.repository.ProductStockRepository
 import com.dailyon.productservice.reviewaggregate.repository.ReviewAggregateRepository;
 import com.dailyon.productservice.reviewaggregate.entity.ReviewAggregate;
 import com.dailyon.productservice.common.util.S3Util;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -48,6 +50,8 @@ public class ProductService {
     private final ProductStockRepository productStockRepository;
     private final DescribeImageRepository describeImageRepository;
     private final ReviewAggregateRepository reviewAggregateRepository;
+
+    private final NewProductCacheRepository newProductCacheRepository;
 
     @Transactional
     public CreateProductResponse createProduct(CreateProductRequest createProductRequest) {
@@ -92,6 +96,12 @@ public class ProductService {
                 createProductRequest.getPrice()
         ));
 
+        try { // 신상품 캐싱
+            newProductCacheRepository.putNewProductCache(product.getId(), product);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
         // create productStocks
         // [1], [2]를 병렬로 돌면서 상품의 치수당 재고를 생성
         List<ProductStock> productStocks = new ArrayList<>();
@@ -121,8 +131,11 @@ public class ProductService {
 
     @Transactional
     public UpdateProductDto updateProduct(Long productId, UpdateProductRequest updateProductRequest) {
+        if(!updateProductRequest.getDescribeImages().isEmpty()) {
+            describeImageRepository.deleteByProductId(productId);
+        }
+
         productStockRepository.deleteByProductId(productId);
-        describeImageRepository.deleteByProductId(productId);
 
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.PRODUCT_NOT_FOUND));
@@ -168,38 +181,43 @@ public class ProductService {
             ));
         }
 
-        // 상품 이미지 경로(bucket/random_uuid.확장자) 생성
-        String newFilePath = s3Util.createFilePath(updateProductRequest.getImage());
-
-        // 상품 설명 이미지(bucket/random_uuid.확장자) 목록 생성
-        List<String> newDescribeImgUrls = updateProductRequest.getDescribeImages().values().stream()
-                .map(s3Util::createFilePath)
-                .collect(Collectors.toList());
-
-        List<DescribeImage> newDescribeImages = newDescribeImgUrls.stream()
-                .map(descImgUrl -> DescribeImage.create(product, descImgUrl))
-                .collect(Collectors.toList());
-
         product.setBrand(newBrand);
         product.setCategory(newCategory);
         product.setPrice(updateProductRequest.getPrice());
         product.setName(updateProductRequest.getName());
         product.setGender(Gender.validate(updateProductRequest.getGender()));
         product.setCode(updateProductRequest.getCode());
-        product.setImgUrl(newFilePath);
+
+        try { // 신상품 캐시 업데이트
+            newProductCacheRepository.deleteNewProductCache(productId);
+            newProductCacheRepository.putNewProductCache(productId, product);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         productStockRepository.saveAll(newProductStocks);
-        describeImageRepository.saveAll(newDescribeImages);
 
         // presignedUrls for response dto
         String imgPresignedUrl = null;
         if(!updateProductRequest.getImage().isEmpty()) {
+            product.setImgUrl(s3Util.createFilePath(updateProductRequest.getImage()));
             imgPresignedUrl = s3Util.getPreSignedUrl(product.getImgUrl());
         }
 
         Map<String, String> describeImgPresignedUrls = null;
         if(!updateProductRequest.getDescribeImages().isEmpty()) {
-            describeImgPresignedUrls = createDescribeImgPresignedUrls((List<String>) updateProductRequest.getDescribeImages().values(), newDescribeImgUrls);
+            // 상품 설명 이미지(bucket/random_uuid.확장자) 목록 생성
+            List<String> newDescribeImgUrls = updateProductRequest.getDescribeImages().values().stream()
+                    .map(s3Util::createFilePath)
+                    .collect(Collectors.toList());
+
+            List<DescribeImage> newDescribeImages = newDescribeImgUrls.stream()
+                    .map(descImgUrl -> DescribeImage.create(product, descImgUrl))
+                    .collect(Collectors.toList());
+
+            describeImageRepository.saveAll(newDescribeImages);
+            describeImgPresignedUrls = createDescribeImgPresignedUrls(
+                    (List<String>) updateProductRequest.getDescribeImages().values(), newDescribeImgUrls);
         }
 
         return UpdateProductDto.create(imgPresignedUrl, describeImgPresignedUrls, productStocksToNotify);
@@ -252,5 +270,9 @@ public class ProductService {
 
     public ReadOOTDProductListResponse readOOTDProductDetails(List<Long> id) {
         return ReadOOTDProductListResponse.fromEntity(productRepository.findOOTDProductDetails(id));
+    }
+
+    public ReadNewProductListResponse readNewProducts() {
+        return new ReadNewProductListResponse(newProductCacheRepository.readNewProductCache());
     }
 }
