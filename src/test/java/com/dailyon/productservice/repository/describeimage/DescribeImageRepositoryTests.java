@@ -75,7 +75,7 @@ public class DescribeImageRepositoryTests extends IntegrationTestSupport {
         describeImageRepository.saveAll(describeImages);
 
         // when
-        describeImageRepository.deleteByProduct(product);
+        describeImageRepository.deleteByProductId(product.getId());
 
         // then
         assertEquals(0, describeImageRepository.findAll().size());

@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface DescribeImageRepository extends JpaRepository<DescribeImage, Long> {
 
     @Modifying(clearAutomatically = true)
-    @Query(value = "DELETE FROM DescribeImage d WHERE d.product = :product")
-    void deleteByProduct(@Param("product") Product product);
+    @Query(value = "DELETE FROM DescribeImage d WHERE d.product.id = :id")
+    void deleteByProductId(@Param("id") Long id);
 }

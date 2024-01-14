@@ -122,6 +122,7 @@ public class ProductService {
     @Transactional
     public UpdateProductDto updateProduct(Long productId, UpdateProductRequest updateProductRequest) {
         productStockRepository.deleteByProductId(productId);
+        describeImageRepository.deleteByProductId(productId);
 
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.PRODUCT_NOT_FOUND));
@@ -167,15 +168,28 @@ public class ProductService {
             ));
         }
 
+        // 상품 이미지 경로(bucket/random_uuid.확장자) 생성
+        String newFilePath = s3Util.createFilePath(updateProductRequest.getImage());
+
+        // 상품 설명 이미지(bucket/random_uuid.확장자) 목록 생성
+        List<String> newDescribeImgUrls = updateProductRequest.getDescribeImages().values().stream()
+                .map(s3Util::createFilePath)
+                .collect(Collectors.toList());
+
+        List<DescribeImage> newDescribeImages = newDescribeImgUrls.stream()
+                .map(descImgUrl -> DescribeImage.create(product, descImgUrl))
+                .collect(Collectors.toList());
+
         product.setBrand(newBrand);
         product.setCategory(newCategory);
         product.setPrice(updateProductRequest.getPrice());
         product.setName(updateProductRequest.getName());
         product.setGender(Gender.validate(updateProductRequest.getGender()));
         product.setCode(updateProductRequest.getCode());
-//        productRepository.save(product);
+        product.setImgUrl(newFilePath);
 
         productStockRepository.saveAll(newProductStocks);
+        describeImageRepository.saveAll(newDescribeImages);
 
         // presignedUrls for response dto
         String imgPresignedUrl = null;
@@ -185,9 +199,7 @@ public class ProductService {
 
         Map<String, String> describeImgPresignedUrls = null;
         if(!updateProductRequest.getDescribeImages().isEmpty()) {
-            describeImgPresignedUrls = updateProductRequest.getDescribeImages().entrySet().stream()
-                    .map(entry -> new AbstractMap.SimpleEntry<>(entry.getValue(), s3Util.getPreSignedUrl(entry.getKey())))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            describeImgPresignedUrls = createDescribeImgPresignedUrls((List<String>) updateProductRequest.getDescribeImages().values(), newDescribeImgUrls);
         }
 
         return UpdateProductDto.create(imgPresignedUrl, describeImgPresignedUrls, productStocksToNotify);
