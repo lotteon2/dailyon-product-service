@@ -5,7 +5,6 @@ import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.common.exception.UniqueException;
 import com.dailyon.productservice.common.feign.response.ReadOOTDProductListResponse;
 import com.dailyon.productservice.describeimage.entity.DescribeImage;
-import com.dailyon.productservice.product.cache.NewProductCacheRepository;
 import com.dailyon.productservice.product.dto.UpdateProductDto;
 import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.ProductStockRequest;
@@ -28,6 +27,8 @@ import com.dailyon.productservice.reviewaggregate.entity.ReviewAggregate;
 import com.dailyon.productservice.common.util.S3Util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -50,8 +51,6 @@ public class ProductService {
     private final ProductStockRepository productStockRepository;
     private final DescribeImageRepository describeImageRepository;
     private final ReviewAggregateRepository reviewAggregateRepository;
-
-    private final NewProductCacheRepository newProductCacheRepository;
 
     @Transactional
     public CreateProductResponse createProduct(CreateProductRequest createProductRequest) {
@@ -95,12 +94,6 @@ public class ProductService {
                 filePath,
                 createProductRequest.getPrice()
         ));
-
-        try { // 신상품 캐싱
-            newProductCacheRepository.putNewProductCache(product.getId(), product);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
 
         // create productStocks
         // [1], [2]를 병렬로 돌면서 상품의 치수당 재고를 생성
@@ -188,13 +181,6 @@ public class ProductService {
         product.setGender(Gender.validate(updateProductRequest.getGender()));
         product.setCode(updateProductRequest.getCode());
 
-        try { // 신상품 캐시 업데이트
-            newProductCacheRepository.deleteNewProductCache(productId);
-            newProductCacheRepository.putNewProductCache(productId, product);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
         productStockRepository.saveAll(newProductStocks);
 
         // presignedUrls for response dto
@@ -272,7 +258,8 @@ public class ProductService {
         return ReadOOTDProductListResponse.fromEntity(productRepository.findOOTDProductDetails(id));
     }
 
+    @Cacheable(value = "newProducts", unless = "#result == null")
     public ReadNewProductListResponse readNewProducts() {
-        return new ReadNewProductListResponse(newProductCacheRepository.readNewProductCache());
+        return ReadNewProductListResponse.create(productRepository.findNewProducts(PageRequest.of(0, 100)));
     }
 }

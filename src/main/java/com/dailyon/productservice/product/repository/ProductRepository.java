@@ -3,6 +3,7 @@ package com.dailyon.productservice.product.repository;
 import com.dailyon.productservice.brand.entity.Brand;
 import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.product.entity.Product;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,4 +37,9 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
             "JOIN FETCH p.category " +
             "WHERE p.category IN :categories AND p.deleted = false")
     List<Product> findProductsFromCategories(@Param("categories") List<Category> categories);
+
+    @Query(value = "SELECT p " +
+            "FROM Product p " +
+            "ORDER BY p.createdAt DESC")
+    List<Product> findNewProducts(Pageable pageable);
 }
