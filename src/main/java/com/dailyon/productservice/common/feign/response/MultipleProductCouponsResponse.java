@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ public class MultipleProductCouponsResponse {
 
         private String discountType;
         private Long discountValue;
+        private LocalDateTime endAt;
 
         private Long minPurchaseAmount;
         private Long maxPurchaseAmount;

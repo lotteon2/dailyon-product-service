@@ -1,7 +1,10 @@
 package com.dailyon.productservice.common.config;
 
+import com.dailyon.productservice.category.dto.response.ReadBreadCrumbListResponse;
+import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.product.dto.response.ReadBestProductListResponse;
 import com.dailyon.productservice.product.dto.response.ReadNewProductListResponse;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -17,6 +20,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
+import java.util.List;
 
 @EnableCaching
 @Configuration
