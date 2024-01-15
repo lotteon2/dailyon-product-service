@@ -1,33 +1,31 @@
 package com.dailyon.productservice.product.service;
 
 import com.dailyon.productservice.brand.entity.Brand;
+import com.dailyon.productservice.brand.repository.BrandRepository;
 import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.category.repository.CategoryRepository;
+import com.dailyon.productservice.common.enums.Gender;
+import com.dailyon.productservice.common.enums.ProductType;
+import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.common.exception.UniqueException;
 import com.dailyon.productservice.common.feign.response.ReadOOTDProductListResponse;
+import com.dailyon.productservice.common.util.S3Util;
 import com.dailyon.productservice.describeimage.entity.DescribeImage;
+import com.dailyon.productservice.describeimage.repository.DescribeImageRepository;
 import com.dailyon.productservice.product.dto.UpdateProductDto;
 import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.ProductStockRequest;
 import com.dailyon.productservice.product.dto.request.UpdateProductRequest;
 import com.dailyon.productservice.product.dto.response.*;
-import com.dailyon.productservice.common.enums.Gender;
-import com.dailyon.productservice.common.enums.ProductType;
-import com.dailyon.productservice.common.exception.NotExistsException;
-import com.dailyon.productservice.brand.repository.BrandRepository;
-import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.product.entity.Product;
-import com.dailyon.productservice.productsize.entity.ProductSize;
-import com.dailyon.productservice.describeimage.repository.DescribeImageRepository;
 import com.dailyon.productservice.product.repository.ProductRepository;
+import com.dailyon.productservice.productsize.entity.ProductSize;
 import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import com.dailyon.productservice.productstock.entity.ProductStock;
 import com.dailyon.productservice.productstock.repository.ProductStockRepository;
-import com.dailyon.productservice.reviewaggregate.repository.ReviewAggregateRepository;
 import com.dailyon.productservice.reviewaggregate.entity.ReviewAggregate;
-import com.dailyon.productservice.common.util.S3Util;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.dailyon.productservice.reviewaggregate.repository.ReviewAggregateRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -128,8 +126,6 @@ public class ProductService {
             describeImageRepository.deleteByProductId(productId);
         }
 
-        productStockRepository.deleteByProductId(productId);
-
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.PRODUCT_NOT_FOUND));
 
@@ -181,6 +177,7 @@ public class ProductService {
         product.setGender(Gender.validate(updateProductRequest.getGender()));
         product.setCode(updateProductRequest.getCode());
 
+        productStockRepository.deleteByProductId(productId);
         productStockRepository.saveAll(newProductStocks);
 
         // presignedUrls for response dto
