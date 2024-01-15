@@ -25,7 +25,10 @@ import com.dailyon.productservice.productstock.repository.ProductStockRepository
 import com.dailyon.productservice.reviewaggregate.repository.ReviewAggregateRepository;
 import com.dailyon.productservice.reviewaggregate.entity.ReviewAggregate;
 import com.dailyon.productservice.common.util.S3Util;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -121,6 +124,10 @@ public class ProductService {
 
     @Transactional
     public UpdateProductDto updateProduct(Long productId, UpdateProductRequest updateProductRequest) {
+        if(!updateProductRequest.getDescribeImages().isEmpty()) {
+            describeImageRepository.deleteByProductId(productId);
+        }
+
         productStockRepository.deleteByProductId(productId);
 
         Product product = productRepository.findById(productId)
@@ -173,21 +180,30 @@ public class ProductService {
         product.setName(updateProductRequest.getName());
         product.setGender(Gender.validate(updateProductRequest.getGender()));
         product.setCode(updateProductRequest.getCode());
-//        productRepository.save(product);
 
         productStockRepository.saveAll(newProductStocks);
 
         // presignedUrls for response dto
         String imgPresignedUrl = null;
         if(!updateProductRequest.getImage().isEmpty()) {
+            product.setImgUrl(s3Util.createFilePath(updateProductRequest.getImage()));
             imgPresignedUrl = s3Util.getPreSignedUrl(product.getImgUrl());
         }
 
         Map<String, String> describeImgPresignedUrls = null;
         if(!updateProductRequest.getDescribeImages().isEmpty()) {
-            describeImgPresignedUrls = updateProductRequest.getDescribeImages().entrySet().stream()
-                    .map(entry -> new AbstractMap.SimpleEntry<>(entry.getValue(), s3Util.getPreSignedUrl(entry.getKey())))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            // 상품 설명 이미지(bucket/random_uuid.확장자) 목록 생성
+            List<String> newDescribeImgUrls = updateProductRequest.getDescribeImages().values().stream()
+                    .map(s3Util::createFilePath)
+                    .collect(Collectors.toList());
+
+            List<DescribeImage> newDescribeImages = newDescribeImgUrls.stream()
+                    .map(descImgUrl -> DescribeImage.create(product, descImgUrl))
+                    .collect(Collectors.toList());
+
+            describeImageRepository.saveAll(newDescribeImages);
+            describeImgPresignedUrls = createDescribeImgPresignedUrls(
+                    (List<String>) updateProductRequest.getDescribeImages().values(), newDescribeImgUrls);
         }
 
         return UpdateProductDto.create(imgPresignedUrl, describeImgPresignedUrls, productStocksToNotify);
@@ -240,5 +256,10 @@ public class ProductService {
 
     public ReadOOTDProductListResponse readOOTDProductDetails(List<Long> id) {
         return ReadOOTDProductListResponse.fromEntity(productRepository.findOOTDProductDetails(id));
+    }
+
+    @Cacheable(value = "newProducts", unless = "#result == null")
+    public ReadNewProductListResponse readNewProducts() {
+        return ReadNewProductListResponse.create(productRepository.findNewProducts(PageRequest.of(0, 100)));
     }
 }
