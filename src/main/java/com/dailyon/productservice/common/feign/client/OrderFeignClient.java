@@ -21,7 +21,7 @@ public interface OrderFeignClient {
     @GetMapping("/clients/orders/ranks")
     ResponseEntity<List<ProductRankResponse>> getBestProductInfo();
 
-    default ResponseEntity<List<ProductRankResponse>> getBestProductInfoFallback() {
+    default ResponseEntity<List<ProductRankResponse>> getBestProductInfoFallback(Throwable t) {
         return ResponseEntity.ok(new ArrayList<>());
     }
 }
