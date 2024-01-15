@@ -1,5 +1,6 @@
 package com.dailyon.productservice.common.config;
 
+import com.dailyon.productservice.product.dto.response.ReadNewProductListResponse;
 import com.dailyon.productservice.product.vo.NewProductVO;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,11 +46,8 @@ public class CacheConfig {
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer(
             ObjectMapper objectMapper
     ) {
-        JavaType newProductVoListType = objectMapper.getTypeFactory()
-                .constructCollectionType(List.class, NewProductVO.class);
-
-        Jackson2JsonRedisSerializer<List<NewProductVO>> newProductVOJackson2JsonRedisSerializer =
-                new Jackson2JsonRedisSerializer<>(newProductVoListType);
+        Jackson2JsonRedisSerializer<ReadNewProductListResponse> newProductVOJackson2JsonRedisSerializer =
+                new Jackson2JsonRedisSerializer<>(ReadNewProductListResponse.class);
 
         newProductVOJackson2JsonRedisSerializer.setObjectMapper(objectMapper);
 
@@ -64,18 +62,6 @@ public class CacheConfig {
                                 )
                                 .serializeValuesWith(RedisSerializationContext.SerializationPair
                                         .fromSerializer(newProductVOJackson2JsonRedisSerializer)
-                                )
-                )
-                .withCacheConfiguration(
-                        "newProductsOrder",
-                        RedisCacheConfiguration.defaultCacheConfig()
-                                .entryTtl(Duration.ofDays(1))
-                                .disableCachingNullValues()
-                                .serializeKeysWith(RedisSerializationContext.SerializationPair
-                                        .fromSerializer(new StringRedisSerializer())
-                                )
-                                .serializeValuesWith(RedisSerializationContext.SerializationPair
-                                        .fromSerializer(new StringRedisSerializer())
                                 )
                 )
         );
