@@ -13,7 +13,6 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     boolean existsByName(String name);
 
-    @Cacheable(value = "childCategories", key = "#masterCategoryId", unless = "#masterCategoryId == null")
     List<Category> findByMasterCategory_Id(Long masterCategoryId);
 
     @Query(nativeQuery = true, value =
@@ -34,7 +33,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             "c.is_deleted = false")
     List<Category> findLeafCategories();
 
-    @Cacheable(value = "allChildCategories", key = "#categoryId")
     @Query(nativeQuery = true, value =
             "WITH RECURSIVE CategoryTree(id) AS (" +
                     "SELECT c.id " +

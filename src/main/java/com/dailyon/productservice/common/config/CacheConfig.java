@@ -54,26 +54,8 @@ public class CacheConfig {
         Jackson2JsonRedisSerializer<ReadBestProductListResponse> bestProductVOJackson2JsonRedisSerializer =
                 new Jackson2JsonRedisSerializer<>(ReadBestProductListResponse.class);
 
-        Jackson2JsonRedisSerializer<ReadBreadCrumbListResponse> breadCrumbJackson2JsonRedisSerializer =
-                new Jackson2JsonRedisSerializer<>(ReadBreadCrumbListResponse.class);
-
-        JavaType childCategoryListType = objectMapper.getTypeFactory()
-                .constructCollectionType(List.class, Category.class);
-
-        Jackson2JsonRedisSerializer<List<Category>> childCategoriesJackson2JsonRedisSerializer =
-                new Jackson2JsonRedisSerializer<>(childCategoryListType);
-
-        JavaType allChildCategoryListType = objectMapper.getTypeFactory()
-                .constructCollectionType(List.class, Category.class);
-
-        Jackson2JsonRedisSerializer<List<Category>> allChildCategoriesJackson2JsonRedisSerializer =
-                new Jackson2JsonRedisSerializer<>(allChildCategoryListType);
-
         newProductVOJackson2JsonRedisSerializer.setObjectMapper(objectMapper);
         bestProductVOJackson2JsonRedisSerializer.setObjectMapper(objectMapper);
-        breadCrumbJackson2JsonRedisSerializer.setObjectMapper(objectMapper);
-        childCategoriesJackson2JsonRedisSerializer.setObjectMapper(objectMapper);
-        allChildCategoriesJackson2JsonRedisSerializer.setObjectMapper(objectMapper);
 
         return (builder -> builder
                 .withCacheConfiguration(
@@ -98,42 +80,6 @@ public class CacheConfig {
                                 )
                                 .serializeValuesWith(RedisSerializationContext.SerializationPair
                                         .fromSerializer(bestProductVOJackson2JsonRedisSerializer)
-                                )
-                )
-                .withCacheConfiguration(
-                        "breadcrumbs",
-                        RedisCacheConfiguration.defaultCacheConfig()
-                                .entryTtl(Duration.ofDays(7))
-                                .disableCachingNullValues()
-                                .serializeKeysWith(RedisSerializationContext.SerializationPair
-                                        .fromSerializer(new StringRedisSerializer())
-                                )
-                                .serializeValuesWith(RedisSerializationContext.SerializationPair
-                                        .fromSerializer(breadCrumbJackson2JsonRedisSerializer)
-                                )
-                )
-                .withCacheConfiguration(
-                        "childCategories",
-                        RedisCacheConfiguration.defaultCacheConfig()
-                                .entryTtl(Duration.ofDays(7))
-                                .disableCachingNullValues()
-                                .serializeKeysWith(RedisSerializationContext.SerializationPair
-                                        .fromSerializer(new StringRedisSerializer())
-                                )
-                                .serializeValuesWith(RedisSerializationContext.SerializationPair
-                                        .fromSerializer(childCategoriesJackson2JsonRedisSerializer)
-                                )
-                )
-                .withCacheConfiguration(
-                        "allChildCategories",
-                        RedisCacheConfiguration.defaultCacheConfig()
-                                .entryTtl(Duration.ofDays(7))
-                                .disableCachingNullValues()
-                                .serializeKeysWith(RedisSerializationContext.SerializationPair
-                                        .fromSerializer(new StringRedisSerializer())
-                                )
-                                .serializeValuesWith(RedisSerializationContext.SerializationPair
-                                        .fromSerializer(allChildCategoriesJackson2JsonRedisSerializer)
                                 )
                 )
         );

@@ -4,15 +4,13 @@ import com.dailyon.productservice.category.dto.request.CreateCategoryRequest;
 import com.dailyon.productservice.category.dto.request.UpdateCategoryRequest;
 import com.dailyon.productservice.category.dto.response.*;
 import com.dailyon.productservice.category.entity.Category;
+import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.common.exception.DeleteException;
 import com.dailyon.productservice.common.exception.NotExistsException;
 import com.dailyon.productservice.common.exception.UniqueException;
-import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.product.repository.ProductRepository;
 import com.dailyon.productservice.productsize.repository.ProductSizeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +26,6 @@ public class CategoryService {
     private final ProductSizeRepository productSizeRepository;
 
     @Transactional
-    @CacheEvict(value = {"breadcrumbs", "childCategories", "allChildCategories"})
     public CreateCategoryResponse createCategory(CreateCategoryRequest createCategoryRequest) {
         // 이미 존재하는 카테고리명이라면 exception
         if(categoryRepository.existsByName(createCategoryRequest.getCategoryName())) {
@@ -57,7 +54,6 @@ public class CategoryService {
         return ReadAllCategoryListResponse.fromEntity(categoryRepository.findAll());
     }
 
-    @Cacheable(value = "breadcrumbs", key = "#id")
     public ReadBreadCrumbListResponse readBreadCrumbs(Long id) {
         Category self = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
@@ -65,7 +61,6 @@ public class CategoryService {
     }
 
     @Transactional
-    @CacheEvict(value = {"breadcrumbs", "childCategories", "allChildCategories"})
     public void updateCategoryName(Long id, UpdateCategoryRequest updateCategoryRequest) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
@@ -86,7 +81,6 @@ public class CategoryService {
     }
 
     @Transactional
-    @CacheEvict(value = {"breadcrumbs", "childCategories", "allChildCategories"})
     public void deleteCategory(Long categoryId) {
         categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));
