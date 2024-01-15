@@ -40,6 +40,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
 
     @Query(value = "SELECT p " +
             "FROM Product p " +
+            "JOIN FETCH p.category " +
+            "JOIN FETCH p.brand " +
             "ORDER BY p.createdAt DESC")
     List<Product> findNewProducts(Pageable pageable);
 }
