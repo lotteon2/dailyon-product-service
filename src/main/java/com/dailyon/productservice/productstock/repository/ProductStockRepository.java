@@ -16,7 +16,7 @@ public interface ProductStockRepository extends JpaRepository<ProductStock, Prod
 
     List<ProductStock> findProductStocksByProductOrderByProductSize(Product product);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query(value = "DELETE FROM ProductStock ps WHERE ps.product.id = :productId")
     void deleteByProductId(@Param("productId") Long productId);
 }
