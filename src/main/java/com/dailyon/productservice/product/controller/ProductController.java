@@ -2,9 +2,7 @@ package com.dailyon.productservice.product.controller;
 
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
-import com.dailyon.productservice.product.dto.response.ReadOOTDSearchSliceResponse;
-import com.dailyon.productservice.product.dto.response.ReadProductDetailResponse;
-import com.dailyon.productservice.product.dto.response.ReadProductSliceResponse;
+import com.dailyon.productservice.product.dto.response.*;
 import com.dailyon.productservice.product.facade.ProductFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,5 +39,15 @@ public class ProductController {
     ResponseEntity<ReadOOTDSearchSliceResponse> searchProductsFromOOTD(@RequestParam Long lastId,
                                                                        @RequestParam String query) {
         return ResponseEntity.status(HttpStatus.OK).body(productFacade.searchFromOOTD(lastId, query));
+    }
+
+    @GetMapping("/new")
+    ResponseEntity<ReadNewProductListResponse> readNewProducts() {
+        return ResponseEntity.status(HttpStatus.OK).body(productFacade.readNewProducts());
+    }
+
+    @GetMapping("/best")
+    ResponseEntity<ReadBestProductListResponse> readBestProducts() {
+        return ResponseEntity.status(HttpStatus.OK).body(productFacade.readBestProducts());
     }
 }

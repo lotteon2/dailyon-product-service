@@ -30,6 +30,10 @@ spring:
   kafka:
     consumer:
       group-id: test
+  redis:
+    host: localhost
+    port: 6379
+    password: 11111111
 
 cloud:
   aws:
@@ -60,4 +64,5 @@ logging:
           EC2MetadataUtils: error
 
 endpoint:
-  promotion-service: localhost:8084
+  promotion-service: http://localhost:8084
+  order-service: http://localhost:8089
