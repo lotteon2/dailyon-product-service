@@ -42,6 +42,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
             "FROM Product p " +
             "JOIN FETCH p.category " +
             "JOIN FETCH p.brand " +
+            "WHERE p.type = 'NORMAL' AND p.deleted = false " +
             "ORDER BY p.createdAt DESC")
     List<Product> findNewProducts(Pageable pageable);
 
@@ -49,7 +50,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
             "FROM Product p " +
             "JOIN FETCH p.category " +
             "JOIN FETCH p.brand " +
-            "WHERE p.id IN :ids"
+            "WHERE p.type = 'NORMAL' AND p.deleted = false AND p.id IN :ids"
     )
     List<Product> findBestProducts(@Param("ids") List<Long> ids);
 }
