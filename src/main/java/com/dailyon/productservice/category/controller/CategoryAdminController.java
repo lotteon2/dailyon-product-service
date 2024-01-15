@@ -34,7 +34,7 @@ public class CategoryAdminController {
     }
 
     @GetMapping("/page/categories")
-    public ResponseEntity<ReadCategoryPageResponse> readCategoryPages(@PageableDefault(sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<ReadCategoryPageResponse> readCategoryPages(Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.readCategoryPages(pageable));
     }
 
