@@ -51,6 +51,7 @@ eureka:
 
 endpoint:
   promotion-service: http://promotion-service:8084
+  order-service: http://order-service:8089
 
 logging:
   level:

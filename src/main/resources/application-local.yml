@@ -74,4 +74,5 @@ logging:
           EC2MetadataUtils: error
 
 endpoint:
-  promotion-service: localhost:8084
+  promotion-service: http://localhost:8084
+  order-service: http://localhost:8089
