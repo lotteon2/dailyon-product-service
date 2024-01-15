@@ -61,7 +61,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
     @Override
     public Page<Product> findProductPage(Long brandId, List<Category> childCategories, ProductType type, Pageable pageable) {
-        JPAQuery<Product> jpaQuery = jpaQueryFactory
+        List<Product> idx = jpaQueryFactory
                 .select(product)
                 .from(product)
                 .leftJoin(product.brand, brand).fetchJoin()
@@ -70,20 +70,20 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .where(product.deleted.eq(false)
                         .and(brandIdEq(brandId))
                         .and(categoryIn(childCategories))
-                        .and(productTypeEq(type)))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+                        .and(productTypeEq(type))
+                ).fetch();
 
-        Long total = jpaQueryFactory
-                .select(product.count())
+        List<Product> result = jpaQueryFactory
+                .select(product)
                 .from(product)
-                .where(product.deleted.eq(false)
-                        .and(brandIdEq(brandId))
-                        .and(categoryIn(childCategories))
-                        .and(productTypeEq(type)))
-                .fetchOne();
+                .where(product.in(idx))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
 
-        return new PageImpl<>(jpaQuery.fetch(), pageable, total);
+        long total = idx.size();
+
+        return new PageImpl<>(result, pageable, total);
     }
 
     @Override
