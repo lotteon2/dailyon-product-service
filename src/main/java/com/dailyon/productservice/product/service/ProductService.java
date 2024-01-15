@@ -258,8 +258,11 @@ public class ProductService {
         return ReadOOTDProductListResponse.fromEntity(productRepository.findOOTDProductDetails(id));
     }
 
-    @Cacheable(value = "newProducts", unless = "#result == null")
     public ReadNewProductListResponse readNewProducts() {
         return ReadNewProductListResponse.create(productRepository.findNewProducts(PageRequest.of(0, 100)));
+    }
+
+    public List<Product> readBestProducts(List<Long> ids) {
+        return productRepository.findBestProducts(ids);
     }
 }

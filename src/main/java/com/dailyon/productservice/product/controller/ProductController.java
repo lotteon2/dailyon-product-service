@@ -2,10 +2,7 @@ package com.dailyon.productservice.product.controller;
 
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
-import com.dailyon.productservice.product.dto.response.ReadNewProductListResponse;
-import com.dailyon.productservice.product.dto.response.ReadOOTDSearchSliceResponse;
-import com.dailyon.productservice.product.dto.response.ReadProductDetailResponse;
-import com.dailyon.productservice.product.dto.response.ReadProductSliceResponse;
+import com.dailyon.productservice.product.dto.response.*;
 import com.dailyon.productservice.product.facade.ProductFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -47,5 +44,10 @@ public class ProductController {
     @GetMapping("/new")
     ResponseEntity<ReadNewProductListResponse> readNewProducts() {
         return ResponseEntity.status(HttpStatus.OK).body(productFacade.readNewProducts());
+    }
+
+    @GetMapping("/best")
+    ResponseEntity<ReadBestProductListResponse> readBestProducts() {
+        return ResponseEntity.status(HttpStatus.OK).body(productFacade.readBestProducts());
     }
 }

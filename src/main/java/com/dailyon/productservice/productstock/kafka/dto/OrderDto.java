@@ -20,6 +20,8 @@ public class OrderDto {
     private Long memberId;
     private int usedPoints;
     private OrderEvent orderEvent;
+    private String orderType;
+    private String referralCode;
 
     @Getter
     @NoArgsConstructor
