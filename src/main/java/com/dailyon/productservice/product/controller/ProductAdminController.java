@@ -38,7 +38,7 @@ public class ProductAdminController {
     ResponseEntity<ReadProductPageResponse> readProductPage(@RequestParam(required = false) Long brandId,
                                                             @RequestParam(required = false) Long categoryId,
                                                             @RequestParam ProductType type,
-                                                            @PageableDefault(sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+                                                            Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(productFacade.readProductPage(brandId, categoryId, type, pageable));
     }
 

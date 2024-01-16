@@ -27,7 +27,7 @@ public class BrandAdminController {
     }
 
     @GetMapping("/page/brands")
-    public ResponseEntity<ReadBrandPageResponse> readBrandPages(@PageableDefault(sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<ReadBrandPageResponse> readBrandPages(Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(brandService.readBrandPage(pageable));
     }
 

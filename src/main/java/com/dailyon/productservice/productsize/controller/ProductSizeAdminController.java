@@ -33,8 +33,10 @@ public class ProductSizeAdminController {
     }
 
     @GetMapping("/page/product-size/{categoryId}")
-    public ResponseEntity<ReadProductSizePageResponse> readProductSizePage(@PathVariable Long categoryId,
-                                                                           @PageableDefault(sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<ReadProductSizePageResponse> readProductSizePage(
+            @PathVariable Long categoryId,
+            Pageable pageable
+    ) {
         return ResponseEntity.status(HttpStatus.OK).body(productSizeService.readProductSizePage(categoryId, pageable));
     }
 
