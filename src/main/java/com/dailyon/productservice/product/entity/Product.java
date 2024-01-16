@@ -47,7 +47,7 @@ public class Product extends BaseEntity {
     @Builder.Default
     private Set<ProductStock> productStocks = new TreeSet<>();
 
-    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY, optional = false)
     private ReviewAggregate reviewAggregate;
 
     @Enumerated(EnumType.STRING)
