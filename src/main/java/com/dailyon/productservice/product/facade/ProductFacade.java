@@ -74,21 +74,11 @@ public class ProductFacade {
 
     public ReadProductSliceResponse readProductSlice(
             String lastVal, Long brandId, Long categoryId, Gender gender, ProductType productType,
-            Integer lowPrice, Integer highPrice, String sort, String direction
+            Integer lowPrice, Integer highPrice, String query, String sort, String direction
     ) {
         Slice<Product> products = productService.readProductSlice(
                 lastVal, brandId, categoryId, gender, productType,
-                lowPrice, highPrice, sort, direction);
-
-        MultipleProductCouponsResponse response = promotionFeignClient.getCouponsForProducts(
-                MultipleProductCouponsRequest.fromEntity(products.getContent())
-        ).getBody();
-
-        return ReadProductSliceResponse.create(products, response.getCoupons());
-    }
-
-    public ReadProductSliceResponse searchProductSlice(Long lastId, String query) {
-        Slice<Product> products = productService.searchProductSlice(lastId, query);
+                lowPrice, highPrice, query, sort, direction);
 
         MultipleProductCouponsResponse response = promotionFeignClient.getCouponsForProducts(
                 MultipleProductCouponsRequest.fromEntity(products.getContent())
@@ -101,8 +91,8 @@ public class ProductFacade {
         return productService.searchFromOOTD(lastId, query);
     }
 
-    public ReadProductPageResponse readProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable) {
-        return productService.readProductPage(brandId, categoryId, type, pageable);
+    public ReadProductPageResponse readProductPage(Long brandId, Long categoryId, ProductType type, String query, Pageable pageable) {
+        return productService.readProductPage(brandId, categoryId, type, query, pageable);
     }
 
     @Cacheable(value = "newProducts", unless = "#result == null")

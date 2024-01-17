@@ -31,6 +31,7 @@ public class ProductController {
      * @param highPrice 가격 필터 상한
      * @param sort 정렬 기준(price, review, rating)
      * @param direction 오름/내림차순(asc, desc)
+     * @param query 상품명 또는 코드
      * @return hasNext, List -> List의 마지막값을 lastVal에 저장하고 다음 요청에 포함시켜야 함.
      */
     @GetMapping
@@ -42,20 +43,16 @@ public class ProductController {
             @RequestParam(required = false) Gender gender,
             @RequestParam(required = false) Integer lowPrice,
             @RequestParam(required = false) Integer highPrice,
+            @RequestParam(required = false) String query,
             @RequestParam(required = false) String sort,
             @RequestParam(required = false) String direction
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 productFacade.readProductSlice(
                         lastVal, brandId, categoryId, gender, type,
-                        lowPrice, highPrice, sort, direction
-                ));
-    }
-
-    @GetMapping("/search")
-    ResponseEntity<ReadProductSliceResponse> searchProducts(@RequestParam Long lastId,
-                                                            @RequestParam(required = false) String query) {
-        return ResponseEntity.status(HttpStatus.OK).body(productFacade.searchProductSlice(lastId, query));
+                        lowPrice, highPrice, query, sort, direction
+                )
+        );
     }
 
     @GetMapping("/search/ootd")

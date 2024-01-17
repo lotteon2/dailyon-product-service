@@ -11,8 +11,12 @@ import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.product.entity.Product;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -30,13 +34,17 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     @Override
     public Slice<Product> findProductSlice(
             String lastVal, Long brandId, List<Category> childCategories, Gender gender, ProductType productType,
-            Integer lowPrice, Integer highPrice, String sort, String direction
+            Integer lowPrice, Integer highPrice, String query, String sort, String direction
     ) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if(query != null) {
+            booleanBuilder.and(nameContains(query).or(codeContains(query)));
+        }
+
         Pageable pageable = Pageable.ofSize(8);
 
         List<Product> idx = jpaQueryFactory
-                .select(product)
-                .from(product)
+                .selectFrom(product)
                 .leftJoin(product.brand, brand).fetchJoin()
                 .leftJoin(product.category, category).fetchJoin()
                 .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
@@ -47,11 +55,11 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                         .and(productTypeEq(productType))
                         .and(filterPrice(lowPrice, highPrice))
                         .and(filterByLastVal(sort, direction, lastVal))
+                        .and(booleanBuilder)
                 ).fetch();
 
         List<Product> result = jpaQueryFactory
-                .select(product)
-                .from(product)
+                .selectFrom(product)
                 .where(product.in(idx))
                 .orderBy(orderSpecifier(sort, direction))
                 .limit(pageable.getPageSize() + 1)
@@ -67,26 +75,45 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     }
 
     @Override
-    public Page<Product> findProductPage(Long brandId, List<Category> childCategories, ProductType type, Pageable pageable) {
-        List<Product> idx = jpaQueryFactory
-                .select(product)
-                .from(product)
+    public Page<Product> findProductPage(
+            Long brandId, List<Category> childCategories,
+            ProductType type, String query, Pageable pageable
+    ) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if(query != null) {
+            booleanBuilder.and(nameContains(query).or(codeContains(query)));
+        }
+
+        JPAQuery<Product> idxQuery = jpaQueryFactory
+                .selectFrom(product)
                 .leftJoin(product.brand, brand).fetchJoin()
                 .leftJoin(product.category, category).fetchJoin()
                 .leftJoin(product.describeImages, describeImage).fetchJoin()
+                .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
                 .where(product.deleted.eq(false)
                         .and(brandIdEq(brandId))
                         .and(categoryIn(childCategories))
+                        .and(booleanBuilder)
                         .and(productTypeEq(type))
-                ).fetch();
+                );
 
-        List<Product> result = jpaQueryFactory
-                .select(product)
-                .from(product)
+        List<Product> idx = idxQuery.fetch();
+
+        JPAQuery<Product> resultQuery = jpaQueryFactory
+                .selectFrom(product)
                 .where(product.in(idx))
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+                .limit(pageable.getPageSize());
+
+        PathBuilder<Product> entityPath = new PathBuilder<>(Product.class, "product");
+        for(Sort.Order order: pageable.getSort()) {
+            resultQuery.orderBy(new OrderSpecifier(
+                    order.isAscending() ? Order.ASC : Order.DESC,
+                    entityPath.get(order.getProperty())
+            ));
+        }
+
+        List<Product> result = resultQuery.fetch();
 
         long total = idx.size();
 
@@ -94,55 +121,25 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     }
 
     @Override
-    public Slice<Product> searchProducts(Long lastId, String query) {
-        Pageable pageable = Pageable.ofSize(8);
-
-        List<Product> idx = jpaQueryFactory
-                .select(product)
-                .from(product)
-                .leftJoin(product.brand, brand).fetchJoin()
-                .leftJoin(product.category, category).fetchJoin()
-                .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
-                .where(product.deleted.eq(false)
-                        .and(product.id.gt(lastId))
-                        .and(nameContains(query).or(codeEq(query)))
-                        .and(productTypeEq(ProductType.NORMAL))
-                ).fetch();
-
-        List<Product> result = jpaQueryFactory
-                .select(product)
-                .from(product)
-                .where(product.in(idx))
-                .limit(pageable.getPageSize() + 1)
-                .fetch();
-
-        boolean hasNext = false;
-        if(result.size() > pageable.getPageSize()) {
-            result.remove(pageable.getPageSize());
-            hasNext = true;
-        }
-
-        return new SliceImpl<>(result, pageable, hasNext);
-    }
-
-    @Override
     public Slice<Product> searchProductsFromOOTD(Long lastId, String query) {
         Pageable pageable = Pageable.ofSize(8);
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if(query != null) {
+            booleanBuilder.and(nameContains(query).or(codeContains(query)));
+        }
 
         List<Product> idx = jpaQueryFactory
-                .select(product)
-                .from(product)
+                .selectFrom(product)
                 .leftJoin(product.brand, brand).fetchJoin()
                 .leftJoin(product.productStocks, productStock).fetchJoin()
                 .where(product.deleted.eq(false)
                         .and(product.id.gt(lastId))
-                        .and(nameContains(query).or(codeEq(query)))
+                        .and(booleanBuilder)
                         .and(productTypeEq(ProductType.NORMAL))
                 ).fetch();
 
         List<Product> result = jpaQueryFactory
-                .select(product)
-                .from(product)
+                .selectFrom(product)
                 .where(product.in(idx))
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -176,8 +173,8 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         return name == null ? null : product.name.contains(name);
     }
 
-    private BooleanExpression codeEq(String code) {
-        return code == null ? null : product.code.eq(code);
+    private BooleanExpression codeContains(String code) {
+        return code == null ? null : product.code.contains(code);
     }
 
     private BooleanExpression filterPrice(Integer lowPrice, Integer highPrice) {

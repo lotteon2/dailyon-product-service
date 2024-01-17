@@ -13,12 +13,13 @@ import java.util.List;
 public interface ProductCustomRepository {
     Slice<Product> findProductSlice(
             String lastVal, Long brandId, List<Category> childCategories, Gender gender, ProductType productType,
-            Integer lowPrice, Integer highPrice, String sort, String direction
+            Integer lowPrice, Integer highPrice, String query, String sort, String direction
     );
 
-    Page<Product> findProductPage(Long brandId, List<Category> childCategories, ProductType type, Pageable pageable);
-
-    Slice<Product> searchProducts(Long lastId, String query);
+    Page<Product> findProductPage(
+            Long brandId, List<Category> childCategories,
+            ProductType type, String query, Pageable pageable
+    );
 
     Slice<Product> searchProductsFromOOTD(Long lastId, String query);
 }

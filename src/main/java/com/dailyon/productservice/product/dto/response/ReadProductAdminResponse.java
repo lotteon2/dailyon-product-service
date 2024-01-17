@@ -24,6 +24,8 @@ public class ReadProductAdminResponse {
     private Integer price;
     private String code;
     private String imgUrl;
+    private Double avgRating;
+    private Long reviewCount;
     private List<ReadProductStockAdminResponse> productStocks;
     private List<String> describeImgUrls;
 
@@ -37,6 +39,8 @@ public class ReadProductAdminResponse {
                 .price(product.getPrice())
                 .code(product.getCode())
                 .imgUrl(product.getImgUrl())
+                .avgRating(product.getReviewAggregate().getAvgRating())
+                .reviewCount(product.getReviewAggregate().getReviewCount())
                 .productStocks(product.getProductStocks().stream()
                         .map(ReadProductStockAdminResponse::fromEntity)
                         .collect(Collectors.toList()))
