@@ -30,7 +30,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
                     "WHERE c.is_deleted = false) " +
             "SELECT c.* FROM category AS c " +
             "INNER JOIN LeafCategory AS ct ON c.id = ct.id AND " +
-            "c.is_deleted = false")
+            "c.is_deleted = false ORDER BY c.name ASC")
     List<Category> findLeafCategories();
 
     @Query(nativeQuery = true, value =
@@ -46,6 +46,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
                     "WHERE c.is_deleted = false)" +
             "SELECT c.* FROM category AS c " +
             "INNER JOIN CategoryTree AS ct ON c.id = ct.id AND " +
-            "c.is_deleted = false")
+            "c.is_deleted = false ORDER BY c.name ASC")
     List<Category> findAllChildCategories(@Param("categoryId") Long categoryId);
 }
