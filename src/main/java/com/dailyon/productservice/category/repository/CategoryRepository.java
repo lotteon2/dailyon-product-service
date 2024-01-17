@@ -1,7 +1,6 @@
 package com.dailyon.productservice.category.repository;
 
 import com.dailyon.productservice.category.entity.Category;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,7 +12,9 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     boolean existsByName(String name);
 
-    List<Category> findByMasterCategory_Id(Long masterCategoryId);
+    List<Category> findByMasterCategory_IdOrderByNameAsc(Long masterCategoryId);
+
+    List<Category> findAllByOrderByNameAsc();
 
     @Query(nativeQuery = true, value =
             "WITH RECURSIVE LeafCategory(id) AS (" +

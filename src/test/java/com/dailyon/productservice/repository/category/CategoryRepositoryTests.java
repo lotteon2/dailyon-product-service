@@ -73,7 +73,7 @@ public class CategoryRepositoryTests extends IntegrationTestSupport {
         Category root2 = categoryRepository.save(Category.createRootCategory("root2"));
 
         // when
-        List<Category> categories = categoryRepository.findByMasterCategory_Id(null);
+        List<Category> categories = categoryRepository.findByMasterCategory_IdOrderByNameAsc(null);
 
         assertEquals(2L, categories.size());
     }
