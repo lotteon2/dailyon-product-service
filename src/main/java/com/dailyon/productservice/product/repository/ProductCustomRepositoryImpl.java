@@ -42,12 +42,9 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         }
         Pageable pageable = Pageable.ofSize(8);
 
-        List<Product> result = jpaQueryFactory
-                .select(product)
+        List<Long> indexes = jpaQueryFactory
+                .select(product.id)
                 .from(product)
-                .leftJoin(product.brand, brand).fetchJoin()
-                .leftJoin(product.category, category).fetchJoin()
-                .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
                 .where(product.deleted.eq(false)
                         .and(brandIdEq(brandId))
                         .and(categoryIn(childCategories))
@@ -59,6 +56,18 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 )
                 .orderBy(orderSpecifier(sort, direction))
                 .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        List<Product> result = jpaQueryFactory
+                .select(product)
+                .from(product)
+                .leftJoin(product.brand, brand).fetchJoin()
+                .leftJoin(product.category, category).fetchJoin()
+                .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
+                .where(
+                        product.id.in(indexes)
+                )
+                .orderBy(orderSpecifier(sort, direction))
                 .fetch();
 
         boolean hasNext = false;
