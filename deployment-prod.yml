@@ -32,7 +32,7 @@ spec:
             requests:
               memory: "384Mi"
             limits:
-              memory: "500Mi"
+              memory: "750Mi"
           ports:
             - containerPort: 8085
           imagePullPolicy: IfNotPresent
