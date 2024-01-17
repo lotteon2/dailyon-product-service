@@ -18,6 +18,7 @@ public class ReadOOTDSearchSliceResponse {
         return ReadOOTDSearchSliceResponse.builder()
                 .hasNext(products.hasNext())
                 .products(products.stream()
+                        .filter(product -> !product.getProductStocks().isEmpty())
                         .map(ReadOOTDSearchResponse::fromEntity)
                         .collect(Collectors.toList()))
                 .build();
