@@ -18,6 +18,9 @@ public class BrandController {
         return ResponseEntity.ok(brandService.readAllBrands());
     }
 
+    /*
+     브랜드 이름으로 검색. 관리자 페이지 및 회원 페이지에서 모두 사용할 듯
+     */
     @GetMapping("/name/{name}")
     public ResponseEntity<ReadBrandListResponse> findBrandsByName(@PathVariable String name) {
         return ResponseEntity.ok(brandService.findBrandsByName(name));

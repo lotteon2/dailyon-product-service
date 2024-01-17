@@ -36,6 +36,9 @@ public class CategoryAdminController {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.readCategoryPages(pageable));
     }
 
+    /*
+     카테고리 이름으로 검색. 관리자 페이지에서 사용할 듯
+     */
     @GetMapping("/categories/name/{name}")
     public ResponseEntity<ReadAllCategoryListResponse> findCategoriesByName(@PathVariable String name) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.findCategoriesByName(name));
