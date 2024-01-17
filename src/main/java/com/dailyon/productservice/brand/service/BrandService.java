@@ -36,7 +36,7 @@ public class BrandService {
     }
 
     public ReadBrandListResponse readAllBrands() {
-        return ReadBrandListResponse.fromEntity(brandRepository.findAll());
+        return ReadBrandListResponse.fromEntity(brandRepository.findAllByOrderByNameAsc());
     }
 
     public ReadBrandListResponse findBrandsByName(String name) {
@@ -56,7 +56,7 @@ public class BrandService {
     }
 
     public ReadBrandPageResponse readBrandPage(Pageable pageable) {
-        return ReadBrandPageResponse.fromEntity(brandRepository.findAll(pageable));
+        return ReadBrandPageResponse.fromEntity(brandRepository.findAllByOrderByNameAsc(pageable));
     }
 
     @Transactional
