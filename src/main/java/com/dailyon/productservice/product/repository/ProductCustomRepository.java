@@ -11,8 +11,10 @@ import org.springframework.data.domain.Slice;
 import java.util.List;
 
 public interface ProductCustomRepository {
-    Slice<Product> findProductSlice(Long lastId, Long brandId, List<Category> childCategories,
-                                    Gender gender, ProductType productType);
+    Slice<Product> findProductSlice(
+            String lastVal, Long brandId, List<Category> childCategories, Gender gender, ProductType productType,
+            Integer lowPrice, Integer highPrice, String sort, String direction
+    );
 
     Page<Product> findProductPage(Long brandId, List<Category> childCategories, ProductType type, Pageable pageable);
 

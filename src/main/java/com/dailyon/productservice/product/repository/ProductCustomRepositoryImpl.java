@@ -11,13 +11,15 @@ import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.product.entity.Product;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Repository
@@ -26,7 +28,10 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Slice<Product> findProductSlice(Long lastId, Long brandId, List<Category> childCategories, Gender gender, ProductType productType) {
+    public Slice<Product> findProductSlice(
+            String lastVal, Long brandId, List<Category> childCategories, Gender gender, ProductType productType,
+            Integer lowPrice, Integer highPrice, String sort, String direction
+    ) {
         Pageable pageable = Pageable.ofSize(8);
 
         List<Product> idx = jpaQueryFactory
@@ -36,17 +41,19 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .leftJoin(product.category, category).fetchJoin()
                 .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
                 .where(product.deleted.eq(false)
-                        .and(product.id.gt(lastId))
                         .and(brandIdEq(brandId))
                         .and(categoryIn(childCategories))
                         .and(genderEq(gender))
                         .and(productTypeEq(productType))
+                        .and(filterPrice(lowPrice, highPrice))
+                        .and(filterByLastVal(sort, direction, lastVal))
                 ).fetch();
 
         List<Product> result = jpaQueryFactory
                 .select(product)
                 .from(product)
                 .where(product.in(idx))
+                .orderBy(orderSpecifier(sort, direction))
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
@@ -171,5 +178,56 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
     private BooleanExpression codeEq(String code) {
         return code == null ? null : product.code.eq(code);
+    }
+
+    private BooleanExpression filterPrice(Integer lowPrice, Integer highPrice) {
+        if(lowPrice == null && highPrice == null) {
+            return null;
+        } else if(lowPrice == null && highPrice != null) {
+            return product.price.loe(highPrice);
+        } else if(lowPrice != null && highPrice == null) {
+            return product.price.goe(lowPrice);
+        } else {
+            return product.price.between(lowPrice, highPrice);
+        }
+    }
+
+    private OrderSpecifier<?> orderSpecifier(String sort, String direction) {
+        if("price".equals(sort)) {
+            return "asc".equals(direction) ?
+                    product.price.asc() :
+                    product.price.desc();
+        } else if("rating".equals(sort)) {
+            return "asc".equals(direction) ?
+                    product.reviewAggregate.avgRating.asc() :
+                    product.reviewAggregate.avgRating.desc();
+        } else if("review".equals(sort)) {
+            return "asc".equals(direction) ?
+                    product.reviewAggregate.reviewCount.asc() :
+                    product.reviewAggregate.reviewCount.desc();
+        } else { // 기본은 최신순 내림차순
+            return product.createdAt.desc();
+        }
+    }
+
+    private BooleanExpression filterByLastVal(String sort, String direction, String lastVal) {
+        if ("price".equals(sort)) {
+            return "asc".equals(direction) ?
+                    product.price.gt(Integer.parseInt(lastVal)) :
+                    product.price.lt(Integer.parseInt(lastVal));
+        } else if ("rating".equals(sort)) {
+            return "asc".equals(direction) ?
+                    product.reviewAggregate.avgRating.gt(Double.parseDouble(lastVal)) :
+                    product.reviewAggregate.avgRating.lt(Double.parseDouble(lastVal));
+        } else if("review".equals(sort)) {
+            return "asc".equals(direction) ?
+                    product.reviewAggregate.reviewCount.gt(Long.parseLong(lastVal)) :
+                    product.reviewAggregate.reviewCount.lt(Long.parseLong(lastVal));
+        } else {
+            return product.createdAt.lt(lastVal != null ?
+                    LocalDateTime.parse(lastVal, DateTimeFormatter.ISO_LOCAL_DATE_TIME) :
+                    LocalDateTime.now()
+            );
+        }
     }
 }

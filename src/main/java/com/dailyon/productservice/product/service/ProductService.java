@@ -227,12 +227,18 @@ public class ProductService {
         return ReadProductDetailResponse.fromEntity(product);
     }
 
-    public Slice<Product> readProductSlice(Long lastId, Long brandId, Long categoryId, Gender gender, ProductType type) {
+    public Slice<Product> readProductSlice(
+            String lastVal, Long brandId, Long categoryId, Gender gender, ProductType type,
+            Integer lowPrice, Integer highPrice, String sort, String direction
+    ) {
         List<Category> childCategories = null;
         if(categoryId != null) {
             childCategories = categoryRepository.findAllChildCategories(categoryId);
         }
-        return productRepository.findProductSlice(lastId, brandId, childCategories, gender, type);
+        return productRepository.findProductSlice(
+                lastVal, brandId, childCategories, gender, type,
+                lowPrice, highPrice, sort, direction
+        );
     }
 
     public ReadProductPageResponse readProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable) {

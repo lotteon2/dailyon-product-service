@@ -21,12 +21,22 @@ public class ProductController {
     }
 
     @GetMapping
-    ResponseEntity<ReadProductSliceResponse> readProductSlice(@RequestParam Long lastId,
-                                                              @RequestParam(required = false) Long brandId,
-                                                              @RequestParam(required = false) Long categoryId,
-                                                              @RequestParam(required = false) Gender gender,
-                                                              @RequestParam ProductType type) {
-        return ResponseEntity.status(HttpStatus.OK).body(productFacade.readProductSlice(lastId, brandId, categoryId, gender, type));
+    ResponseEntity<ReadProductSliceResponse> readProductSlice(
+            @RequestParam(required = false) String lastVal,
+            @RequestParam(required = false, defaultValue = "NORMAL") ProductType type,
+            @RequestParam(required = false) Long brandId,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Gender gender,
+            @RequestParam(required = false) Integer lowPrice,
+            @RequestParam(required = false) Integer highPrice,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String direction
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                productFacade.readProductSlice(
+                        lastVal, brandId, categoryId, gender, type,
+                        lowPrice, highPrice, sort, direction
+                ));
     }
 
     @GetMapping("/search")
