@@ -39,6 +39,10 @@ public class BrandService {
         return ReadBrandListResponse.fromEntity(brandRepository.findAll());
     }
 
+    public ReadBrandListResponse findBrandsByName(String name) {
+        return ReadBrandListResponse.fromEntity(brandRepository.findBrandsByNameContainsOrderByName(name));
+    }
+
     @Transactional
     public void updateBrand(Long id, UpdateBrandRequest updateBrandRequest) {
         // 존재하지 않는 id에 대해 수정하려고 하면 exception
