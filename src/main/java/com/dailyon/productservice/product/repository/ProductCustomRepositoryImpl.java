@@ -58,6 +58,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                         .and(booleanBuilder)
                 )
                 .orderBy(orderSpecifier(sort, direction))
+                .limit(pageable.getPageSize() + 1)
                 .fetch();
 
         boolean hasNext = false;
@@ -79,14 +80,9 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         if(query != null) {
             booleanBuilder.and(nameContains(query).or(codeContains(query)));
         }
-        JPAQuery<Product> resultQuery = jpaQueryFactory
-                .select(product)
+        JPAQuery<Long> indexQuery = jpaQueryFactory
+                .select(product.id)
                 .from(product)
-                .leftJoin(product.brand, brand).fetchJoin()
-                .leftJoin(product.category, category).fetchJoin()
-                .leftJoin(product.describeImages, describeImage).fetchJoin()
-                .leftJoin(product.productStocks, productStock).fetchJoin()
-                .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
                 .where(product.deleted.eq(false)
                         .and(brandIdEq(brandId))
                         .and(categoryIn(childCategories))
@@ -95,6 +91,22 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
+        for(Sort.Order order: pageable.getSort()) {
+            indexQuery.orderBy(new OrderSpecifier(
+                    order.isAscending() ? Order.ASC : Order.DESC,
+                    entityPath.get(order.getProperty())
+            ));
+        }
+        List<Long> indexes = indexQuery.fetch();
+
+        JPAQuery<Product> resultQuery = jpaQueryFactory
+                .select(product)
+                .from(product)
+                .leftJoin(product.brand, brand).fetchJoin()
+                .leftJoin(product.category, category).fetchJoin()
+                .leftJoin(product.productStocks, productStock).fetchJoin()
+                .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
+                .where(product.id.in(indexes));
 
         for(Sort.Order order: pageable.getSort()) {
             resultQuery.orderBy(new OrderSpecifier(
@@ -102,7 +114,6 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                     entityPath.get(order.getProperty())
             ));
         }
-
         List<Product> result = resultQuery.fetch();
 
         JPAQuery<Long> countQuery = jpaQueryFactory
