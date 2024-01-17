@@ -16,6 +16,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     List<Category> findAllByOrderByNameAsc();
 
+    List<Category> findCategoriesByNameContainsOrderByNameAsc(String name);
+
     @Query(nativeQuery = true, value =
             "WITH RECURSIVE LeafCategory(id) AS (" +
                     "SELECT c.id " +

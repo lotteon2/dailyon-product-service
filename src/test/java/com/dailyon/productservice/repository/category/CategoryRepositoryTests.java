@@ -66,6 +66,17 @@ public class CategoryRepositoryTests extends IntegrationTestSupport {
     }
 
     @Test
+    @DisplayName("카테고리 이름 포함 조회")
+    public void findCategoriesContainsName() {
+        Category root = categoryRepository.save(Category.createRootCategory("root"));
+        Category mid = categoryRepository.save(Category.createCategory(root, "mid"));
+        Category leaf = categoryRepository.save(Category.createCategory(mid, "leaf"));
+
+        List<Category> categories = categoryRepository.findCategoriesByNameContainsOrderByNameAsc("lea");
+        assertEquals("leaf", categories.get(0).getName());
+    }
+
+    @Test
     @DisplayName("master_category_id로 그 하위 카테고리 목록 조회")
     public void findByMasterCategoryId() {
         // given

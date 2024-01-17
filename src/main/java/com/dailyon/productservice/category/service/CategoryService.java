@@ -56,6 +56,10 @@ public class CategoryService {
         return ReadAllCategoryListResponse.fromEntity(categoryRepository.findAllByOrderByNameAsc());
     }
 
+    public ReadAllCategoryListResponse findCategoriesByName(String name) {
+        return ReadAllCategoryListResponse.fromEntity(categoryRepository.findCategoriesByNameContainsOrderByNameAsc(name));
+    }
+
     public ReadBreadCrumbListResponse readBreadCrumbs(Long id) {
         Category self = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotExistsException(NotExistsException.CATEGORY_NOT_FOUND));

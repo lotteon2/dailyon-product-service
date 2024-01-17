@@ -36,6 +36,11 @@ public class CategoryAdminController {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.readCategoryPages(pageable));
     }
 
+    @GetMapping("/categories/name/{name}")
+    public ResponseEntity<ReadAllCategoryListResponse> findCategoriesByName(@PathVariable String name) {
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.findCategoriesByName(name));
+    }
+
     @GetMapping("/categories/leaf")
     public ResponseEntity<ReadChildrenCategoryListResponse> readLeafCategories() {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.readLeafCategories());
