@@ -20,6 +20,19 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productFacade.readProductDetail(productId));
     }
 
+    /**
+     * 쇼핑몰 화면에서 무한 스크롤 위한 조회 api
+     * @param lastVal 최초 호출 시 direction이 asc면 0, desc면 큰 값
+     * @param type 상품 타입(NORMAL, AUCTION)
+     * @param brandId 브랜드 id
+     * @param categoryId 카테고리 id(카테고리 지정하면 하위 카테고리들 포함)
+     * @param gender 성별(MALE, FEMALE, COMMON)
+     * @param lowPrice 가격 필터 하한
+     * @param highPrice 가격 필터 상한
+     * @param sort 정렬 기준(price, review, rating)
+     * @param direction 오름/내림차순(asc, desc)
+     * @return hasNext, List -> List의 마지막값을 lastVal에 저장하고 다음 요청에 포함시켜야 함.
+     */
     @GetMapping
     ResponseEntity<ReadProductSliceResponse> readProductSlice(
             @RequestParam(required = false) String lastVal,
