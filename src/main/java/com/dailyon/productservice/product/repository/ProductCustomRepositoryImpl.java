@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.dailyon.productservice.brand.entity.QBrand.brand;
@@ -42,9 +43,12 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         }
         Pageable pageable = Pageable.ofSize(8);
 
-        List<Long> indexes = jpaQueryFactory
-                .select(product.id)
+        List<Product> result = jpaQueryFactory
+                .select(product)
                 .from(product)
+                .leftJoin(product.brand, brand).fetchJoin()
+                .leftJoin(product.category, category).fetchJoin()
+                .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
                 .where(product.deleted.eq(false)
                         .and(brandIdEq(brandId))
                         .and(categoryIn(childCategories))
@@ -56,18 +60,6 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 )
                 .orderBy(orderSpecifier(sort, direction))
                 .limit(pageable.getPageSize() + 1)
-                .fetch();
-
-        List<Product> result = jpaQueryFactory
-                .select(product)
-                .from(product)
-                .leftJoin(product.brand, brand).fetchJoin()
-                .leftJoin(product.category, category).fetchJoin()
-                .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
-                .where(
-                        product.id.in(indexes)
-                )
-                .orderBy(orderSpecifier(sort, direction))
                 .fetch();
 
         boolean hasNext = false;
@@ -107,12 +99,16 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
             ));
         }
         List<Long> indexes = indexQuery.fetch();
+        if(indexes.isEmpty()) {
+            return new PageImpl<>(new ArrayList<>(), pageable, 0);
+        }
 
         JPAQuery<Product> resultQuery = jpaQueryFactory
-                .select(product)
+                .selectDistinct(product)
                 .from(product)
                 .leftJoin(product.brand, brand).fetchJoin()
                 .leftJoin(product.category, category).fetchJoin()
+                .leftJoin(product.describeImages, describeImage).fetchJoin()
                 .leftJoin(product.productStocks, productStock).fetchJoin()
                 .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
                 .where(product.id.in(indexes));
@@ -147,23 +143,17 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
             booleanBuilder.and(nameContains(query).or(codeContains(query)));
         }
 
-        List<Long> idx = jpaQueryFactory
-                .select(product.id)
+        List<Product> result = jpaQueryFactory
+                .select(product)
                 .from(product)
+                .leftJoin(product.brand, brand).fetchJoin()
+                .leftJoin(product.productStocks, productStock).fetchJoin()
                 .where(product.deleted.eq(false)
                         .and(product.id.gt(lastId))
                         .and(booleanBuilder)
                         .and(productTypeEq(ProductType.NORMAL))
                 )
                 .limit(pageable.getPageSize() + 1)
-                .fetch();
-
-        List<Product> result = jpaQueryFactory
-                .select(product)
-                .from(product)
-                .leftJoin(product.brand, brand).fetchJoin()
-                .leftJoin(product.productStocks, productStock).fetchJoin()
-                .where(product.id.in(idx))
                 .fetch();
 
         boolean hasNext = false;
