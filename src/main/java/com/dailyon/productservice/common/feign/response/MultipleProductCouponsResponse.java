@@ -30,6 +30,6 @@ public class MultipleProductCouponsResponse {
         private LocalDateTime endAt;
 
         private Long minPurchaseAmount;
-        private Long maxPurchaseAmount;
+        private Long maxDiscountAmount;
     }
 }
