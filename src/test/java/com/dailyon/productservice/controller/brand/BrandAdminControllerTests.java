@@ -117,7 +117,7 @@ public class BrandAdminControllerTests extends IntegrationTestSupport {
         );
 
         // then
-        resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
+        resultActions.andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
@@ -171,7 +171,7 @@ public class BrandAdminControllerTests extends IntegrationTestSupport {
         );
 
         resultActions
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(NotExistsException.BRAND_NOT_FOUND));
     }
 }
