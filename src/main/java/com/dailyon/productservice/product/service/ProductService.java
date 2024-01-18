@@ -242,15 +242,19 @@ public class ProductService {
     }
 
     public ReadProductPageResponse readProductPage(
-            Long brandId, Long categoryId, ProductType type,
-            String query, Pageable pageable
+            Long brandId, Long categoryId, ProductType type, String query,
+            int page, int size, String sort, String direction
     ) {
         List<Category> childCategories = null;
         if(categoryId != null) {
             childCategories = categoryRepository.findAllChildCategories(categoryId);
         }
         return ReadProductPageResponse.fromEntity(
-                productRepository.findProductPage(brandId, childCategories, type, query, pageable));
+                productRepository.findProductPage(
+                        brandId, childCategories, type, query,
+                        page, size, sort, direction
+                )
+        );
     }
 
     public ReadOOTDSearchSliceResponse searchFromOOTD(Long lastId, String query) {

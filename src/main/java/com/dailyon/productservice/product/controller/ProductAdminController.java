@@ -44,14 +44,16 @@ public class ProductAdminController {
             @RequestParam(required = false) Long categoryId,
             @RequestParam ProductType type,
             @RequestParam(required = false) String query,
-            @PageableDefault(
-                    size = 5,
-                    sort = {"updatedAt"},
-                    direction = Sort.Direction.DESC
-            ) Pageable pageable
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String sort,
+            @RequestParam String direction
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(
-                productFacade.readProductPage(brandId, categoryId, type, query, pageable)
+                productFacade.readProductPage(
+                        brandId, categoryId, type, query,
+                        page, size, sort, direction
+                )
         );
     }
 

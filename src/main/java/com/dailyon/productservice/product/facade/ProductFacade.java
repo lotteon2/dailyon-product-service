@@ -91,8 +91,14 @@ public class ProductFacade {
         return productService.searchFromOOTD(lastId, query);
     }
 
-    public ReadProductPageResponse readProductPage(Long brandId, Long categoryId, ProductType type, String query, Pageable pageable) {
-        return productService.readProductPage(brandId, categoryId, type, query, pageable);
+    public ReadProductPageResponse readProductPage(
+            Long brandId, Long categoryId, ProductType type, String query,
+            int page, int size, String sort, String direction
+    ) {
+        return productService.readProductPage(
+                brandId, categoryId, type, query,
+                page, size, sort, direction
+        );
     }
 
     @Cacheable(value = "newProducts", unless = "#result == null")
