@@ -61,9 +61,9 @@ VALUES (1,  '/product-img/7ca72775-fa3c-49ef-8e62-34d1e2b67f30.avif'),
        (10, '/product-img/deec2081-a85a-4cb5-871e-9dc26b37f775.jpg');
 
 INSERT INTO review_aggregate (product_id, avg_rating, review_count)
-VALUES (1, 0, 0), (2, 0, 0),
-       (3, 0, 0), (4, 0, 0),
-       (5, 0, 0), (6, 0, 0),
-       (7, 0, 0), (8, 0, 0),
-       (9, 0, 0), (10, 0, 0),
+VALUES (1, 3, 1), (2, 1.5, 6),
+       (3, 4, 4), (4, 2.5, 2),
+       (5, 5, 3), (6, 3.5, 1),
+       (7, 2, 4), (8, 4.5, 3),
+       (9, 1, 5), (10, 0.5, 8),
        (11, 0, 0);

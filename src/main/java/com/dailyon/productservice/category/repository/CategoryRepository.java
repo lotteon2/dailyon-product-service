@@ -1,7 +1,6 @@
 package com.dailyon.productservice.category.repository;
 
 import com.dailyon.productservice.category.entity.Category;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,7 +12,11 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     boolean existsByName(String name);
 
-    List<Category> findByMasterCategory_Id(Long masterCategoryId);
+    List<Category> findByMasterCategory_IdOrderByNameAsc(Long masterCategoryId);
+
+    List<Category> findAllByOrderByNameAsc();
+
+    List<Category> findCategoriesByNameContainsOrderByNameAsc(String name);
 
     @Query(nativeQuery = true, value =
             "WITH RECURSIVE LeafCategory(id) AS (" +
@@ -30,7 +33,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
                     "WHERE c.is_deleted = false) " +
             "SELECT c.* FROM category AS c " +
             "INNER JOIN LeafCategory AS ct ON c.id = ct.id AND " +
-            "c.is_deleted = false")
+            "c.is_deleted = false ORDER BY c.name ASC")
     List<Category> findLeafCategories();
 
     @Query(nativeQuery = true, value =
@@ -46,6 +49,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
                     "WHERE c.is_deleted = false)" +
             "SELECT c.* FROM category AS c " +
             "INNER JOIN CategoryTree AS ct ON c.id = ct.id AND " +
-            "c.is_deleted = false")
+            "c.is_deleted = false ORDER BY c.name ASC")
     List<Category> findAllChildCategories(@Param("categoryId") Long categoryId);
 }

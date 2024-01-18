@@ -227,24 +227,30 @@ public class ProductService {
         return ReadProductDetailResponse.fromEntity(product);
     }
 
-    public Slice<Product> readProductSlice(Long lastId, Long brandId, Long categoryId, Gender gender, ProductType type) {
+    public Slice<Product> readProductSlice(
+            String lastVal, Long brandId, Long categoryId, Gender gender, ProductType type,
+            Integer lowPrice, Integer highPrice, String query, String sort, String direction
+    ) {
         List<Category> childCategories = null;
         if(categoryId != null) {
             childCategories = categoryRepository.findAllChildCategories(categoryId);
         }
-        return productRepository.findProductSlice(lastId, brandId, childCategories, gender, type);
+        return productRepository.findProductSlice(
+                lastVal, brandId, childCategories, gender, type,
+                lowPrice, highPrice, query, sort, direction
+        );
     }
 
-    public ReadProductPageResponse readProductPage(Long brandId, Long categoryId, ProductType type, Pageable pageable) {
+    public ReadProductPageResponse readProductPage(
+            Long brandId, Long categoryId, ProductType type,
+            String query, Pageable pageable
+    ) {
         List<Category> childCategories = null;
         if(categoryId != null) {
             childCategories = categoryRepository.findAllChildCategories(categoryId);
         }
-        return ReadProductPageResponse.fromEntity(productRepository.findProductPage(brandId, childCategories, type, pageable));
-    }
-
-    public Slice<Product> searchProductSlice(Long lastId, String query) {
-        return productRepository.searchProducts(lastId, query);
+        return ReadProductPageResponse.fromEntity(
+                productRepository.findProductPage(brandId, childCategories, type, query, pageable));
     }
 
     public ReadOOTDSearchSliceResponse searchFromOOTD(Long lastId, String query) {

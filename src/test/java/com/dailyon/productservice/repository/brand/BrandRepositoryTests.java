@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,21 @@ public class BrandRepositoryTests extends IntegrationTestSupport {
         assertNotNull(createdBrand.getCreatedAt());
         assertNotNull(createdBrand.getUpdatedAt());
     }
+
+    @Test
+    @DisplayName("브랜드 이름 검색")
+    void findsByNameTest() {
+        // given
+        String name = "testBrandName";
+
+        // when
+        Brand createdBrand = brandRepository.save(Brand.createBrand(name));
+
+        List<Brand> test = brandRepository.findBrandsByNameContainsOrderByName("test");
+
+        assertEquals("testBrandName",test.get(0).getName());
+    }
+
 
     @Test
     @DisplayName("브랜드 전체 조회")
