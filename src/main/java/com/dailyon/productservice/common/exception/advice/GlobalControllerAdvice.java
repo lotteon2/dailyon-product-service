@@ -23,7 +23,7 @@ public class GlobalControllerAdvice {
     }
 
     @ExceptionHandler(NotExistsException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse notExistsException(NotExistsException e) {
         return ErrorResponse.builder()
                 .message(e.getMessage())
