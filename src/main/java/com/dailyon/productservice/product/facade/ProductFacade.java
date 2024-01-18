@@ -72,6 +72,10 @@ public class ProductFacade {
         return productService.readProductDetail(productId);
     }
 
+    @Cacheable(value = "auctionProducts", unless = "#result == null")
+    public ReadProductDetailResponse readAuctionProductDetail(Long productId) {
+        return productService.readProductDetail(productId);
+    }
     public ReadProductSliceResponse readProductSlice(
             String lastVal, Long brandId, Long categoryId, Gender gender, ProductType productType,
             Integer lowPrice, Integer highPrice, String query, String sort, String direction
