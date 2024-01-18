@@ -90,7 +90,7 @@ public class CacheConfig {
                 .withCacheConfiguration(
                         "auctionProducts",
                         RedisCacheConfiguration.defaultCacheConfig()
-                                .entryTtl(Duration.ofDays(7))
+                                .entryTtl(Duration.ofDays(1))
                                 .disableCachingNullValues()
                                 .serializeKeysWith(RedisSerializationContext.SerializationPair
                                         .fromSerializer(new StringRedisSerializer())
