@@ -19,30 +19,43 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/products")
 @RequiredArgsConstructor
 public class ProductAdminController {
     private final ProductFacade productFacade;
-    @PostMapping("/products")
-    public ResponseEntity<CreateProductResponse> createProduct(@Valid @RequestBody CreateProductRequest createProductRequest) {
+    @PostMapping
+    public ResponseEntity<CreateProductResponse> createProduct(
+            @Valid @RequestBody CreateProductRequest createProductRequest
+    ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productFacade.createProduct(createProductRequest));
     }
 
-    @PutMapping("/products/{productId}")
-    public ResponseEntity<UpdateProductResponse> updateProduct(@PathVariable Long productId,
-                                                               @RequestBody UpdateProductRequest updateProductRequest) {
+    @PutMapping("/{productId}")
+    public ResponseEntity<UpdateProductResponse> updateProduct(
+            @PathVariable Long productId,
+            @RequestBody UpdateProductRequest updateProductRequest
+    ) {
         return ResponseEntity.status(HttpStatus.OK).body(productFacade.updateProduct(productId, updateProductRequest));
     }
 
-    @GetMapping("/products")
-    ResponseEntity<ReadProductPageResponse> readProductPage(@RequestParam(required = false) Long brandId,
-                                                            @RequestParam(required = false) Long categoryId,
-                                                            @RequestParam ProductType type,
-                                                            Pageable pageable) {
-        return ResponseEntity.status(HttpStatus.OK).body(productFacade.readProductPage(brandId, categoryId, type, pageable));
+    @GetMapping
+    ResponseEntity<ReadProductPageResponse> readProductPage(
+            @RequestParam(required = false) Long brandId,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam ProductType type,
+            @RequestParam(required = false) String query,
+            @PageableDefault(
+                    size = 5,
+                    sort = {"updatedAt"},
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                productFacade.readProductPage(brandId, categoryId, type, query, pageable)
+        );
     }
 
-    @DeleteMapping("/products")
+    @DeleteMapping
     ResponseEntity<Void> deleteProducts(@RequestParam List<Long> ids) {
         productFacade.deleteProducts(ids);
         return ResponseEntity.status(HttpStatus.OK).build();

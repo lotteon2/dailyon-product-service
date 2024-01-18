@@ -20,19 +20,39 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productFacade.readProductDetail(productId));
     }
 
+    /**
+     * 쇼핑몰 화면에서 무한 스크롤 위한 조회 api
+     * @param lastVal 최초 호출 시 direction이 asc면 0, desc면 큰 값
+     * @param type 상품 타입(NORMAL, AUCTION)
+     * @param brandId 브랜드 id
+     * @param categoryId 카테고리 id(카테고리 지정하면 하위 카테고리들 포함)
+     * @param gender 성별(MALE, FEMALE, COMMON)
+     * @param lowPrice 가격 필터 하한
+     * @param highPrice 가격 필터 상한
+     * @param sort 정렬 기준(price, review, rating)
+     * @param direction 오름/내림차순(asc, desc)
+     * @param query 상품명 또는 코드
+     * @return hasNext, List -> List의 마지막값을 lastVal에 저장하고 다음 요청에 포함시켜야 함.
+     */
     @GetMapping
-    ResponseEntity<ReadProductSliceResponse> readProductSlice(@RequestParam Long lastId,
-                                                              @RequestParam(required = false) Long brandId,
-                                                              @RequestParam(required = false) Long categoryId,
-                                                              @RequestParam(required = false) Gender gender,
-                                                              @RequestParam ProductType type) {
-        return ResponseEntity.status(HttpStatus.OK).body(productFacade.readProductSlice(lastId, brandId, categoryId, gender, type));
-    }
-
-    @GetMapping("/search")
-    ResponseEntity<ReadProductSliceResponse> searchProducts(@RequestParam Long lastId,
-                                                            @RequestParam(required = false) String query) {
-        return ResponseEntity.status(HttpStatus.OK).body(productFacade.searchProductSlice(lastId, query));
+    ResponseEntity<ReadProductSliceResponse> readProductSlice(
+            @RequestParam(required = false) String lastVal,
+            @RequestParam(required = false, defaultValue = "NORMAL") ProductType type,
+            @RequestParam(required = false) Long brandId,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Gender gender,
+            @RequestParam(required = false) Integer lowPrice,
+            @RequestParam(required = false) Integer highPrice,
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String direction
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                productFacade.readProductSlice(
+                        lastVal, brandId, categoryId, gender, type,
+                        lowPrice, highPrice, query, sort, direction
+                )
+        );
     }
 
     @GetMapping("/search/ootd")

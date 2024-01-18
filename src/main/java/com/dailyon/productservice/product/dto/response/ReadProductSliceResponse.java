@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Slice;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,6 +44,7 @@ public class ReadProductSliceResponse {
         private String imgUrl;
         private Double avgRating;
         private Long reviewCount;
+        private LocalDateTime createdAt;
         private List<CouponInfoItemResponse> coupons;
 
         public static ReadProductResponse create(Product product, List<CouponInfoItemResponse> coupons) {
@@ -56,6 +58,7 @@ public class ReadProductSliceResponse {
                     .imgUrl(product.getImgUrl())
                     .avgRating(product.getReviewAggregate().getAvgRating())
                     .reviewCount(product.getReviewAggregate().getReviewCount())
+                    .createdAt(product.getCreatedAt())
                     .coupons(coupons)
                     .build();
         }

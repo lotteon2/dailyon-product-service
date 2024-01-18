@@ -9,8 +9,6 @@ import com.dailyon.productservice.category.dto.response.ReadChildrenCategoryList
 import com.dailyon.productservice.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +34,14 @@ public class CategoryAdminController {
     @GetMapping("/page/categories")
     public ResponseEntity<ReadCategoryPageResponse> readCategoryPages(Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.readCategoryPages(pageable));
+    }
+
+    /*
+     카테고리 이름으로 검색. 관리자 페이지에서 사용할 듯
+     */
+    @GetMapping("/categories/name/{name}")
+    public ResponseEntity<ReadAllCategoryListResponse> findCategoriesByName(@PathVariable String name) {
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.findCategoriesByName(name));
     }
 
     @GetMapping("/categories/leaf")

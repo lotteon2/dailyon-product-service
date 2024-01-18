@@ -255,24 +255,9 @@ public class ProductServiceTests extends IntegrationTestSupport {
     void readProductSlice() {
         // given, when
         Slice<Product> response = productService.readProductSlice(
-                0L,
-                null,
-                null,
-                null,
-                ProductType.valueOf("NORMAL")
+                null, null, null, null, ProductType.valueOf("NORMAL"),
+                null, null, null, null, null
         );
-
-        // then
-        assertFalse(response.hasNext());
-        assertEquals(1, response.getContent().size());
-    }
-
-    @Test
-    @DisplayName("상품 목록 검색")
-    void searchProductsTest() {
-        // given, when
-        Slice<Product> response
-                = productService.searchProductSlice(0L, "TEST");
 
         // then
         assertFalse(response.hasNext());
@@ -296,7 +281,7 @@ public class ProductServiceTests extends IntegrationTestSupport {
     void readProductPage() {
         // given, when
         ReadProductPageResponse response = productService.readProductPage(
-                null, null, ProductType.valueOf("NORMAL"), PageRequest.of(0, 8)
+                null, null, ProductType.valueOf("NORMAL"), null, PageRequest.of(0, 8)
         );
 
         // then

@@ -47,11 +47,17 @@ public class CategoryService {
     }
 
     public ReadChildrenCategoryListResponse readChildrenCategoriesByMaster(Long masterCategoryId) {
-        return ReadChildrenCategoryListResponse.fromEntity(categoryRepository.findByMasterCategory_Id(masterCategoryId));
+        return ReadChildrenCategoryListResponse.fromEntity(
+                categoryRepository.findByMasterCategory_IdOrderByNameAsc(masterCategoryId)
+        );
     }
 
     public ReadAllCategoryListResponse readAllCategories() {
-        return ReadAllCategoryListResponse.fromEntity(categoryRepository.findAll());
+        return ReadAllCategoryListResponse.fromEntity(categoryRepository.findAllByOrderByNameAsc());
+    }
+
+    public ReadAllCategoryListResponse findCategoriesByName(String name) {
+        return ReadAllCategoryListResponse.fromEntity(categoryRepository.findCategoriesByNameContainsOrderByNameAsc(name));
     }
 
     public ReadBreadCrumbListResponse readBreadCrumbs(Long id) {
