@@ -281,7 +281,8 @@ public class ProductServiceTests extends IntegrationTestSupport {
     void readProductPage() {
         // given, when
         ReadProductPageResponse response = productService.readProductPage(
-                null, null, ProductType.valueOf("NORMAL"), null, PageRequest.of(0, 8)
+                null, null, ProductType.valueOf("NORMAL"), null,
+                0, 5, "updatedAt", "desc"
         );
 
         // then

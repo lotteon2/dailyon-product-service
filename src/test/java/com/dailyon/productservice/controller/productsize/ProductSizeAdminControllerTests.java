@@ -82,7 +82,7 @@ public class ProductSizeAdminControllerTests extends IntegrationTestSupport {
         );
 
         // then
-        resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
+        resultActions.andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test

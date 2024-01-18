@@ -75,7 +75,7 @@ public class CategoryAdminControllerTests extends IntegrationTestSupport {
 
         // then
         resultActions
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
@@ -225,7 +225,7 @@ public class CategoryAdminControllerTests extends IntegrationTestSupport {
 
         // then
         resultActions
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message")
                         .value(NotExistsException.CATEGORY_NOT_FOUND));
     }

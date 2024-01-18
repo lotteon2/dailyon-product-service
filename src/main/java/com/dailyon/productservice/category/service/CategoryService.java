@@ -83,7 +83,7 @@ public class CategoryService {
     }
 
     public ReadCategoryPageResponse readCategoryPages(Pageable pageable) {
-        return ReadCategoryPageResponse.fromEntity(categoryRepository.findAll(pageable));
+        return ReadCategoryPageResponse.fromEntity(categoryRepository.findAllByOrderByNameAsc(pageable));
     }
 
     @Transactional

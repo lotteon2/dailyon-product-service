@@ -5,6 +5,7 @@ import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.product.dto.response.*;
 import com.dailyon.productservice.product.facade.ProductFacade;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,10 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productFacade.readProductDetail(productId));
     }
 
+    @GetMapping("/auctions/id/{productId}")
+    ResponseEntity<ReadProductDetailResponse> readAuctionProductDetail(@PathVariable Long productId) {
+        return ResponseEntity.status(HttpStatus.OK).body(productFacade.readAuctionProductDetail(productId));
+    }
     /**
      * 쇼핑몰 화면에서 무한 스크롤 위한 조회 api
      * @param lastVal 최초 호출 시 direction이 asc면 0, desc면 큰 값

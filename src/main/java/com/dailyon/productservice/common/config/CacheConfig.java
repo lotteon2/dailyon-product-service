@@ -4,6 +4,7 @@ import com.dailyon.productservice.category.dto.response.ReadBreadCrumbListRespon
 import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.product.dto.response.ReadBestProductListResponse;
 import com.dailyon.productservice.product.dto.response.ReadNewProductListResponse;
+import com.dailyon.productservice.product.dto.response.ReadProductDetailResponse;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -54,8 +55,12 @@ public class CacheConfig {
         Jackson2JsonRedisSerializer<ReadBestProductListResponse> bestProductVOJackson2JsonRedisSerializer =
                 new Jackson2JsonRedisSerializer<>(ReadBestProductListResponse.class);
 
+        Jackson2JsonRedisSerializer<ReadProductDetailResponse> auctionProductVOJackson2JsonRedisSerializer =
+                new Jackson2JsonRedisSerializer<>(ReadProductDetailResponse.class);
+
         newProductVOJackson2JsonRedisSerializer.setObjectMapper(objectMapper);
         bestProductVOJackson2JsonRedisSerializer.setObjectMapper(objectMapper);
+        auctionProductVOJackson2JsonRedisSerializer.setObjectMapper(objectMapper);
 
         return (builder -> builder
                 .withCacheConfiguration(
@@ -80,6 +85,18 @@ public class CacheConfig {
                                 )
                                 .serializeValuesWith(RedisSerializationContext.SerializationPair
                                         .fromSerializer(bestProductVOJackson2JsonRedisSerializer)
+                                )
+                )
+                .withCacheConfiguration(
+                        "auctionProducts",
+                        RedisCacheConfiguration.defaultCacheConfig()
+                                .entryTtl(Duration.ofDays(1))
+                                .disableCachingNullValues()
+                                .serializeKeysWith(RedisSerializationContext.SerializationPair
+                                        .fromSerializer(new StringRedisSerializer())
+                                )
+                                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                                        .fromSerializer(auctionProductVOJackson2JsonRedisSerializer)
                                 )
                 )
         );

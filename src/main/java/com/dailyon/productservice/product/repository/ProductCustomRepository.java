@@ -17,8 +17,8 @@ public interface ProductCustomRepository {
     );
 
     Page<Product> findProductPage(
-            Long brandId, List<Category> childCategories,
-            ProductType type, String query, Pageable pageable
+            Long brandId, List<Category> childCategories, ProductType type, String query,
+            int page, int size, String sort, String direction
     );
 
     Slice<Product> searchProductsFromOOTD(Long lastId, String query);

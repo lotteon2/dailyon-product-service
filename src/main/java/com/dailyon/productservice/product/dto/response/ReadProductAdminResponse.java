@@ -18,7 +18,9 @@ import java.util.stream.Collectors;
 public class ReadProductAdminResponse {
     private Long id;
     private Long brandId;
+    private String brandName;
     private Long categoryId;
+    private String categoryName;
     private String name;
     private Gender gender;
     private Integer price;
@@ -33,7 +35,9 @@ public class ReadProductAdminResponse {
         return ReadProductAdminResponse.builder()
                 .id(product.getId())
                 .brandId(product.getBrand().getId())
+                .brandName(product.getBrand().getName())
                 .categoryId(product.getCategory().getId())
+                .categoryName(product.getCategory().getName())
                 .name(product.getName())
                 .gender(product.getGender())
                 .price(product.getPrice())

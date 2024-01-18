@@ -5,10 +5,8 @@ import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.product.entity.Product;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -73,10 +71,11 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
     @Override
     public Page<Product> findProductPage(
-            Long brandId, List<Category> childCategories,
-            ProductType type, String query, Pageable pageable
+            Long brandId, List<Category> childCategories, ProductType type, String query,
+            int page, int size, String sort, String direction
     ) {
-        PathBuilder<Product> entityPath = new PathBuilder<>(Product.class, "product");
+        Pageable pageable = PageRequest.of(page, size);
+
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if(query != null) {
             booleanBuilder.and(nameContains(query).or(codeContains(query)));
@@ -90,14 +89,10 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                         .and(booleanBuilder)
                         .and(productTypeEq(type))
                 )
+                .orderBy(orderSpecifier(sort, direction))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
-        for(Sort.Order order: pageable.getSort()) {
-            indexQuery.orderBy(new OrderSpecifier(
-                    order.isAscending() ? Order.ASC : Order.DESC,
-                    entityPath.get(order.getProperty())
-            ));
-        }
+
         List<Long> indexes = indexQuery.fetch();
         if(indexes.isEmpty()) {
             return new PageImpl<>(new ArrayList<>(), pageable, 0);
@@ -111,14 +106,9 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .leftJoin(product.describeImages, describeImage).fetchJoin()
                 .leftJoin(product.productStocks, productStock).fetchJoin()
                 .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
+                .orderBy(orderSpecifier(sort, direction))
                 .where(product.id.in(indexes));
 
-        for(Sort.Order order: pageable.getSort()) {
-            resultQuery.orderBy(new OrderSpecifier(
-                    order.isAscending() ? Order.ASC : Order.DESC,
-                    entityPath.get(order.getProperty())
-            ));
-        }
         List<Product> result = resultQuery.fetch();
 
         JPAQuery<Long> countQuery = jpaQueryFactory
@@ -166,11 +156,11 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     }
 
     private BooleanExpression brandIdEq(Long brandId) {
-        return brandId == null ? null : brand.id.eq(brandId);
+        return brandId == null ? null : product.brand.id.eq(brandId);
     }
 
     private BooleanExpression categoryIn(List<Category> childCategories) {
-        return childCategories == null ? null : category.in(childCategories);
+        return childCategories == null ? null : product.category.in(childCategories);
     }
 
     private BooleanExpression genderEq(Gender gender) {
