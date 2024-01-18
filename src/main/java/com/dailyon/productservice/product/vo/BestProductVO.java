@@ -14,6 +14,7 @@ import java.io.Serializable;
 public class BestProductVO implements Serializable, Comparable<BestProductVO> {
     private Long id;
     private String brandName;
+    private Long categoryId;
     private String categoryName;
     private Integer price;
     private String name;
@@ -25,6 +26,7 @@ public class BestProductVO implements Serializable, Comparable<BestProductVO> {
         return BestProductVO.builder()
                 .id(product.getId())
                 .brandName(product.getBrand().getName())
+                .categoryId(product.getCategory().getId())
                 .categoryName(product.getCategory().getName())
                 .price(product.getPrice())
                 .name(product.getName())
