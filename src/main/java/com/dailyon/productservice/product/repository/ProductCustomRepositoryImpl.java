@@ -156,11 +156,11 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
     }
 
     private BooleanExpression brandIdEq(Long brandId) {
-        return brandId == null ? null : brand.id.eq(brandId);
+        return brandId == null ? null : product.brand.id.eq(brandId);
     }
 
     private BooleanExpression categoryIn(List<Category> childCategories) {
-        return childCategories == null ? null : category.in(childCategories);
+        return childCategories == null ? null : product.category.in(childCategories);
     }
 
     private BooleanExpression genderEq(Gender gender) {
