@@ -62,7 +62,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         }
 
         List<Product> result = jpaQueryFactory
-                .selectDistinct(product)
+                .select(product)
                 .from(product)
                 .leftJoin(product.brand, brand).fetchJoin()
                 .leftJoin(product.category, category).fetchJoin()
