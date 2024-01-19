@@ -12,6 +12,7 @@ import com.dailyon.productservice.describeimage.entity.DescribeImage;
 import com.dailyon.productservice.describeimage.repository.DescribeImageRepository;
 import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.ProductStockRequest;
+import com.dailyon.productservice.product.dto.request.UpdateProductRequest;
 import com.dailyon.productservice.product.dto.response.ReadOOTDSearchSliceResponse;
 import com.dailyon.productservice.product.dto.response.ReadProductPageResponse;
 import com.dailyon.productservice.product.entity.Product;
@@ -32,6 +33,7 @@ import org.springframework.data.domain.Slice;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -308,5 +310,28 @@ public class ProductServiceTests extends IntegrationTestSupport {
 
         // then
         assertThrows(NoSuchElementException.class, () -> productRepository.findById(productId).get());
+    }
+
+    @Test
+    @DisplayName("상품 수정")
+    void updateProductsTest() {
+        UpdateProductRequest updateProductRequest = UpdateProductRequest.builder()
+                .describeImages(new HashMap<>())
+                .brandId(brand.getId())
+                .categoryId(category.getId())
+                .price(0)
+                .name("")
+                .code("NEW")
+                .gender("MALE")
+                .image("")
+                .productStocks(List.of(ProductStockRequest.builder()
+                        .productSizeId(productSize1.getId())
+                        .quantity(20L)
+                        .build()))
+                .build();
+
+        assertDoesNotThrow(() ->
+                productService.updateProduct(product.getId(), updateProductRequest)
+        );
     }
 }
