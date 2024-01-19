@@ -2,6 +2,7 @@ package com.dailyon.productservice.productstock.repository;
 
 import com.dailyon.productservice.common.feign.request.OrderProductDto;
 import com.dailyon.productservice.common.feign.request.ReadWishCartProductRequest;
+import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.productstock.entity.ProductStock;
 import com.dailyon.productservice.productstock.kafka.dto.OrderDto;
 import com.querydsl.core.BooleanBuilder;
@@ -77,6 +78,16 @@ public class ProductStockCustomRepositoryImpl implements ProductStockCustomRepos
                 .leftJoin(productStock.product, product).fetchJoin()
                 .leftJoin(productStock.productSize, productSize).fetchJoin()
                 .where(builder)
+                .fetch();
+    }
+
+    @Override
+    public List<ProductStock> findProductStocksByProductOrderByProductSize(Product product) {
+        return jpaQueryFactory
+                .selectFrom(productStock)
+                .where(productStock.product.eq(product))
+                .orderBy(productStock.productSize.id.asc())
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                 .fetch();
     }
 }

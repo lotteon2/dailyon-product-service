@@ -104,7 +104,7 @@ public class MultiThreadTest {
         }));
         latch.await();
 
-        List<ProductStock> productStocks = productStockRepository.findProductStocksByProductOrderByProductSize(product);
+        List<ProductStock> productStocks = productStockRepository.findProductStocksByProduct(product);
         Assertions.assertEquals(0, productStocks.get(0).getQuantity());
     }
 }
