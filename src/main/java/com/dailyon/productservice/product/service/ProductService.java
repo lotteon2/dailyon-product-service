@@ -228,16 +228,16 @@ public class ProductService {
     }
 
     public Slice<Product> readProductSlice(
-            String lastVal, Long brandId, Long categoryId, Gender gender, ProductType type,
-            Integer lowPrice, Integer highPrice, String query, String sort, String direction
+            Long brandId, Long categoryId, Gender gender, ProductType productType,
+            Integer lowPrice, Integer highPrice, String query, int page, String sort, String direction
     ) {
         List<Category> childCategories = null;
         if(categoryId != null) {
             childCategories = categoryRepository.findAllChildCategories(categoryId);
         }
         return productRepository.findProductSlice(
-                lastVal, brandId, childCategories, gender, type,
-                lowPrice, highPrice, query, sort, direction
+                brandId, childCategories, gender, productType,
+                lowPrice, highPrice, query, page, sort, direction
         );
     }
 

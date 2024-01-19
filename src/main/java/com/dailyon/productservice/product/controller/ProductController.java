@@ -41,7 +41,6 @@ public class ProductController {
      */
     @GetMapping
     ResponseEntity<ReadProductSliceResponse> readProductSlice(
-            @RequestParam(required = false) String lastVal,
             @RequestParam(required = false, defaultValue = "NORMAL") ProductType type,
             @RequestParam(required = false) Long brandId,
             @RequestParam(required = false) Long categoryId,
@@ -49,13 +48,14 @@ public class ProductController {
             @RequestParam(required = false) Integer lowPrice,
             @RequestParam(required = false) Integer highPrice,
             @RequestParam(required = false) String query,
+            @RequestParam int page,
             @RequestParam(required = false) String sort,
             @RequestParam(required = false) String direction
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 productFacade.readProductSlice(
-                        lastVal, brandId, categoryId, gender, type,
-                        lowPrice, highPrice, query, sort, direction
+                        brandId, categoryId, gender, type,
+                        lowPrice, highPrice, query, page, sort, direction
                 )
         );
     }

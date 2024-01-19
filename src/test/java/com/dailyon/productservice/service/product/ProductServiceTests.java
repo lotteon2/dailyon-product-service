@@ -255,8 +255,8 @@ public class ProductServiceTests extends IntegrationTestSupport {
     void readProductSlice() {
         // given, when
         Slice<Product> response = productService.readProductSlice(
-                null, null, null, null, ProductType.valueOf("NORMAL"),
-                null, null, null, null, null
+                 null, null, null, ProductType.valueOf("NORMAL"),
+                null, null, null, 0,  null, null
         );
 
         // then
