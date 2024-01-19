@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface ProductStockRepository extends JpaRepository<ProductStock, ProductStockId>, ProductStockCustomRepository {
-    List<ProductStock> findProductStocksByProductOrderByProductSize(Product product);
+    List<ProductStock> findProductStocksByProduct(Product product);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query(value = "DELETE FROM ProductStock ps WHERE ps.product.id = :productId")
