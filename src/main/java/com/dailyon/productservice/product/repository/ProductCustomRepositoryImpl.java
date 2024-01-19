@@ -32,14 +32,34 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
     @Override
     public Slice<Product> findProductSlice(
-            String lastVal, Long brandId, List<Category> childCategories, Gender gender, ProductType productType,
-            Integer lowPrice, Integer highPrice, String query, String sort, String direction
+            Long brandId, List<Category> childCategories, Gender gender, ProductType productType,
+            Integer lowPrice, Integer highPrice, String query, int page, String sort, String direction
     ) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if(query != null) {
             booleanBuilder.and(nameContains(query).or(codeContains(query)));
         }
-        Pageable pageable = Pageable.ofSize(8);
+        Pageable pageable = PageRequest.of(page, 8);
+
+        List<Long> indexes = jpaQueryFactory
+                .select(product.id)
+                .from(product)
+                .where(product.deleted.eq(false)
+                        .and(brandIdEq(brandId))
+                        .and(categoryIn(childCategories))
+                        .and(genderEq(gender))
+                        .and(productTypeEq(productType))
+                        .and(filterPrice(lowPrice, highPrice))
+                        .and(booleanBuilder)
+                )
+                .orderBy(orderSpecifier(sort, direction))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        if(indexes.isEmpty()) {
+            return new SliceImpl<>(new ArrayList<>(), pageable, false);
+        }
 
         List<Product> result = jpaQueryFactory
                 .select(product)
@@ -47,17 +67,10 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .leftJoin(product.brand, brand).fetchJoin()
                 .leftJoin(product.category, category).fetchJoin()
                 .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
-                .where(product.deleted.eq(false)
-                        .and(brandIdEq(brandId))
-                        .and(categoryIn(childCategories))
-                        .and(genderEq(gender))
-                        .and(productTypeEq(productType))
-                        .and(filterPrice(lowPrice, highPrice))
-                        .and(filterByLastVal(sort, direction, lastVal))
-                        .and(booleanBuilder)
+                .where(
+                        product.id.in(indexes)
                 )
                 .orderBy(orderSpecifier(sort, direction))
-                .limit(pageable.getPageSize() + 1)
                 .fetch();
 
         boolean hasNext = false;

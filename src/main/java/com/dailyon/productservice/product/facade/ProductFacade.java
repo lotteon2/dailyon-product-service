@@ -78,12 +78,13 @@ public class ProductFacade {
     }
 
     public ReadProductSliceResponse readProductSlice(
-            String lastVal, Long brandId, Long categoryId, Gender gender, ProductType productType,
-            Integer lowPrice, Integer highPrice, String query, String sort, String direction
+            Long brandId, Long categoryId, Gender gender, ProductType productType,
+            Integer lowPrice, Integer highPrice, String query, int page, String sort, String direction
     ) {
         Slice<Product> products = productService.readProductSlice(
-                lastVal, brandId, categoryId, gender, productType,
-                lowPrice, highPrice, query, sort, direction);
+                brandId, categoryId, gender, productType,
+                lowPrice, highPrice, query, page, sort, direction
+        );
 
         MultipleProductCouponsResponse response = promotionFeignClient.getCouponsForProducts(
                 MultipleProductCouponsRequest.fromEntity(products.getContent())

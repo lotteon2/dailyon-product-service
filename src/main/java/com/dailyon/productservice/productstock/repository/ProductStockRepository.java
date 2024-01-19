@@ -13,7 +13,6 @@ import java.util.List;
 
 @Repository
 public interface ProductStockRepository extends JpaRepository<ProductStock, ProductStockId>, ProductStockCustomRepository {
-
     List<ProductStock> findProductStocksByProductOrderByProductSize(Product product);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
