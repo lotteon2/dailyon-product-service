@@ -68,8 +68,8 @@ public class ProductStockCustomRepositoryImpl implements ProductStockCustomRepos
             builder.or(
                     (productStock.product.id.eq(request.getProductId())
                             .and(productStock.productSize.id.eq(request.getProductSizeId()))
-                            .and(productStock.productSize.deleted.isFalse())
-                            .and(productStock.product.deleted.isFalse())
+                            //.and(productStock.productSize.deleted.isFalse())
+                            //.and(productStock.product.deleted.isFalse())
                     )
             );
         }
