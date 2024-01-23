@@ -22,4 +22,8 @@ public interface ProductCustomRepository {
     );
 
     Slice<Product> searchProductsFromOOTD(Long lastId, String query);
+
+    List<Product> searchProducts(String query);
+
+    List<Product> searchAfterGpt(List<Long> categoryIds, List<Long> brandIds, Gender gender);
 }

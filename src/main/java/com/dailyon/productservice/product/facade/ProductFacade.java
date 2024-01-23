@@ -1,5 +1,7 @@
 package com.dailyon.productservice.product.facade;
 
+import com.dailyon.productservice.brand.dto.response.ReadBrandResponse;
+import com.dailyon.productservice.category.dto.response.ReadChildrenCategoryResponse;
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.common.exception.DeleteException;
@@ -8,30 +10,28 @@ import com.dailyon.productservice.common.feign.client.PromotionFeignClient;
 import com.dailyon.productservice.common.feign.request.MultipleProductCouponsRequest;
 import com.dailyon.productservice.common.feign.response.CouponForProductResponse;
 import com.dailyon.productservice.common.feign.response.MultipleProductCouponsResponse;
+import com.dailyon.productservice.common.feign.response.OpenAIResponse;
 import com.dailyon.productservice.product.dto.UpdateProductDto;
 import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.UpdateProductRequest;
 import com.dailyon.productservice.product.dto.response.*;
 import com.dailyon.productservice.product.entity.Product;
+import com.dailyon.productservice.common.feign.client.OpenAIClient;
 import com.dailyon.productservice.product.service.ProductService;
 import com.dailyon.productservice.product.sqs.ProductRestockHandler;
 import dailyon.domain.order.clients.ProductRankResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ProductFacade {
@@ -39,6 +39,7 @@ public class ProductFacade {
     private final PromotionFeignClient promotionFeignClient;
     private final OrderFeignClient orderFeignClient;
     private final ProductRestockHandler productRestockHandler;
+    private final OpenAIClient openAIClient;
 
     public CreateProductResponse createProduct(CreateProductRequest createProductRequest) {
         return productService.createProduct(createProductRequest);
@@ -91,6 +92,30 @@ public class ProductFacade {
         ).getBody();
 
         return ReadProductSliceResponse.create(products, response.getCoupons());
+    }
+
+    public ReadProductSearchResponse searchProducts(String query) {
+        List<Product> products = productService.searchProducts(query);
+
+        if(products.isEmpty()) {
+            try {
+                OpenAIResponse responseFromGpt = openAIClient.getSearchResults(query);
+
+                products = productService.searchAfterGpt(
+                        responseFromGpt.getChoices().get(0).getMessage().getContent().getBrands().getBrands().stream().map(ReadBrandResponse::getId).collect(Collectors.toList()) ,
+                        responseFromGpt.getChoices().get(0).getMessage().getContent().getCategories().getCategories().stream().map(ReadChildrenCategoryResponse::getId).collect(Collectors.toList()),
+                        responseFromGpt.getChoices().get(0).getMessage().getContent().getGenders().getGenders().get(0)
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        MultipleProductCouponsResponse response = promotionFeignClient.getCouponsForProducts(
+                MultipleProductCouponsRequest.fromEntity(products)
+        ).getBody();
+
+        return ReadProductSearchResponse.create(products, response.getCoupons());
     }
 
     public ReadOOTDSearchSliceResponse searchFromOOTD(Long lastId, String query) {
