@@ -1,25 +1,29 @@
 package com.dailyon.productservice.common.feign.response;
 
-import com.dailyon.productservice.brand.dto.response.ReadBrandResponse;
-import com.dailyon.productservice.category.dto.response.ReadChildrenCategoryResponse;
+import com.dailyon.productservice.brand.entity.Brand;
+import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.common.enums.Gender;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class OpenAIResponse {
     private String id;
     private String object;
     private Long created;
     private String model;
     private List<Choice> choices;
-    private TokenInfo usage;
-    private String system_fingerprint;
+    private Usage usage;
+    @JsonProperty("system_fingerprint")
+    private String systemFingerprint;
 
     @Getter
     @Builder
@@ -27,30 +31,29 @@ public class OpenAIResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Choice {
-        private Long index;
+        private int index;
         private Message message;
+        private Object logprobs;
+        @JsonProperty("finish_reason")
+        private String finishReason;
+    }
 
-        @Getter
-        @Builder
-        @ToString
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class Message {
-            private String role;
-            private Response content;
-            private Object logprobs;
-            private String finish_reason;
+    @Getter
+    @Builder
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Message {
+        private String role;
+        private String content; // String type to hold JSON content
 
-            @Getter
-            @Builder
-            @ToString
-            @NoArgsConstructor
-            @AllArgsConstructor
-            public static class Response {
-                private CategoryResponse categories;
-                private BrandResponse brands;
-                private GenderResponse genders;
-                private PriceRangeResponse priceRanges;
+        // Method to convert JSON string to Content object
+        public Content getParsedContent(ObjectMapper objectMapper) {
+            try {
+                return objectMapper.readValue(this.content, Content.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Failed to deserialize content", e);
             }
         }
     }
@@ -60,35 +63,53 @@ public class OpenAIResponse {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CategoryResponse {
+    public static class Content {
         private List<ReadChildrenCategoryResponse> categories;
-    }
-
-    @Getter
-    @Builder
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class BrandResponse {
         private List<ReadBrandResponse> brands;
-    }
-
-    @Getter
-    @Builder
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class GenderResponse {
         private List<Gender> genders;
+        private List<PriceRange> priceRanges;
     }
 
     @Getter
     @Builder
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PriceRangeResponse {
-        private List<PriceRange> priceRanges;
+    public static class ReadChildrenCategoryResponse {
+        private Long id;
+        private String name;
+
+        @Override
+        public String toString() {
+            return "{'id':" + this.id + ", 'name':" + "'" + this.name + "'" +"}";
+        }
+
+        public static ReadChildrenCategoryResponse fromEntity(Category category) {
+            return ReadChildrenCategoryResponse.builder()
+                    .id(category.getId())
+                    .name(category.getName())
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReadBrandResponse {
+        private Long id;
+        private String name;
+
+        @Override
+        public String toString() {
+            return "{'id':" + this.id + ", 'name':" + "'" + this.name + "'" +"}";
+        }
+
+        public static ReadBrandResponse fromEntity(Brand brand) {
+            return ReadBrandResponse.builder()
+                    .id(brand.getId())
+                    .name(brand.getName())
+                    .build();
+        }
     }
 
     @Getter
@@ -106,9 +127,14 @@ public class OpenAIResponse {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class TokenInfo {
-        private Long prompt_tokens;
-        private Long completion_tokens;
-        private Long total_tokens;
+    public static class Usage {
+        @JsonProperty("prompt_tokens")
+        private Long promptTokens;
+
+        @JsonProperty("completion_tokens")
+        private Long completionTokens;
+
+        @JsonProperty("total_tokens")
+        private Long totalTokens;
     }
 }

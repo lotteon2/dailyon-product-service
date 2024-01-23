@@ -19,6 +19,7 @@ import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.common.feign.client.OpenAIClient;
 import com.dailyon.productservice.product.service.ProductService;
 import com.dailyon.productservice.product.sqs.ProductRestockHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dailyon.domain.order.clients.ProductRankResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,7 @@ public class ProductFacade {
     private final OrderFeignClient orderFeignClient;
     private final ProductRestockHandler productRestockHandler;
     private final OpenAIClient openAIClient;
+    private final ObjectMapper objectMapper;
 
     public CreateProductResponse createProduct(CreateProductRequest createProductRequest) {
         return productService.createProduct(createProductRequest);
@@ -97,24 +99,34 @@ public class ProductFacade {
     public ReadProductSearchResponse searchProducts(String query) {
         List<Product> products = productService.searchProducts(query);
 
-        if(products.isEmpty()) {
+        if (products.isEmpty()) {
             try {
-                OpenAIResponse responseFromGpt = openAIClient.getSearchResults(query);
+                String response = openAIClient.getSearchResults(query);
 
+                OpenAIResponse responseFromGpt = objectMapper.convertValue(response, OpenAIResponse.class);
+
+                OpenAIResponse.Message message = responseFromGpt.getChoices().get(0).getMessage();
+
+                OpenAIResponse.Content content = message.getParsedContent(objectMapper);
+
+                // Use content object to search products
                 products = productService.searchAfterGpt(
-                        responseFromGpt.getChoices().get(0).getMessage().getContent().getBrands().getBrands().stream().map(ReadBrandResponse::getId).collect(Collectors.toList()) ,
-                        responseFromGpt.getChoices().get(0).getMessage().getContent().getCategories().getCategories().stream().map(ReadChildrenCategoryResponse::getId).collect(Collectors.toList()),
-                        responseFromGpt.getChoices().get(0).getMessage().getContent().getGenders().getGenders().get(0)
+                        content.getBrands().stream().map(OpenAIResponse.ReadBrandResponse::getId).collect(Collectors.toList()),
+                        content.getCategories().stream().map(OpenAIResponse.ReadChildrenCategoryResponse::getId).collect(Collectors.toList()),
+                        content.getGenders().get(0)
                 );
             } catch (Exception e) {
+                // Properly log and handle the exception as per your application's requirements
                 e.printStackTrace();
             }
         }
 
+        // Assuming promotionFeignClient is correctly set up to fetch coupons
         MultipleProductCouponsResponse response = promotionFeignClient.getCouponsForProducts(
                 MultipleProductCouponsRequest.fromEntity(products)
         ).getBody();
 
+        // Return results with attached coupons
         return ReadProductSearchResponse.create(products, response.getCoupons());
     }
 

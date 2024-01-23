@@ -32,7 +32,7 @@ public class OpenAIClient {
     private final BrandRepository brandRepository;
     private final CategoryRepository categoryRepository;
 
-    public OpenAIResponse getSearchResults(String searchQuery) throws Exception {
+    public String getSearchResults(String searchQuery) throws Exception {
         List<ReadBrandResponse> brands = ReadBrandListResponse
                 .fromEntity(brandRepository.findAll())
                 .getBrandResponses();
@@ -73,24 +73,37 @@ public class OpenAIClient {
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
         String apiEndpoint = "https://api.openai.com/v1/chat/completions";
-        String response = restTemplate.postForObject(apiEndpoint, entity, String.class);
-
-        log.info(response.toString());
-        return objectMapper.readValue(response, OpenAIResponse.class);
+        Object result = restTemplate.postForObject(apiEndpoint, entity, Object.class);
+        log.info("==================================================================");
+        log.info(result.toString());
+        log.info("==================================================================");
+        return objectMapper.writeValueAsString(result);
     }
 
     private String createPrompt(String searchQuery, String brands, String categories, String genders) {
-        return "'categories': [" + categories + "], \n"
-                + "'brands': [" + brands + "], \n"
-                + "'genders' " + genders + ",\n"
-                + "'priceRanges': [{'id': 1, 'name': \"$0-$99\"}, {'id': 2, 'name': \"$100-$199\"}, {'id': 3, 'name': \"$200-$299\"}, {'id': 4, 'name': \"$300-$399\"}, {'id': 5, 'name': \"over $400\"}]\n"
-                + "Search Query: \"" + searchQuery + "\" "
-                + "Based on the search query, "
-                + "let me know the relevant 3 categories, 3 brands, 1 gender, and 1 price range:"
-                + "Please provide the answer in the following JSON format. \n"
-                + "{'categories' : [{'id': 1, 'name': 'Fashion'}, {'id': 2, 'name': 'Electronics'}, {'id': 3, 'name' :'Home & Living'}], "
-                + "'brands': [{'id' : 1 , 'name' : 'Nike'}, {'id' : 2 , 'name' : 'Samsung'}, {'id' :3 , 'name' : 'Apple'}], "
-                + "'genders': [{'value' : 'MALE' , 'name': '남성'}], "
-                + "'priceRanges': [{'id' :1, 'name' :\"$0-$99\")]}";
+        // Ensure that brands, categories, and genders are valid JSON arrays before this method is called
+        return "{" +
+                "\"categories\": [" + categories + "], " +
+                "\"brands\": [" + brands + "], " +
+                "\"genders\": " + genders + ", " +
+                "\"priceRanges\": [" +
+                "{\"id\": 1, \"name\": \"$0-$99\"}, " +
+                "{\"id\": 2, \"name\": \"$100-$199\"}, " +
+                "{\"id\": 3, \"name\": \"$200-$299\"}, " +
+                "{\"id\": 4, \"name\": \"$300-$399\"}, " +
+                "{\"id\": 5, \"name\": \"over $400\"}" +
+                "], " +
+                "Search Query: \"" + escapeJson(searchQuery) + "\" " +
+                "Based on the search query, let me know the relevant 3 categories, 3 brands, 1 gender, and 1 price range. " +
+                "Please provide the answer in the following JSON format. " +
+                "{\"categories\": [{\"id\": 1, \"name\": \"Fashion\"}, {\"id\": 2, \"name\": \"Electronics\"}, {\"id\": 3, \"name\": \"Home & Living\"}], " +
+                "\"brands\": [{\"id\": 1, \"name\": \"Nike\"}, {\"id\": 2, \"name\": \"Samsung\"}, {\"id\": 3, \"name\": \"Apple\"}], " +
+                "\"genders\": [{\"value\": \"MALE\", \"name\": \"남성\"}], " +
+                "\"priceRanges\": [{\"id\": 1, \"name\": \"$0-$99\"}]}" +
+                "}";
+    }
+
+    private String escapeJson(String jsonContainingString) {
+        return jsonContainingString.replace("\"", "\\\"");
     }
 }
