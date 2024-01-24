@@ -257,6 +257,14 @@ public class ProductService {
         );
     }
 
+    public List<Product> searchProducts(String query) {
+        return productRepository.searchProducts(query);
+    }
+
+    public List<Product> searchAfterGpt(List<Long> brandIds, List<Long> categoryIds, Gender gender) {
+        return productRepository.searchAfterGpt(brandIds, categoryIds, gender);
+    }
+
     public ReadOOTDSearchSliceResponse searchFromOOTD(Long lastId, String query) {
         return ReadOOTDSearchSliceResponse.fromEntity(productRepository.searchProductsFromOOTD(lastId, query));
     }

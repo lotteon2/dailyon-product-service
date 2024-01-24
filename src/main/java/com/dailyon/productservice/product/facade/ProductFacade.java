@@ -3,11 +3,13 @@ package com.dailyon.productservice.product.facade;
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.common.exception.DeleteException;
+import com.dailyon.productservice.common.feign.client.OpenAIClient;
 import com.dailyon.productservice.common.feign.client.OrderFeignClient;
 import com.dailyon.productservice.common.feign.client.PromotionFeignClient;
 import com.dailyon.productservice.common.feign.request.MultipleProductCouponsRequest;
 import com.dailyon.productservice.common.feign.response.CouponForProductResponse;
 import com.dailyon.productservice.common.feign.response.MultipleProductCouponsResponse;
+import com.dailyon.productservice.common.feign.response.OpenAIResponse;
 import com.dailyon.productservice.product.dto.UpdateProductDto;
 import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.UpdateProductRequest;
@@ -15,23 +17,20 @@ import com.dailyon.productservice.product.dto.response.*;
 import com.dailyon.productservice.product.entity.Product;
 import com.dailyon.productservice.product.service.ProductService;
 import com.dailyon.productservice.product.sqs.ProductRestockHandler;
+import com.google.gson.Gson;
 import dailyon.domain.order.clients.ProductRankResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ProductFacade {
@@ -39,6 +38,8 @@ public class ProductFacade {
     private final PromotionFeignClient promotionFeignClient;
     private final OrderFeignClient orderFeignClient;
     private final ProductRestockHandler productRestockHandler;
+    private final OpenAIClient openAIClient;
+    private final Gson gson;
 
     public CreateProductResponse createProduct(CreateProductRequest createProductRequest) {
         return productService.createProduct(createProductRequest);
@@ -91,6 +92,37 @@ public class ProductFacade {
         ).getBody();
 
         return ReadProductSliceResponse.create(products, response.getCoupons());
+    }
+
+    public ReadProductSearchResponse searchProducts(String query) {
+        List<Product> products = productService.searchProducts(query);
+
+        if (products.isEmpty()) {
+            try {
+                String response = openAIClient.getSearchResults(query);
+                OpenAIResponse responseFromGpt = gson.fromJson(response, OpenAIResponse.class);
+                String jsonContent = responseFromGpt.getChoices().get(0).getMessage().getContent();
+                OpenAIResponse.Content content = gson.fromJson(jsonContent, OpenAIResponse.Content.class);
+
+                // Use content object to search products
+                products = productService.searchAfterGpt(
+                        content.getBrands().stream().map(OpenAIResponse.ReadBrandResponse::getId).collect(Collectors.toList()),
+                        content.getCategories().stream().map(OpenAIResponse.ReadChildrenCategoryResponse::getId).collect(Collectors.toList()),
+                        content.getGenders().get(0)
+                );
+            } catch (Exception e) {
+                // Properly log and handle the exception as per your application's requirements
+                e.printStackTrace();
+            }
+        }
+
+        // Assuming promotionFeignClient is correctly set up to fetch coupons
+        MultipleProductCouponsResponse response = promotionFeignClient.getCouponsForProducts(
+                MultipleProductCouponsRequest.fromEntity(products)
+        ).getBody();
+
+        // Return results with attached coupons
+        return ReadProductSearchResponse.create(products, response.getCoupons());
     }
 
     public ReadOOTDSearchSliceResponse searchFromOOTD(Long lastId, String query) {
