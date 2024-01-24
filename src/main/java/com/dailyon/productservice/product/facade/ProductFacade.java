@@ -102,14 +102,23 @@ public class ProductFacade {
                 String response = openAIClient.getSearchResults(query);
                 OpenAIResponse responseFromGpt = gson.fromJson(response, OpenAIResponse.class);
                 String jsonContent = responseFromGpt.getChoices().get(0).getMessage().getContent();
+                log.info("================================");
+                log.info(jsonContent);
+                log.info("================================");
                 OpenAIResponse.Content content = gson.fromJson(jsonContent, OpenAIResponse.Content.class);
 
                 // Use content object to search products
-                products = productService.searchAfterGpt(
-                        content.getBrands().stream().map(OpenAIResponse.ReadBrandResponse::getId).collect(Collectors.toList()),
-                        content.getCategories().stream().map(OpenAIResponse.ReadChildrenCategoryResponse::getId).collect(Collectors.toList()),
-                        content.getGenders().get(0)
-                );
+                List<Long> brandIds = content.getBrands().stream()
+                        .map(OpenAIResponse.ReadBrandResponse::getId)
+                        .collect(Collectors.toList());
+
+                List<Long> categoryIds = content.getCategories().stream()
+                        .map(OpenAIResponse.ReadChildrenCategoryResponse::getId)
+                        .collect(Collectors.toList());
+
+                Gender gender = content.getGenders().get(0);
+
+                products = productService.searchAfterGpt(categoryIds, brandIds, gender);
             } catch (Exception e) {
                 // Properly log and handle the exception as per your application's requirements
                 e.printStackTrace();

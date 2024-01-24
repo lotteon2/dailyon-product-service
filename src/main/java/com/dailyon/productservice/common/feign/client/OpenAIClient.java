@@ -7,10 +7,8 @@ import com.dailyon.productservice.category.dto.response.ReadChildrenCategoryList
 import com.dailyon.productservice.category.dto.response.ReadChildrenCategoryResponse;
 import com.dailyon.productservice.category.repository.CategoryRepository;
 import com.dailyon.productservice.common.enums.Gender;
-import com.dailyon.productservice.common.feign.response.OpenAIResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +21,6 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-@Slf4j
 public class OpenAIClient {
 
     private final Environment environment;
