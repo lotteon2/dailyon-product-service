@@ -187,15 +187,15 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
     @Override
     public List<Product> searchAfterGpt(List<Long> categoryIds, List<Long> brandIds, Gender gender) {
-        return jpaQueryFactory.selectFrom(product)
+        return jpaQueryFactory.selectDistinct(product)
+                .from(product)
                 .leftJoin(product.brand, brand).fetchJoin()
                 .leftJoin(product.category, category).fetchJoin()
-                .where(product.deleted.eq(false)
-                        .and(productTypeEq(ProductType.NORMAL))
-                        .and(product.category.id.in(categoryIds)
-                                .and(product.brand.id.in(brandIds))
-                                .and(genderEq(gender))
-                        )
+                .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
+                .where(product.brand.id.in(brandIds)
+                        .and(product.category.id.in(categoryIds))
+                        .and(product.type.eq(ProductType.NORMAL))
+                        .and(product.gender.eq(gender))
                 )
                 .orderBy(orderSpecifier("createdAt", "desc"))
                 .fetch();
