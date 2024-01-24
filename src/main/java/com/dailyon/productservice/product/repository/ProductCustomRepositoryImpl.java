@@ -187,7 +187,8 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
     @Override
     public List<Product> searchAfterGpt(List<Long> categoryIds, List<Long> brandIds, Gender gender) {
-        return jpaQueryFactory.selectFrom(product)
+        return jpaQueryFactory.selectDistinct(product)
+                .from(product)
                 .leftJoin(product.brand, brand).fetchJoin()
                 .leftJoin(product.category, category).fetchJoin()
                 .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
