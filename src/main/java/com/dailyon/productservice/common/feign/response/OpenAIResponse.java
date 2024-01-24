@@ -3,12 +3,9 @@ package com.dailyon.productservice.common.feign.response;
 import com.dailyon.productservice.brand.entity.Brand;
 import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.common.enums.Gender;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @Getter
@@ -45,17 +42,7 @@ public class OpenAIResponse {
     @AllArgsConstructor
     public static class Message {
         private String role;
-        private String content; // String type to hold JSON content
-
-        // Method to convert JSON string to Content object
-        public Content getParsedContent(ObjectMapper objectMapper) {
-            try {
-                return objectMapper.readValue(this.content, Content.class);
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new RuntimeException("Failed to deserialize content", e);
-            }
-        }
+        private String content;
     }
 
     @Getter

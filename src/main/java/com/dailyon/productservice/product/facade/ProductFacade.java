@@ -1,10 +1,9 @@
 package com.dailyon.productservice.product.facade;
 
-import com.dailyon.productservice.brand.dto.response.ReadBrandResponse;
-import com.dailyon.productservice.category.dto.response.ReadChildrenCategoryResponse;
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.common.exception.DeleteException;
+import com.dailyon.productservice.common.feign.client.OpenAIClient;
 import com.dailyon.productservice.common.feign.client.OrderFeignClient;
 import com.dailyon.productservice.common.feign.client.PromotionFeignClient;
 import com.dailyon.productservice.common.feign.request.MultipleProductCouponsRequest;
@@ -16,10 +15,9 @@ import com.dailyon.productservice.product.dto.request.CreateProductRequest;
 import com.dailyon.productservice.product.dto.request.UpdateProductRequest;
 import com.dailyon.productservice.product.dto.response.*;
 import com.dailyon.productservice.product.entity.Product;
-import com.dailyon.productservice.common.feign.client.OpenAIClient;
 import com.dailyon.productservice.product.service.ProductService;
 import com.dailyon.productservice.product.sqs.ProductRestockHandler;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import dailyon.domain.order.clients.ProductRankResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +39,7 @@ public class ProductFacade {
     private final OrderFeignClient orderFeignClient;
     private final ProductRestockHandler productRestockHandler;
     private final OpenAIClient openAIClient;
-    private final ObjectMapper objectMapper;
+    private final Gson gson;
 
     public CreateProductResponse createProduct(CreateProductRequest createProductRequest) {
         return productService.createProduct(createProductRequest);
@@ -102,12 +100,9 @@ public class ProductFacade {
         if (products.isEmpty()) {
             try {
                 String response = openAIClient.getSearchResults(query);
-
-                OpenAIResponse responseFromGpt = objectMapper.convertValue(response, OpenAIResponse.class);
-
-                OpenAIResponse.Message message = responseFromGpt.getChoices().get(0).getMessage();
-
-                OpenAIResponse.Content content = message.getParsedContent(objectMapper);
+                OpenAIResponse responseFromGpt = gson.fromJson(response, OpenAIResponse.class);
+                String jsonContent = responseFromGpt.getChoices().get(0).getMessage().getContent();
+                OpenAIResponse.Content content = gson.fromJson(jsonContent, OpenAIResponse.Content.class);
 
                 // Use content object to search products
                 products = productService.searchAfterGpt(
