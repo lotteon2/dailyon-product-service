@@ -66,3 +66,6 @@ logging:
 endpoint:
   promotion-service: http://localhost:8084
   order-service: http://localhost:8089
+
+open-api:
+  secret-key: test

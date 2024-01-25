@@ -99,4 +99,8 @@ public class CategoryService {
         categories.forEach(Category::softDelete);
         productSizeRepository.deleteProductSizesByCategory(categories);
     }
+
+    public List<Category> findAllChildCategories(Long categoryId) {
+        return categoryRepository.findAllChildCategories(categoryId);
+    }
 }

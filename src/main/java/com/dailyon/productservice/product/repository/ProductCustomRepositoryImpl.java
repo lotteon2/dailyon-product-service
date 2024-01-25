@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,6 +166,41 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         return new SliceImpl<>(result, pageable, hasNext);
     }
 
+    @Override
+    public List<Product> searchProducts(String query) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if(query != null) {
+            booleanBuilder.and(nameContains(query).or(codeContains(query)));
+        }
+
+        return jpaQueryFactory.selectFrom(product)
+                .leftJoin(product.brand, brand).fetchJoin()
+                .leftJoin(product.category, category).fetchJoin()
+                .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
+                .where(product.deleted.eq(false)
+                        .and(booleanBuilder)
+                        .and(productTypeEq(ProductType.NORMAL))
+                )
+                .orderBy(orderSpecifier("createdAt", "desc"))
+                .fetch();
+    }
+
+    @Override
+    public List<Product> searchAfterGpt(List<Long> categoryIds, List<Long> brandIds, Gender gender) {
+        return jpaQueryFactory.selectDistinct(product)
+                .from(product)
+                .leftJoin(product.brand, brand).fetchJoin()
+                .leftJoin(product.category, category).fetchJoin()
+                .leftJoin(product.reviewAggregate, reviewAggregate).fetchJoin()
+                .where(product.brand.id.in(brandIds)
+                        .and(product.category.id.in(categoryIds))
+                        .and(product.type.eq(ProductType.NORMAL))
+                        .and(product.gender.eq(gender))
+                )
+                .orderBy(orderSpecifier("createdAt", "desc"))
+                .fetch();
+    }
+
     private BooleanExpression brandIdEq(Long brandId) {
         return brandId == null ? null : product.brand.id.eq(brandId);
     }
@@ -219,27 +252,6 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                     product.reviewAggregate.reviewCount.desc();
         } else { // 기본은 최신순 내림차순
             return product.createdAt.desc();
-        }
-    }
-
-    private BooleanExpression filterByLastVal(String sort, String direction, String lastVal) {
-        if ("price".equals(sort)) {
-            return "asc".equals(direction) ?
-                    product.price.gt(Integer.parseInt(lastVal)) :
-                    product.price.lt(Integer.parseInt(lastVal));
-        } else if ("rating".equals(sort)) {
-            return "asc".equals(direction) ?
-                    product.reviewAggregate.avgRating.gt(Double.parseDouble(lastVal)) :
-                    product.reviewAggregate.avgRating.lt(Double.parseDouble(lastVal));
-        } else if("review".equals(sort)) {
-            return "asc".equals(direction) ?
-                    product.reviewAggregate.reviewCount.gt(Long.parseLong(lastVal)) :
-                    product.reviewAggregate.reviewCount.lt(Long.parseLong(lastVal));
-        } else {
-            return product.createdAt.lt(lastVal != null ?
-                    LocalDateTime.parse(lastVal, DateTimeFormatter.ISO_LOCAL_DATE_TIME) :
-                    LocalDateTime.now()
-            );
         }
     }
 }

@@ -1,10 +1,7 @@
 package com.dailyon.productservice.brand.dto.response;
 
 import com.dailyon.productservice.brand.entity.Brand;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
@@ -13,6 +10,11 @@ import lombok.NoArgsConstructor;
 public class ReadBrandResponse {
     private Long id;
     private String name;
+
+    @Override
+    public String toString() {
+        return '{' + "'id':" + this.id + ", 'name': '" + this.name + "'}";
+    }
 
     public static ReadBrandResponse fromEntity(Brand brand) {
         return ReadBrandResponse.builder()
