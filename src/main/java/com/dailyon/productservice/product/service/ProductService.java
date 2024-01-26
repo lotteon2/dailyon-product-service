@@ -271,8 +271,9 @@ public class ProductService {
                     .map(Category::getId)
                     .collect(Collectors.toList()));
         }
+        categoryIds.addAll(childCategoryIds);
 
-        return productRepository.searchAfterGpt(childCategoryIds, brandIds, gender, lowPrice, highPrice);
+        return productRepository.searchAfterGpt(categoryIds, brandIds, gender, lowPrice, highPrice);
     }
 
     public ReadOOTDSearchSliceResponse searchFromOOTD(Long lastId, String query) {
