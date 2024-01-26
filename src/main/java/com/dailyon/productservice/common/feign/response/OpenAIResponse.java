@@ -107,6 +107,11 @@ public class OpenAIResponse {
     public static class PriceRange {
         private Long id;
         private String name;
+
+        public Integer[] parseHighAndLow() {
+            String[] split = this.name.replace("$", "").split("-");
+            return new Integer[] { Integer.parseInt(split[0]) * 1000, Integer.parseInt(split[1]) * 1000 };
+        }
     }
 
     @Getter
