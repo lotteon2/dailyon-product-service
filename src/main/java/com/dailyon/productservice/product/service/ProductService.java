@@ -261,8 +261,18 @@ public class ProductService {
         return productRepository.searchProducts(query);
     }
 
-    public List<Product> searchAfterGpt(List<Long> brandIds, List<Long> categoryIds, Gender gender) {
-        return productRepository.searchAfterGpt(brandIds, categoryIds, gender);
+    public List<Product> searchAfterGpt(List<Long> categoryIds, List<Long> brandIds,
+                                        Gender gender, Integer lowPrice, Integer highPrice) {
+
+        List<Long> childCategoryIds = new ArrayList<>();
+        for(Long categoryId: categoryIds) {
+            childCategoryIds.addAll(categoryRepository.findAllChildCategories(categoryId)
+                    .stream()
+                    .map(Category::getId)
+                    .collect(Collectors.toList()));
+        }
+
+        return productRepository.searchAfterGpt(childCategoryIds, brandIds, gender, lowPrice, highPrice);
     }
 
     public ReadOOTDSearchSliceResponse searchFromOOTD(Long lastId, String query) {

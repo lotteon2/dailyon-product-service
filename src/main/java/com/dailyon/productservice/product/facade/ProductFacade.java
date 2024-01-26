@@ -1,5 +1,6 @@
 package com.dailyon.productservice.product.facade;
 
+import com.dailyon.productservice.category.entity.Category;
 import com.dailyon.productservice.common.enums.Gender;
 import com.dailyon.productservice.common.enums.ProductType;
 import com.dailyon.productservice.common.exception.DeleteException;
@@ -99,12 +100,15 @@ public class ProductFacade {
 
         if (products.isEmpty()) {
             try {
-                String response = openAIClient.getSearchResults(query);
+                String translatedResponse = openAIClient.getTranslatedPrompt(query);
+                OpenAIResponse translatedContent = gson.fromJson(translatedResponse, OpenAIResponse.class);
+                String translatedQuery = translatedContent.getChoices().get(0).getMessage().getContent();
+                log.info("translatedQuery: "+translatedQuery);
+
+                String response = openAIClient.getSearchResults(translatedQuery);
                 OpenAIResponse responseFromGpt = gson.fromJson(response, OpenAIResponse.class);
                 String jsonContent = responseFromGpt.getChoices().get(0).getMessage().getContent();
-                log.info("================================");
-                log.info(jsonContent);
-                log.info("================================");
+
                 OpenAIResponse.Content content = gson.fromJson(jsonContent, OpenAIResponse.Content.class);
 
                 // Use content object to search products
@@ -118,7 +122,12 @@ public class ProductFacade {
 
                 Gender gender = content.getGenders().get(0);
 
-                products = productService.searchAfterGpt(categoryIds, brandIds, gender);
+                Integer[] prices = new Integer[2];
+                if(content.getPriceRanges().get(0) != null) {
+                    prices = content.getPriceRanges().get(0).parseHighAndLow();
+                }
+
+                products = productService.searchAfterGpt(categoryIds, brandIds, gender, prices[0], prices[1]);
             } catch (Exception e) {
                 // Properly log and handle the exception as per your application's requirements
                 e.printStackTrace();

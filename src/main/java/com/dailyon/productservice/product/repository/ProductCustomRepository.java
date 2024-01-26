@@ -25,5 +25,6 @@ public interface ProductCustomRepository {
 
     List<Product> searchProducts(String query);
 
-    List<Product> searchAfterGpt(List<Long> categoryIds, List<Long> brandIds, Gender gender);
+    List<Product> searchAfterGpt(List<Long> categoryIds, List<Long> brandIds,
+                                 Gender gender, Integer lowPrice, Integer highPrice);
 }
