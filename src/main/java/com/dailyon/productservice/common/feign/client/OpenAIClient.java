@@ -116,11 +116,11 @@ public class OpenAIClient {
                 "\"brands\": [" + brandString + "], " +
                 "\"genders\": [" + genders + "], " +
                 "\"priceRanges\": [" +
-                "{\"id\": 1, \"name\": \"$0-$299\"}, " +
-                "{\"id\": 2, \"name\": \"$300-$599\"}, " +
-                "{\"id\": 3, \"name\": \"$600-$899\"}, " +
-                "{\"id\": 4, \"name\": \"$900-$1199\"}, " +
-                "{\"id\": 5, \"name\": \"over $1200\"}" +
+                "{\"id\": 1, \"name\": \"$0-$499\"}, " +
+                "{\"id\": 2, \"name\": \"$500-$999\"}, " +
+                "{\"id\": 3, \"name\": \"$1000-$1499\"}, " +
+                "{\"id\": 4, \"name\": \"$1500-$1999\"}, " +
+                "{\"id\": 5, \"name\": \"over $2000\"}" +
                 "], " +
                 "Search Query: \"" + searchQuery + "\"." +
                 "Based on the search query, let me know the relevant maximum 5 categories, maximum 5 brands, 2 gender, and 1 price range. " +
