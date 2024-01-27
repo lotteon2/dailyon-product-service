@@ -187,7 +187,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
     @Override
     public List<Product> searchAfterGpt(List<Long> categoryIds, List<Long> brandIds,
-                                        Gender gender, Integer lowPrice, Integer highPrice) {
+                                        List<Gender> genders, Integer lowPrice, Integer highPrice) {
         return jpaQueryFactory.selectDistinct(product)
                 .from(product)
                 .leftJoin(product.brand, brand).fetchJoin()
@@ -196,7 +196,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 .where(product.brand.id.in(brandIds)
                         .and(product.category.id.in(categoryIds))
                         .and(product.type.eq(ProductType.NORMAL))
-                        .and(product.gender.eq(gender))
+                        .and(product.gender.in(genders))
                         .and(filterPrice(lowPrice, highPrice))
                 )
                 .orderBy(orderSpecifier("createdAt", "desc"))

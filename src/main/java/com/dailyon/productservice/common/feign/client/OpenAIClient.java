@@ -114,7 +114,7 @@ public class OpenAIClient {
         return "{" +
                 "\"categories\": [" + categoryString + "], " +
                 "\"brands\": [" + brandString + "], " +
-                "\"genders\": " + genders + ", " +
+                "\"genders\": [" + genders + "], " +
                 "\"priceRanges\": [" +
                 "{\"id\": 1, \"name\": \"$0-$299\"}, " +
                 "{\"id\": 2, \"name\": \"$300-$599\"}, " +
@@ -123,7 +123,7 @@ public class OpenAIClient {
                 "{\"id\": 5, \"name\": \"over $1200\"}" +
                 "], " +
                 "Search Query: \"" + searchQuery + "\"." +
-                "Based on the search query, let me know the relevant maximum 3 categories, maximum 5 brands, 1 gender, and 1 price range. " +
+                "Based on the search query, let me know the relevant maximum 5 categories, maximum 5 brands, 2 gender, and 1 price range. " +
                 "Please provide the answer in the json object format. And also Field priceRanges can be null." +
                 "{\"categories\":[{\"id\":1, \"name\":\"Fashion\"}, {\"id\":2, \"name\":\"Electronics\"}, {\"id\":3, \"name\": \"Home & Living\"}], " +
                 "\"brands\":[{\"id\":1, \"name\":\"Nike\"}, {\"id\":2, \"name\":\"Samsung\"}, {\"id\":3, \"name\":\"Apple\"}], " +

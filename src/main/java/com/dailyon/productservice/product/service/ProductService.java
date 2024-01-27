@@ -262,7 +262,7 @@ public class ProductService {
     }
 
     public List<Product> searchAfterGpt(List<Long> categoryIds, List<Long> brandIds,
-                                        Gender gender, Integer lowPrice, Integer highPrice) {
+                                        List<Gender> genders, Integer lowPrice, Integer highPrice) {
 
         List<Long> childCategoryIds = new ArrayList<>();
         for(Long categoryId: categoryIds) {
@@ -273,7 +273,7 @@ public class ProductService {
         }
         categoryIds.addAll(childCategoryIds);
 
-        return productRepository.searchAfterGpt(categoryIds, brandIds, gender, lowPrice, highPrice);
+        return productRepository.searchAfterGpt(categoryIds, brandIds, genders, lowPrice, highPrice);
     }
 
     public ReadOOTDSearchSliceResponse searchFromOOTD(Long lastId, String query) {

@@ -120,14 +120,14 @@ public class ProductFacade {
                         .map(OpenAIResponse.ReadChildrenCategoryResponse::getId)
                         .collect(Collectors.toList());
 
-                Gender gender = content.getGenders().get(0);
+                List<Gender> genders = content.getGenders();
 
                 Integer[] prices = new Integer[2];
                 if(content.getPriceRanges().get(0) != null) {
                     prices = content.getPriceRanges().get(0).parseHighAndLow();
                 }
 
-                products = productService.searchAfterGpt(categoryIds, brandIds, gender, prices[0], prices[1]);
+                products = productService.searchAfterGpt(categoryIds, brandIds, genders, prices[0], prices[1]);
             } catch (Exception e) {
                 // Properly log and handle the exception as per your application's requirements
                 e.printStackTrace();
