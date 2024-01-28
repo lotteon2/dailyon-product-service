@@ -35,20 +35,20 @@ public class OpenAIClient {
                 .fromEntity(brandRepository.findAll())
                 .getBrandResponses();
 
-        String allBrands = brands.stream()
+        String brandString = brands.stream()
                 .map(ReadBrandResponse::toString)
                 .collect(Collectors.joining(","));
 
-        List<Category> midCategories = categoryRepository.findAllChildCategories(null)
+        List<Category> midCategories = categoryRepository.findByMasterCategory_IdOrderByNameAsc(null)
                 .stream()
-                .flatMap(rootCategory -> categoryRepository.findAllChildCategories(rootCategory.getId()).stream())
+                .flatMap(rootCategory -> categoryRepository.findByMasterCategory_IdOrderByNameAsc(rootCategory.getId()).stream())
                 .collect(Collectors.toList());
 
         List<ReadChildrenCategoryResponse> categories = ReadChildrenCategoryListResponse
                 .fromEntity(midCategories)
                 .getCategoryResponses();
 
-        String allCategories = categories.stream()
+        String categoryString = categories.stream()
                 .map(ReadChildrenCategoryResponse::toString)
                 .collect(Collectors.joining(","));
 
@@ -58,7 +58,7 @@ public class OpenAIClient {
         List<Map<String, Object>> messages = new ArrayList<>();
         Map<String, Object> message = new HashMap<>();
         message.put("role", "user");
-        message.put("content", createPrompt(searchQuery, allBrands, allCategories, genderStrings));
+        message.put("content", createPrompt(searchQuery, brandString, categoryString, genderStrings));
         messages.add(message);
 
         Map<String, Object> requestData = new HashMap<>();
@@ -110,20 +110,20 @@ public class OpenAIClient {
         return "Translate this sentence into english: " + "\"" + query + "\"";
     }
 
-    private String createPrompt(String searchQuery, String brands, String categories, String genders) {
+    private String createPrompt(String searchQuery, String brandString, String categoryString, String genders) {
         return "{" +
-                "\"categories\": [" + categories + "], " +
-                "\"brands\": [" + brands + "], " +
-                "\"genders\": " + genders + ", " +
+                "\"categories\": [" + categoryString + "], " +
+                "\"brands\": [" + brandString + "], " +
+                "\"genders\": [" + genders + "], " +
                 "\"priceRanges\": [" +
-                "{\"id\": 1, \"name\": \"$0-$299\"}, " +
-                "{\"id\": 2, \"name\": \"$300-$599\"}, " +
-                "{\"id\": 3, \"name\": \"$600-$899\"}, " +
-                "{\"id\": 4, \"name\": \"$900-$1199\"}, " +
-                "{\"id\": 5, \"name\": \"over $1200\"}" +
+                "{\"id\": 1, \"name\": \"$0-$499\"}, " +
+                "{\"id\": 2, \"name\": \"$500-$999\"}, " +
+                "{\"id\": 3, \"name\": \"$1000-$1499\"}, " +
+                "{\"id\": 4, \"name\": \"$1500-$1999\"}, " +
+                "{\"id\": 5, \"name\": \"over $2000\"}" +
                 "], " +
                 "Search Query: \"" + searchQuery + "\"." +
-                "Based on the search query, let me know the relevant maximum 3 categories, maximum 5 brands, 1 gender, and 1 price range. " +
+                "Based on the search query, let me know the relevant maximum 5 categories, maximum 5 brands, 2 gender, and 1 price range. " +
                 "Please provide the answer in the json object format. And also Field priceRanges can be null." +
                 "{\"categories\":[{\"id\":1, \"name\":\"Fashion\"}, {\"id\":2, \"name\":\"Electronics\"}, {\"id\":3, \"name\": \"Home & Living\"}], " +
                 "\"brands\":[{\"id\":1, \"name\":\"Nike\"}, {\"id\":2, \"name\":\"Samsung\"}, {\"id\":3, \"name\":\"Apple\"}], " +
